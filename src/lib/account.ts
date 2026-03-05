@@ -35,7 +35,7 @@ export async function upsertMyProfile(input: {
   const user = userData.user;
   if (!user) return false;
 
-  const { error } = await supabase.from('profiles').upsert(
+  const { error } = await (supabase.from('profiles') as any).upsert(
     {
       user_id: user.id,
       email: user.email ?? null,
