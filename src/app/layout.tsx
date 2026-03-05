@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     description:
       'Professional-grade disposable gloves and trimming supplies. Case pricing for retail, wholesale, and distribution.',
     url: 'https://valuesuppliers.co',
-    images: [{ width: 1200, height: 630, alt: 'ValueSuppliers.co — Gloves for Every Industry' }],
   },
   twitter: {
     card: 'summary_large_image',
