@@ -1,5 +1,3 @@
-'use client';
-
 import type { Metadata } from 'next';
 import { Mail, Phone, Clock, MessageSquare } from 'lucide-react';
 
