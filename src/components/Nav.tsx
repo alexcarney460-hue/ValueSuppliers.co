@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 const NAV_LINKS = [
   { label: 'Catalog', href: '/catalog' },
@@ -16,6 +17,7 @@ const NAV_LINKS = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const { count, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -91,13 +93,13 @@ export default function Nav() {
           {/* Right icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {[
-              { Icon: Search, label: 'Search' },
-              { Icon: User, label: 'Account' },
-              { Icon: ShoppingCart, label: 'Cart' },
-            ].map(({ Icon, label }) => (
+              { Icon: Search, label: 'Search', onClick: undefined },
+              { Icon: User, label: 'Account', onClick: undefined },
+            ].map(({ Icon, label, onClick }) => (
               <button
                 key={label}
                 aria-label={label}
+                onClick={onClick}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -123,6 +125,58 @@ export default function Nav() {
                 <Icon size={18} />
               </button>
             ))}
+
+            {/* Cart button with count badge */}
+            <button
+              aria-label="Open cart"
+              onClick={openCart}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-charcoal)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                position: 'relative',
+                transition: 'background-color 150ms ease, color 150ms ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-sage-light)';
+                (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-forest)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+                (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-charcoal)';
+              }}
+            >
+              <ShoppingCart size={18} />
+              {count > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 2,
+                    right: 2,
+                    width: 16,
+                    height: 16,
+                    backgroundColor: 'var(--color-amber)',
+                    color: '#fff',
+                    fontSize: '0.55rem',
+                    fontWeight: 800,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 1,
+                  }}
+                >
+                  {count > 9 ? '9+' : count}
+                </span>
+              )}
+            </button>
 
             {/* Wholesale pill CTA */}
             <Link

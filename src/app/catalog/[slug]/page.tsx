@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, ChevronRight, CheckCircle, Package, Truck, ShieldCheck, Tag } from 'lucide-react';
 import PRODUCTS, { getProductBySlug, getRelatedProducts } from '@/lib/products';
+import AddToCartPanel from '@/components/AddToCartPanel';
 import { priceForAccount, formatPrice } from '@/lib/pricing';
 
 export function generateStaticParams() {
@@ -237,50 +238,19 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* Add to cart */}
-            <div style={{ display: 'flex', gap: 12, marginBottom: 32 }} className="vs-btn-group">
-              <button
-                style={{
-                  flex: 1,
-                  backgroundColor: 'var(--color-forest)',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 10,
-                  padding: '16px 24px',
-                  fontFamily: "'Barlow', Arial, sans-serif",
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  boxShadow: 'var(--shadow-forest)',
-                }}
-              >
-                Add to Cart
-              </button>
-              <Link
-                href="/contact"
-                style={{
-                  backgroundColor: 'transparent',
-                  color: 'var(--color-charcoal)',
-                  border: '2px solid var(--color-border)',
-                  borderRadius: 10,
-                  padding: '16px 20px',
-                  fontFamily: "'Barlow', Arial, sans-serif",
-                  fontWeight: 600,
-                  fontSize: '0.9rem',
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Request Quote
-              </Link>
-            </div>
-
-            {/* In stock indicator */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 36, color: 'var(--color-muted-green)' }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-muted-green)' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>In Stock — Ships within 1–2 business days</span>
+            {/* Subscribe & Save + Add to Cart */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, color: 'var(--color-muted-green)' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-muted-green)' }} />
+                <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>In Stock — Ships within 1–2 business days</span>
+              </div>
+              <AddToCartPanel
+                id={product.slug}
+                name={product.name}
+                price={product.price}
+                img={product.img}
+                unit={product.unit}
+              />
             </div>
 
             {/* Specs */}
