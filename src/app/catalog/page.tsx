@@ -1,20 +1,20 @@
 import type { Metadata } from 'next';
-import { Package } from 'lucide-react';
+import Image from 'next/image';
 
 export const metadata: Metadata = { title: 'Catalog' };
 
 const CATEGORIES = ['All', 'Gloves', 'Trimmers', 'Accessories'];
 
 const PRODUCTS = [
-  { id: 1, category: 'Gloves', name: 'Nitrile Disposable Gloves — 4 mil', detail: 'XS–XXL | 100 ct / case', price: '$18.99', badge: 'Best Seller' },
-  { id: 2, category: 'Gloves', name: 'Nitrile Disposable Gloves — 6 mil', detail: 'S–XL | 100 ct / case', price: '$24.99', badge: null },
-  { id: 3, category: 'Gloves', name: 'Latex Exam Gloves — 3 mil', detail: 'S–XL | 100 ct / case', price: '$14.99', badge: null },
-  { id: 4, category: 'Gloves', name: 'Vinyl Disposable Gloves', detail: 'S–XL | 100 ct / case', price: '$11.99', badge: 'Value' },
-  { id: 5, category: 'Gloves', name: 'Black Nitrile Gloves — 4 mil', detail: 'S–XXL | 100 ct / case', price: '$21.99', badge: null },
-  { id: 6, category: 'Trimmers', name: 'Curved Trimming Scissors', detail: 'Titanium coated | Spring-loaded', price: '$12.50', badge: 'New' },
-  { id: 7, category: 'Trimmers', name: 'Bonsai Precision Snips', detail: 'Stainless steel | Non-stick coating', price: '$9.99', badge: null },
-  { id: 8, category: 'Trimmers', name: 'Straight Blade Trimming Scissors', detail: 'Micro-serrated | Ergonomic grip', price: '$10.99', badge: null },
-  { id: 9, category: 'Accessories', name: 'Trimming Tray — Large', detail: '19" x 13" | Screen included', price: '$34.99', badge: null },
+  { id: 1, category: 'Gloves', name: 'Nitrile Disposable Gloves — 4 mil', detail: 'XS–XXL | 100 ct / case', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
+  { id: 2, category: 'Gloves', name: 'Nitrile Disposable Gloves — 6 mil', detail: 'S–XL | 100 ct / case', price: '$24.99', badge: null, img: '/products/product-2.avif' },
+  { id: 3, category: 'Gloves', name: 'Latex Exam Gloves — 3 mil', detail: 'S–XL | 100 ct / case', price: '$14.99', badge: null, img: '/products/product-3.avif' },
+  { id: 4, category: 'Gloves', name: 'Vinyl Disposable Gloves', detail: 'S–XL | 100 ct / case', price: '$11.99', badge: 'Value', img: '/products/product-4.avif' },
+  { id: 5, category: 'Gloves', name: 'Black Nitrile Gloves — 4 mil', detail: 'S–XXL | 100 ct / case', price: '$21.99', badge: null, img: '/products/product-5.avif' },
+  { id: 6, category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL | 100 ct / box', price: '$22.99', badge: null, img: '/products/product-6.avif' },
+  { id: 7, category: 'Trimmers', name: 'Curved Trimming Scissors', detail: 'Titanium coated | Spring-loaded', price: '$12.50', badge: 'New', img: '/products/product-1.avif' },
+  { id: 8, category: 'Trimmers', name: 'Bonsai Precision Snips', detail: 'Stainless steel | Non-stick coating', price: '$9.99', badge: null, img: '/products/product-2.avif' },
+  { id: 9, category: 'Accessories', name: 'Trimming Tray — Large', detail: '19" x 13" | Screen included', price: '$34.99', badge: null, img: '/products/product-3.avif' },
 ];
 
 export default function CatalogPage() {
@@ -75,17 +75,14 @@ export default function CatalogPage() {
                 overflow: 'hidden',
               }}
             >
-              <div
-                style={{
-                  height: 180,
-                  backgroundColor: 'var(--color-sage-light)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                }}
-              >
-                <Package size={40} color="var(--color-warm-gray)" />
+              <div style={{ height: 180, position: 'relative', backgroundColor: 'var(--color-sage-light)' }}>
+                <Image
+                  src={product.img}
+                  alt={product.name}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                />
                 {product.badge && (
                   <span
                     className="label-caps"

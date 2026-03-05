@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Package, Truck, BadgeCheck, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { Truck, BadgeCheck, ArrowRight, Package } from 'lucide-react';
 
 const TIER_CARDS = [
   {
@@ -35,34 +36,10 @@ const FEATURE_ITEMS = [
 ];
 
 const PRODUCT_TEASERS = [
-  {
-    category: 'Gloves',
-    name: 'Nitrile Disposable Gloves',
-    detail: '4 mil | XS–XXL | 100 ct / case',
-    price: '$18.99',
-    badge: 'Best Seller',
-  },
-  {
-    category: 'Gloves',
-    name: 'Latex Exam Gloves',
-    detail: '3 mil | S–XL | 100 ct / case',
-    price: '$14.99',
-    badge: null,
-  },
-  {
-    category: 'Trimmers',
-    name: 'Curved Trimming Scissors',
-    detail: 'Titanium coated | Spring-loaded',
-    price: '$12.50',
-    badge: 'New',
-  },
-  {
-    category: 'Trimmers',
-    name: 'Bonsai Precision Snips',
-    detail: 'Stainless steel | Non-stick coating',
-    price: '$9.99',
-    badge: null,
-  },
+  { category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '4 mil | XS–XXL | 100 ct / case', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
+  { category: 'Gloves', name: 'Latex Exam Gloves', detail: '3 mil | S–XL | 100 ct / case', price: '$14.99', badge: null, img: '/products/product-2.avif' },
+  { category: 'Gloves', name: 'Black Nitrile Gloves', detail: '4 mil | S–XXL | 100 ct / case', price: '$21.99', badge: null, img: '/products/product-3.avif' },
+  { category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL | 100 ct / box', price: '$22.99', badge: null, img: '/products/product-6.avif' },
 ];
 
 export default function HomePage() {
@@ -294,18 +271,14 @@ export default function HomePage() {
                   overflow: 'hidden',
                 }}
               >
-                {/* Image placeholder */}
-                <div
-                  style={{
-                    height: 200,
-                    backgroundColor: 'var(--color-sage-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  <Package size={48} color="var(--color-warm-gray)" />
+                <div style={{ height: 200, position: 'relative', backgroundColor: 'var(--color-sage-light)' }}>
+                  <Image
+                    src={product.img}
+                    alt={product.name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                  />
                   {product.badge && (
                     <span
                       className="label-caps"
