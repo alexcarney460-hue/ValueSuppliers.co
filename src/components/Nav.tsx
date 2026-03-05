@@ -33,9 +33,10 @@ export default function Nav() {
           right: 0,
           zIndex: 100,
           height: 'var(--nav-height)',
-          backgroundColor: scrolled ? '#fff' : 'var(--color-forest)',
-          borderBottom: scrolled ? '1px solid var(--color-border)' : 'none',
-          transition: 'background-color 250ms ease, border-color 250ms ease',
+          backgroundColor: '#fff',
+          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
+          boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.06)' : 'none',
+          transition: 'border-color 250ms ease, box-shadow 250ms ease',
           display: 'flex',
           alignItems: 'center',
           padding: '0 24px',
@@ -55,7 +56,7 @@ export default function Nav() {
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <Image
               src="/logo.jpg"
-              alt="ValueSuppliers.co"
+              alt="ValueSuppliers.co — Gloves for Every Industry"
               width={160}
               height={60}
               style={{ objectFit: 'contain', height: 52, width: 'auto' }}
@@ -71,7 +72,7 @@ export default function Nav() {
                 href={link.href}
                 className="label-caps"
                 style={{
-                  color: scrolled ? 'var(--color-charcoal)' : 'rgba(255,255,255,0.85)',
+                  color: 'var(--color-charcoal)',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
                 }}
@@ -90,7 +91,7 @@ export default function Nav() {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: scrolled ? 'var(--color-charcoal)' : '#fff',
+                  color: 'var(--color-charcoal)',
                   display: 'flex',
                   alignItems: 'center',
                   padding: 4,
@@ -108,7 +109,7 @@ export default function Nav() {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: scrolled ? 'var(--color-charcoal)' : '#fff',
+                color: 'var(--color-charcoal)',
                 display: 'none',
                 alignItems: 'center',
                 padding: 4,
@@ -127,7 +128,7 @@ export default function Nav() {
             position: 'fixed',
             inset: 0,
             zIndex: 200,
-            backgroundColor: 'var(--color-forest)',
+            backgroundColor: '#fff',
             display: 'flex',
             flexDirection: 'column',
             padding: '24px',
@@ -139,11 +140,11 @@ export default function Nav() {
               alt="ValueSuppliers.co"
               width={140}
               height={52}
-              style={{ objectFit: 'contain', height: 44, width: 'auto', filter: 'brightness(0) invert(1)' }}
+              style={{ objectFit: 'contain', height: 44, width: 'auto' }}
             />
             <button
               onClick={() => setOpen(false)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-charcoal)' }}
             >
               <X size={28} />
             </button>
@@ -157,11 +158,11 @@ export default function Nav() {
                 onClick={() => setOpen(false)}
                 className="font-display"
                 style={{
-                  color: '#fff',
+                  color: 'var(--color-charcoal)',
                   textDecoration: 'none',
                   fontSize: '2rem',
                   padding: '12px 0',
-                  borderBottom: '1px solid rgba(255,255,255,0.1)',
+                  borderBottom: '1px solid var(--color-border)',
                 }}
               >
                 {link.label}
@@ -177,9 +178,9 @@ export default function Nav() {
                 className="label-caps"
                 style={{
                   padding: '6px 14px',
-                  border: '1px solid rgba(255,255,255,0.3)',
+                  border: '1px solid var(--color-border)',
                   borderRadius: 9999,
-                  color: 'rgba(255,255,255,0.7)',
+                  color: 'var(--color-warm-gray)',
                   fontSize: '0.7rem',
                 }}
               >

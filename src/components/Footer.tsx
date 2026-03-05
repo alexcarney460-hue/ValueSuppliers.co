@@ -47,13 +47,13 @@ export default function Footer() {
         >
           {/* Brand col */}
           <div style={{ gridColumn: 'span 1' }}>
-            <div style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 12, backgroundColor: '#fff', borderRadius: 8, padding: '4px 10px', display: 'inline-block' }}>
               <Image
                 src="/logo.jpg"
                 alt="ValueSuppliers.co"
                 width={140}
                 height={52}
-                style={{ objectFit: 'contain', height: 48, width: 'auto', filter: 'brightness(0) invert(1)' }}
+                style={{ objectFit: 'contain', height: 44, width: 'auto', display: 'block' }}
               />
             </div>
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem', lineHeight: 1.6, maxWidth: 200 }}>
