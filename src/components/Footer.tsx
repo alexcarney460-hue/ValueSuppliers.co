@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const FOOTER_LINKS = {
   Products: [
@@ -46,8 +47,14 @@ export default function Footer() {
         >
           {/* Brand col */}
           <div style={{ gridColumn: 'span 1' }}>
-            <div className="font-display" style={{ fontSize: '1.25rem', marginBottom: 12 }}>
-              VALUE SUPPLIERS<span style={{ color: 'var(--color-amber)' }}>.co</span>
+            <div style={{ marginBottom: 12 }}>
+              <Image
+                src="/logo.jpg"
+                alt="ValueSuppliers.co"
+                width={140}
+                height={52}
+                style={{ objectFit: 'contain', height: 48, width: 'auto', filter: 'brightness(0) invert(1)' }}
+              />
             </div>
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem', lineHeight: 1.6, maxWidth: 200 }}>
               Professional-grade supplies for every stage of the grow.

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
 
 const NAV_LINKS = [
@@ -51,38 +52,15 @@ export default function Nav() {
           }}
         >
           {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-            {/* VS Badge */}
-            <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
-              <polygon
-                points="24,2 44,13 44,35 24,46 4,35 4,13"
-                fill={scrolled ? 'var(--color-forest)' : 'var(--color-amber)'}
-              />
-              <text
-                x="24"
-                y="31"
-                textAnchor="middle"
-                fontFamily="'Barlow Condensed', Arial Narrow, sans-serif"
-                fontWeight="700"
-                fontSize="18"
-                fill={scrolled ? '#fff' : 'var(--color-forest)'}
-              >
-                VS
-              </text>
-            </svg>
-
-            <span
-              className="font-display"
-              style={{
-                fontSize: '1.25rem',
-                letterSpacing: '-0.02em',
-                color: scrolled ? 'var(--color-charcoal)' : '#fff',
-                lineHeight: 1,
-              }}
-            >
-              VALUE SUPPLIERS
-              <span style={{ color: 'var(--color-amber)', fontSize: '1rem' }}>.co</span>
-            </span>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <Image
+              src="/logo.jpg"
+              alt="ValueSuppliers.co"
+              width={160}
+              height={60}
+              style={{ objectFit: 'contain', height: 52, width: 'auto' }}
+              priority
+            />
           </Link>
 
           {/* Desktop nav links */}
@@ -156,9 +134,13 @@ export default function Nav() {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
-            <span className="font-display" style={{ color: '#fff', fontSize: '1.25rem' }}>
-              VALUE SUPPLIERS<span style={{ color: 'var(--color-amber)' }}>.co</span>
-            </span>
+            <Image
+              src="/logo.jpg"
+              alt="ValueSuppliers.co"
+              width={140}
+              height={52}
+              style={{ objectFit: 'contain', height: 44, width: 'auto', filter: 'brightness(0) invert(1)' }}
+            />
             <button
               onClick={() => setOpen(false)}
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}
