@@ -36,10 +36,10 @@ const FEATURE_ITEMS = [
 ];
 
 const PRODUCT_TEASERS = [
-  { category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '4 mil | XS–XXL | 100 ct / case', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
-  { category: 'Gloves', name: 'Latex Exam Gloves', detail: '3 mil | S–XL | 100 ct / case', price: '$14.99', badge: null, img: '/products/product-2.avif' },
-  { category: 'Gloves', name: 'Black Nitrile Gloves', detail: '4 mil | S–XXL | 100 ct / case', price: '$21.99', badge: null, img: '/products/product-3.avif' },
-  { category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL | 100 ct / box', price: '$22.99', badge: null, img: '/products/product-6.avif' },
+  { slug: 'nitrile-4mil', category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '4 mil | XS–XXL | 100 ct / case', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
+  { slug: 'latex-exam-gloves', category: 'Gloves', name: 'Latex Exam Gloves', detail: '3 mil | S–XL | 100 ct / case', price: '$14.99', badge: null, img: '/products/product-3.avif' },
+  { slug: 'black-nitrile-4mil', category: 'Gloves', name: 'Black Nitrile Gloves', detail: '4 mil | S–XXL | 100 ct / case', price: '$21.99', badge: null, img: '/products/product-5.avif' },
+  { slug: 'nitrile-xl-box', category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL | 100 ct / box', price: '$22.99', badge: null, img: '/products/product-6.avif' },
 ];
 
 export default function HomePage() {
@@ -261,92 +261,66 @@ export default function HomePage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
             {PRODUCT_TEASERS.map((product) => (
-              <div
-                key={product.name}
-                className="tilt-card"
-                style={{
-                  backgroundColor: '#fff',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                }}
+              <Link
+                key={product.slug}
+                href={`/catalog/${product.slug}`}
+                style={{ textDecoration: 'none' }}
               >
-                <div style={{ height: 200, position: 'relative', backgroundColor: 'var(--color-sage-light)' }}>
-                  <Image
-                    src={product.img}
-                    alt={product.name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    sizes="(max-width: 768px) 100vw, 25vw"
-                  />
-                  {product.badge && (
-                    <span
-                      className="label-caps"
-                      style={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        backgroundColor: 'var(--color-amber)',
-                        color: '#fff',
-                        padding: '4px 10px',
-                        borderRadius: 4,
-                        fontSize: '0.65rem',
-                      }}
-                    >
-                      {product.badge}
-                    </span>
-                  )}
-                </div>
+                <div
+                  className="tilt-card"
+                  style={{
+                    backgroundColor: '#fff',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ height: 200, position: 'relative', backgroundColor: 'var(--color-sage-light)' }}>
+                    <Image
+                      src={product.img}
+                      alt={product.name}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                    />
+                    {product.badge && (
+                      <span
+                        className="label-caps"
+                        style={{
+                          position: 'absolute',
+                          top: 12,
+                          right: 12,
+                          backgroundColor: 'var(--color-amber)',
+                          color: '#fff',
+                          padding: '4px 10px',
+                          borderRadius: 4,
+                          fontSize: '0.65rem',
+                        }}
+                      >
+                        {product.badge}
+                      </span>
+                    )}
+                  </div>
 
-                <div style={{ padding: '20px 20px 24px' }}>
-                  <span
-                    className="label-caps"
-                    style={{ color: 'var(--color-amber)', fontSize: '0.65rem' }}
-                  >
-                    {product.category}
-                  </span>
-                  <h3
-                    className="font-heading"
-                    style={{ fontSize: '1rem', marginTop: 6, marginBottom: 4, color: 'var(--color-charcoal)' }}
-                  >
-                    {product.name}
-                  </h3>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginBottom: 16 }}>
-                    {product.detail}
-                  </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span
-                      className="font-mono"
-                      style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--color-charcoal)' }}
-                    >
-                      {product.price}
+                  <div style={{ padding: '20px 20px 24px' }}>
+                    <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem' }}>
+                      {product.category}
                     </span>
-                    <button
-                      style={{
-                        backgroundColor: 'var(--color-amber)',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: 6,
-                        padding: '8px 16px',
-                        fontFamily: "'Barlow', Arial, sans-serif",
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Add to Cart
-                    </button>
+                    <h3 className="font-heading" style={{ fontSize: '1rem', marginTop: 6, marginBottom: 4, color: 'var(--color-charcoal)' }}>
+                      {product.name}
+                    </h3>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginBottom: 16 }}>
+                      {product.detail}
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--color-charcoal)' }}>
+                        {product.price}
+                      </span>
+                      <span style={{ color: 'var(--color-forest)', fontSize: '0.8rem', fontWeight: 700 }}>View →</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
