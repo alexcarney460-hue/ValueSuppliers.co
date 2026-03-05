@@ -159,7 +159,7 @@ export default function ContactPage() {
             </p>
 
             <form style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="vs-name-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {['First Name', 'Last Name'].map((label) => (
                   <div key={label}>
                     <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>

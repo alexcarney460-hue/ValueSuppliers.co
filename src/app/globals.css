@@ -83,3 +83,67 @@ body {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.10);
 }
+
+/* ── Mobile helpers ── */
+.vs-btn-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.vs-btn-group > * {
+  flex: 1 1 auto;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ── Mobile overrides ── */
+@media (max-width: 640px) {
+  :root {
+    --nav-height: 80px;
+  }
+
+  /* Nav logo shrinks on mobile */
+  .vs-logo { height: 64px !important; }
+
+  /* Section padding */
+  .vs-section { padding-top: 48px !important; padding-bottom: 48px !important; }
+  .vs-section-sm { padding-top: 32px !important; padding-bottom: 32px !important; }
+
+  /* Hero padding */
+  .vs-hero { padding: 56px 20px !important; }
+
+  /* Button groups stack full-width */
+  .vs-btn-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .vs-btn-group > * {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Heading size guard */
+  .vs-h1 { font-size: clamp(2rem, 10vw, 4rem) !important; }
+
+  /* Contact form name fields stack */
+  .vs-name-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tier table scrolls horizontally */
+  .vs-tier-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vs-tier-table-wrap table { min-width: 540px; }
+
+  /* Footer brand col takes full width */
+  .vs-footer-brand { grid-column: 1 / -1 !important; }
+}
+
+@media (max-width: 480px) {
+  /* Extra-small: reduce body horizontal padding */
+  .vs-container { padding-left: 16px !important; padding-right: 16px !important; }
+}

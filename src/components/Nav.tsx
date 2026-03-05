@@ -60,7 +60,8 @@ export default function Nav() {
               alt="ValueSuppliers.co — Gloves for Every Industry"
               width={160}
               height={60}
-              style={{ objectFit: 'contain', height: 130, width: 'auto' }}
+              className="vs-logo"
+              style={{ objectFit: 'contain', height: 120, width: 'auto' }}
               priority
             />
           </Link>

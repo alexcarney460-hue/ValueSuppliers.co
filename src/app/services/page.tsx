@@ -63,7 +63,7 @@ export default function ServicesPage() {
             We bring a trained, licensed, and bonded trimming crew directly to your facility.
             Professional output, full compliance documentation, and zero headache.
           </p>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 40 }}>
+          <div className="vs-btn-group" style={{ marginTop: 40 }}>
             <Link
               href="/contact"
               style={{

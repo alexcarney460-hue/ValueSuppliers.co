@@ -77,7 +77,7 @@ export default function HomePage() {
             Professional-grade disposable gloves and cannabis trimming equipment. Case pricing for every operation size.
           </p>
 
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="vs-btn-group" style={{ maxWidth: 480, margin: '0 auto' }}>
             <Link
               href="/catalog"
               style={{
@@ -446,7 +446,7 @@ export default function HomePage() {
           <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 36, fontSize: '1.05rem' }}>
             Apply for wholesale or distribution pricing. Get access to bulk discounts, NET terms, and a dedicated rep.
           </p>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="vs-btn-group" style={{ maxWidth: 480, margin: '0 auto' }}>
             <Link
               href="/wholesale"
               style={{
