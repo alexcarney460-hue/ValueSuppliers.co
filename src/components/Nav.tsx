@@ -34,10 +34,12 @@ export default function Nav() {
           right: 0,
           zIndex: 100,
           height: 'var(--nav-height)',
-          backgroundColor: '#fff',
-          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
-          boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.06)' : 'none',
-          transition: 'border-color 250ms ease, box-shadow 250ms ease',
+          backgroundColor: scrolled ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.96)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid rgba(226,224,219,0.5)',
+          boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+          transition: 'background-color 300ms ease, border-color 300ms ease, box-shadow 300ms ease',
           display: 'flex',
           alignItems: 'center',
           padding: '0 24px',
@@ -66,17 +68,19 @@ export default function Nav() {
             />
           </Link>
 
-          {/* Desktop nav links */}
+          {/* Desktop nav */}
           <nav style={{ display: 'flex', gap: 32 }} className="desktop-nav">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="label-caps"
+                className="label-caps vs-nav-link"
                 style={{
                   color: 'var(--color-charcoal)',
                   textDecoration: 'none',
-                  transition: 'color 150ms ease',
+                  fontSize: '0.68rem',
+                  letterSpacing: '0.16em',
+                  paddingBottom: 2,
                 }}
               >
                 {link.label}
@@ -85,10 +89,15 @@ export default function Nav() {
           </nav>
 
           {/* Right icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            {[Search, User, ShoppingCart].map((Icon, i) => (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {[
+              { Icon: Search, label: 'Search' },
+              { Icon: User, label: 'Account' },
+              { Icon: ShoppingCart, label: 'Cart' },
+            ].map(({ Icon, label }) => (
               <button
-                key={i}
+                key={label}
+                aria-label={label}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -96,17 +105,61 @@ export default function Nav() {
                   color: 'var(--color-charcoal)',
                   display: 'flex',
                   alignItems: 'center',
-                  padding: 4,
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  transition: 'background-color 150ms ease, color 150ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-sage-light)';
+                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-forest)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-charcoal)';
                 }}
               >
-                <Icon size={20} />
+                <Icon size={18} />
               </button>
             ))}
+
+            {/* Wholesale pill CTA */}
+            <Link
+              href="/wholesale"
+              className="desktop-nav"
+              style={{
+                marginLeft: 8,
+                backgroundColor: 'var(--color-forest)',
+                color: '#fff',
+                padding: '8px 18px',
+                borderRadius: 8,
+                fontFamily: "'Barlow', Arial, sans-serif",
+                fontWeight: 700,
+                fontSize: '0.68rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                transition: 'background-color 150ms ease, transform 200ms ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'var(--color-forest-light)';
+                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'var(--color-forest)';
+                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
+              }}
+            >
+              Wholesale
+            </Link>
 
             {/* Mobile hamburger */}
             <button
               className="mobile-menu-btn"
               onClick={() => setOpen(true)}
+              aria-label="Open menu"
               style={{
                 background: 'none',
                 border: 'none',
@@ -114,10 +167,14 @@ export default function Nav() {
                 color: 'var(--color-charcoal)',
                 display: 'none',
                 alignItems: 'center',
-                padding: 4,
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                marginLeft: 4,
               }}
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
           </div>
         </div>
@@ -142,18 +199,31 @@ export default function Nav() {
               alt="ValueSuppliers.co"
               width={140}
               height={52}
-              style={{ objectFit: 'contain', height: 104, width: 'auto' }}
+              style={{ objectFit: 'contain', height: 80, width: 'auto' }}
             />
             <button
               onClick={() => setOpen(false)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-charcoal)' }}
+              aria-label="Close menu"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-charcoal)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 40,
+                height: 40,
+                borderRadius: 8,
+                backgroundColor: 'var(--color-bg)',
+              }}
             >
-              <X size={28} />
+              <X size={22} />
             </button>
           </div>
 
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
-            {NAV_LINKS.map((link) => (
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+            {NAV_LINKS.map((link, i) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -162,32 +232,47 @@ export default function Nav() {
                 style={{
                   color: 'var(--color-charcoal)',
                   textDecoration: 'none',
-                  fontSize: '2rem',
-                  padding: '12px 0',
+                  fontSize: '2.2rem',
+                  padding: '14px 0',
                   borderBottom: '1px solid var(--color-border)',
+                  letterSpacing: '-0.01em',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  animationDelay: `${i * 0.05}s`,
                 }}
               >
                 {link.label}
+                <span style={{ fontSize: '1.2rem', color: 'var(--color-amber)', opacity: 0.7 }}>→</span>
               </Link>
             ))}
           </nav>
 
-          {/* Tier quick-links */}
-          <div style={{ display: 'flex', gap: 12, paddingTop: 24 }}>
-            {['Retail', 'Wholesale', 'Distribution'].map((tier) => (
-              <span
-                key={tier}
+          {/* Tier pills */}
+          <div style={{ display: 'flex', gap: 10, paddingTop: 28 }}>
+            {[
+              { label: 'Retail', href: '/catalog' },
+              { label: 'Wholesale', href: '/wholesale' },
+              { label: 'Distribution', href: '/distribution' },
+            ].map(({ label, href }) => (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setOpen(false)}
                 className="label-caps"
                 style={{
-                  padding: '6px 14px',
+                  padding: '7px 16px',
                   border: '1px solid var(--color-border)',
                   borderRadius: 9999,
                   color: 'var(--color-warm-gray)',
-                  fontSize: '0.7rem',
+                  fontSize: '0.65rem',
+                  textDecoration: 'none',
+                  backgroundColor: 'var(--color-bg)',
+                  transition: 'border-color 150ms ease, color 150ms ease',
                 }}
               >
-                {tier}
-              </span>
+                {label}
+              </Link>
             ))}
           </div>
         </div>

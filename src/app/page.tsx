@@ -50,70 +50,75 @@ export default function HomePage() {
         style={{
           backgroundColor: 'var(--color-forest)',
           color: '#fff',
-          padding: '96px 24px',
+          padding: '108px 24px 100px',
           textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
+        {/* Atmospheric overlays */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(200,146,42,0.10) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 50% 60% at 100% 100%, rgba(0,0,0,0.25) 0%, transparent 60%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 40% 50% at 0% 100%, rgba(0,0,0,0.20) 0%, transparent 60%)', pointerEvents: 'none' }} />
+
         <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <span
-            className="label-caps"
-            style={{ color: 'var(--color-amber)', display: 'block', marginBottom: 16 }}
+            className="label-caps vs-fade-up"
+            style={{ color: 'var(--color-amber)', display: 'block', marginBottom: 20, letterSpacing: '0.22em', opacity: 0.9 }}
           >
             Gloves · Trimmers · Supplies
           </span>
 
           <h1
-            className="font-display"
-            style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', lineHeight: 1.0, marginBottom: 24 }}
+            className="font-display vs-fade-up-1"
+            style={{ fontSize: 'clamp(2.75rem, 8vw, 5rem)', lineHeight: 0.95, marginBottom: 28, letterSpacing: '-0.01em' }}
           >
             Everything Your Grow Needs.
             <br />
-            <span style={{ color: 'var(--color-amber)' }}>One Supplier.</span>
+            <span className="vs-gradient-text">One Supplier.</span>
           </h1>
 
-          <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.75)', maxWidth: 560, margin: '0 auto 40px' }}>
+          <p className="vs-fade-up-2" style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 520, margin: '0 auto 44px', lineHeight: 1.75 }}>
             Professional-grade disposable gloves and cannabis trimming equipment. Case pricing for every operation size.
           </p>
 
-          <div className="vs-btn-group" style={{ maxWidth: 480, margin: '0 auto' }}>
+          <div className="vs-btn-group vs-fade-up-3" style={{ maxWidth: 480, margin: '0 auto' }}>
             <Link
               href="/catalog"
+              className="vs-btn-amber"
               style={{
                 backgroundColor: 'var(--color-amber)',
                 color: '#fff',
-                padding: '14px 32px',
-                borderRadius: 8,
+                padding: '15px 32px',
+                borderRadius: 9,
                 fontFamily: "'Barlow', Arial, sans-serif",
-                fontWeight: 600,
-                fontSize: '0.875rem',
+                fontWeight: 700,
+                fontSize: '0.85rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                transition: 'background-color 150ms ease',
               }}
             >
-              Order by the Case <ArrowRight size={16} />
+              Order by the Case <ArrowRight size={15} />
             </Link>
             <Link
               href="/wholesale"
+              className="vs-btn-ghost"
               style={{
                 backgroundColor: 'transparent',
                 color: '#fff',
-                padding: '14px 32px',
-                borderRadius: 8,
-                border: '2px solid rgba(255,255,255,0.4)',
+                padding: '15px 32px',
+                borderRadius: 9,
+                border: '1.5px solid rgba(255,255,255,0.3)',
                 fontFamily: "'Barlow', Arial, sans-serif",
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.85rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
-                transition: 'border-color 150ms ease',
               }}
             >
               Get Wholesale Pricing
@@ -123,7 +128,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURE BAR ── */}
-      <section style={{ backgroundColor: 'var(--color-forest-light)', padding: '32px 24px' }}>
+      <section style={{ background: 'linear-gradient(to right, var(--color-forest-dark), var(--color-forest-light), var(--color-forest-dark))', padding: '28px 24px' }}>
         <div
           style={{
             maxWidth: 1280,
@@ -423,13 +428,14 @@ export default function HomePage() {
           <div className="vs-btn-group" style={{ maxWidth: 480, margin: '0 auto' }}>
             <Link
               href="/wholesale"
+              className="vs-btn-amber"
               style={{
                 backgroundColor: 'var(--color-amber)',
                 color: '#fff',
-                padding: '14px 32px',
-                borderRadius: 8,
+                padding: '15px 32px',
+                borderRadius: 9,
                 fontFamily: "'Barlow', Arial, sans-serif",
-                fontWeight: 600,
+                fontWeight: 700,
                 fontSize: '0.875rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
@@ -440,12 +446,13 @@ export default function HomePage() {
             </Link>
             <Link
               href="/distribution"
+              className="vs-btn-ghost"
               style={{
                 backgroundColor: 'transparent',
                 color: '#fff',
-                padding: '14px 32px',
-                borderRadius: 8,
-                border: '2px solid rgba(255,255,255,0.35)',
+                padding: '15px 32px',
+                borderRadius: 9,
+                border: '1.5px solid rgba(255,255,255,0.3)',
                 fontFamily: "'Barlow', Arial, sans-serif",
                 fontWeight: 600,
                 fontSize: '0.875rem',

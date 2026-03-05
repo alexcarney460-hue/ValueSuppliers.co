@@ -67,6 +67,7 @@ export default async function ProductPage({
                 overflow: 'hidden',
                 aspectRatio: '1 / 1',
                 position: 'relative',
+                boxShadow: 'var(--shadow-md)',
               }}
             >
               <Image
@@ -252,6 +253,7 @@ export default async function ProductPage({
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
+                  boxShadow: 'var(--shadow-forest)',
                 }}
               >
                 Add to Cart
@@ -494,17 +496,7 @@ export default async function ProductPage({
         </div>
       </section>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .vs-product-grid {
-            grid-template-columns: 1fr !important;
-            gap: 32px !important;
-          }
-          .vs-product-image-col {
-            position: static !important;
-          }
-        }
-      `}</style>
+
     </div>
   );
 }
