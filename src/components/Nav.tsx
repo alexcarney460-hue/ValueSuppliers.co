@@ -7,6 +7,7 @@ import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
 
 const NAV_LINKS = [
   { label: 'Catalog', href: '/catalog' },
+  { label: 'Services', href: '/services' },
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'Distribution', href: '/distribution' },
   { label: 'About', href: '/about' },
@@ -59,7 +60,7 @@ export default function Nav() {
               alt="ValueSuppliers.co — Gloves for Every Industry"
               width={160}
               height={60}
-              style={{ objectFit: 'contain', height: 52, width: 'auto' }}
+              style={{ objectFit: 'contain', height: 130, width: 'auto' }}
               priority
             />
           </Link>
@@ -140,7 +141,7 @@ export default function Nav() {
               alt="ValueSuppliers.co"
               width={140}
               height={52}
-              style={{ objectFit: 'contain', height: 44, width: 'auto' }}
+              style={{ objectFit: 'contain', height: 104, width: 'auto' }}
             />
             <button
               onClick={() => setOpen(false)}

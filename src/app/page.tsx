@@ -352,6 +352,57 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── SERVICES CALLOUT ── */}
+      <section style={{ backgroundColor: 'var(--color-sage-light)', padding: '72px 24px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
+          <div>
+            <span className="label-caps" style={{ color: 'var(--color-amber)' }}>Onsite Services</span>
+            <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginTop: 10, marginBottom: 16, color: 'var(--color-charcoal)', lineHeight: 1.1 }}>
+              We Also Bring the Crew.
+            </h2>
+            <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.8, marginBottom: 12 }}>
+              Beyond supplies, we offer fully licensed and bonded onsite trimming services. Professional crews, your facility, your schedule.
+            </p>
+            <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.8, marginBottom: 28 }}>
+              Full compliance documentation included — licensing, insurance, and chain-of-custody records for every job.
+            </p>
+            <Link
+              href="/services"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                backgroundColor: 'var(--color-forest)',
+                color: '#fff',
+                padding: '12px 28px',
+                borderRadius: 8,
+                fontFamily: "'Barlow', Arial, sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+              }}
+            >
+              Learn About Our Services <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {[
+              { label: 'Licensed & Bonded', sub: 'Full compliance documentation' },
+              { label: 'Experienced Crews', sub: 'Trained professionals only' },
+              { label: 'Flexible Scheduling', sub: 'Book by day, week, or run' },
+              { label: 'We Come to You', sub: 'Fully onsite — your facility' },
+            ].map(({ label, sub }) => (
+              <div key={label} style={{ backgroundColor: '#fff', borderRadius: 12, padding: '20px 18px', border: '1px solid var(--color-border)' }}>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-charcoal)', marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)' }}>{sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── MARQUEE TRUST BAR ── */}
       <div
         style={{ backgroundColor: 'var(--color-amber)', padding: '14px 0', overflow: 'hidden' }}
