@@ -23,7 +23,7 @@ export async function getMyProfile(): Promise<Profile | null> {
     .maybeSingle();
 
   if (error) return null;
-  return (data as Profile) ?? null;
+  return (data as unknown as Profile) ?? null;
 }
 
 export async function upsertMyProfile(input: {
