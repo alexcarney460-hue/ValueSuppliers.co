@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { RefreshCw, ShoppingCart, ArrowRight, CheckCircle } from 'lucide-react';
 import { useCart, type PurchasePlan } from '@/context/CartContext';
-import { AUTOSHIP_DISCOUNT } from '@/lib/stripe';
+import { AUTOSHIP_DISCOUNT } from '@/lib/square';
 import { formatPrice, roundMoney } from '@/lib/pricing';
 
 type Props = {

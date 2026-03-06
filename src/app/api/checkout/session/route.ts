@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { randomUUID } from 'crypto';
+import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square';
 import type { CartItem } from '@/context/CartContext';
 
 export async function POST(req: NextRequest) {
   try {
-    if (!stripe) {
-      return NextResponse.json({ error: 'Stripe is not configured.' }, { status: 500 });
+    if (!squareClient) {
+      return NextResponse.json({ error: 'Square is not configured.' }, { status: 500 });
+    }
+    if (!SQUARE_LOCATION_ID) {
+      return NextResponse.json({ error: 'Square location not configured.' }, { status: 500 });
     }
 
     const body = await req.json();
@@ -25,60 +29,49 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const mode: 'payment' | 'subscription' = hasAutoship ? 'subscription' : 'payment';
-
-    const lineItems = items.map((item) => {
-      const base: {
-        price_data: {
-          currency: string;
-          product_data: { name: string; metadata: Record<string, string> };
-          unit_amount: number;
-          recurring?: { interval: 'month'; interval_count: number };
-        };
-        quantity: number;
-      } = {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: item.name,
-            metadata: { productId: item.id, plan: item.plan },
-          },
-          unit_amount: Math.round(item.price * 100),
-        },
-        quantity: item.quantity,
-      };
-
-      if (item.plan === 'autoship') {
-        base.price_data.recurring = { interval: 'month', interval_count: 1 };
-      }
-
-      return base;
-    });
-
     const origin = req.headers.get('origin') ?? 'https://valuesuppliers.co';
 
-    const session = await stripe.checkout.sessions.create({
-      mode,
-      line_items: lineItems,
-      billing_address_collection: 'required',
-      shipping_address_collection: { allowed_countries: ['US'] },
-      allow_promotion_codes: true,
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/checkout/cancel`,
-      ...(hasAutoship && {
-        subscription_data: {
-          metadata: { autoship: 'true', source: 'valuesuppliers.co' },
+    // Build Square order line items
+    const lineItems = items.map((item) => ({
+      name: item.plan === 'autoship' ? `${item.name} (Subscribe & Save)` : item.name,
+      quantity: String(item.quantity),
+      basePriceMoney: {
+        amount: BigInt(Math.round(item.price * 100)),
+        currency: 'USD' as const,
+      },
+      note: item.plan === 'autoship' ? 'Monthly autoship — 10% off' : undefined,
+    }));
+
+    // Create Square payment link
+    const response = await squareClient.checkoutApi.createPaymentLink({
+      idempotencyKey: randomUUID(),
+      order: {
+        locationId: SQUARE_LOCATION_ID,
+        lineItems,
+        metadata: {
+          autoship: hasAutoship ? 'true' : 'false',
+          source: 'valuesuppliers.co',
         },
-      }),
-      metadata: {
-        autoship: hasAutoship ? 'true' : 'false',
-        source: 'valuesuppliers.co',
+      },
+      checkoutOptions: {
+        merchantSupportEmail: 'orders@valuesuppliers.co',
+        allowTipping: false,
+        redirectUrl: `${origin}/checkout/success`,
+        askForShippingAddress: true,
+      },
+      prePopulatedData: {
+        // Square supports pre-populating buyer email if passed in request
       },
     });
 
-    return NextResponse.json({ id: session.id, url: session.url });
+    const paymentLink = response.result.paymentLink;
+    if (!paymentLink?.url) {
+      throw new Error('Square did not return a payment link URL.');
+    }
+
+    return NextResponse.json({ url: paymentLink.url, id: paymentLink.id });
   } catch (err) {
-    console.error('[Stripe] checkout error', err);
+    console.error('[Square] checkout error', err);
     return NextResponse.json({ error: 'Unable to start checkout.' }, { status: 500 });
   }
 }
