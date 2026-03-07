@@ -63,7 +63,7 @@ export default function AccountPage() {
     }
     if (data.user) {
       // Create profile row
-      await supabase.from('profiles').upsert({
+      await (supabase.from('profiles') as any).upsert({
         user_id: data.user.id,
         email: data.user.email ?? email,
         account_type: 'retail',
