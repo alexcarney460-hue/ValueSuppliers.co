@@ -16,16 +16,21 @@ export async function GET(req: Request) {
     const [
       { count: totalContacts },
       { count: totalCompanies },
-      { data: allOrders, error: ordersErr },
     ] = await Promise.all([
       supabase.from('contacts').select('*', { count: 'exact', head: true }),
       supabase.from('companies').select('*', { count: 'exact', head: true }),
-      supabase.from('orders').select('id, order_number, email, total, status, created_at'),
     ]);
 
-    if (ordersErr) throw ordersErr;
-
-    const orders = allOrders ?? [];
+    // orders table may not exist yet
+    let orders: { id: string; email: string; total: number; status: string; created_at: string }[] = [];
+    try {
+      const { data: allOrders, error: ordersErr } = await supabase
+        .from('orders')
+        .select('id, email, total, status, created_at');
+      if (!ordersErr && allOrders) orders = allOrders as typeof orders;
+    } catch {
+      // orders table doesn't exist yet
+    }
     const activeOrders = orders.filter(
       (o) => o.status !== 'refunded' && o.status !== 'cancelled',
     );
@@ -45,11 +50,18 @@ export async function GET(req: Request) {
 
     // --- Recent Contacts (latest 5) ---
 
-    const { data: recentContacts } = await supabase
+    const { data: recentContactsRaw } = await supabase
       .from('contacts')
-      .select('id, full_name, email, created_at')
+      .select('id, firstname, lastname, email, created_at')
       .order('created_at', { ascending: false })
       .limit(5);
+
+    const recentContacts = (recentContactsRaw ?? []).map((c: any) => ({
+      id: c.id,
+      full_name: [c.firstname, c.lastname].filter(Boolean).join(' ') || '(unnamed)',
+      email: c.email ?? '',
+      created_at: c.created_at,
+    }));
 
     // --- Recent Orders (latest 5) ---
 
@@ -103,7 +115,7 @@ export async function GET(req: Request) {
       const { count: uncontacted } = await supabase
         .from('contacts')
         .select('*', { count: 'exact', head: true })
-        .is('last_contacted', null);
+        .is('last_contacted_at', null);
 
       if (uncontacted && uncontacted > 0) {
         alerts.push({
@@ -120,8 +132,8 @@ export async function GET(req: Request) {
       ok: true,
       data: {
         stats,
-        recent_contacts: recentContacts ?? [],
-        recent_orders: recentOrders,
+        recent_contacts: recentContacts,
+        recent_orders: recentOrders.map((o: any) => ({ ...o, order_number: String(o.id).slice(-8) })),
         content_pipeline: contentPipeline,
         alerts,
       },
