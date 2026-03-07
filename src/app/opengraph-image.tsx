@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'ValueSuppliers.co — Gloves for Every Industry';
+export const alt = 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -13,100 +13,68 @@ export default function Image() {
           width: 1200,
           height: 630,
           display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: '#1B3A2D',
           fontFamily: 'system-ui, -apple-system, sans-serif',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f5f7f5 50%, #ecf2ed 100%)',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Background grid lines */}
+        {/* Subtle green wash — bottom right */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            display: 'flex',
-          }}
-        />
-
-        {/* Amber glow top-right */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -120,
+            bottom: -120,
             right: -80,
-            width: 480,
-            height: 480,
+            width: 520,
+            height: 520,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(200,146,42,0.22) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(27,58,45,0.06) 0%, transparent 70%)',
             display: 'flex',
           }}
         />
-
-        {/* Bottom-left glow */}
+        {/* Amber glow — top left */}
         <div
           style={{
             position: 'absolute',
-            bottom: -100,
+            top: -80,
             left: -60,
-            width: 360,
-            height: 360,
+            width: 340,
+            height: 340,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(200,146,42,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(200,146,42,0.08) 0%, transparent 70%)',
             display: 'flex',
           }}
         />
 
-        {/* Amber top bar */}
+        {/* ═══════════ LEFT — Text (58%) ═══════════ */}
         <div
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 6,
-            background: 'linear-gradient(90deg, #C8922A, #E5B84A, #C8922A)',
-            display: 'flex',
-          }}
-        />
-
-        {/* Content */}
-        <div
-          style={{
+            width: 690,
+            height: 630,
             display: 'flex',
             flexDirection: 'column',
-            padding: '60px 72px',
-            flex: 1,
             justifyContent: 'space-between',
+            padding: '56px 60px 52px 64px',
             position: 'relative',
           }}
         >
-          {/* Top: Domain badge */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
+          {/* Brand badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div
               style={{
-                backgroundColor: 'rgba(200,146,42,0.18)',
-                border: '1px solid rgba(200,146,42,0.4)',
-                borderRadius: 8,
-                padding: '6px 16px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
+                backgroundColor: 'rgba(200,146,42,0.10)',
+                border: '1.5px solid rgba(200,146,42,0.28)',
+                borderRadius: 999,
+                padding: '6px 18px',
               }}
             >
               <div
                 style={{
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   borderRadius: '50%',
                   backgroundColor: '#C8922A',
                   display: 'flex',
@@ -115,9 +83,9 @@ export default function Image() {
               <span
                 style={{
                   color: '#C8922A',
-                  fontSize: 14,
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
+                  fontSize: 13,
+                  fontWeight: 800,
+                  letterSpacing: '0.22em',
                   textTransform: 'uppercase',
                 }}
               >
@@ -126,96 +94,279 @@ export default function Image() {
             </div>
           </div>
 
-          {/* Main content */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {/* Eyebrow */}
-            <div
+          {/* Headline block */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span
               style={{
-                color: '#C8922A',
-                fontSize: 16,
+                color: '#9A9590',
+                fontSize: 15,
                 fontWeight: 700,
-                letterSpacing: '0.2em',
+                letterSpacing: '0.3em',
                 textTransform: 'uppercase',
-                marginBottom: 16,
+                marginBottom: 18,
                 display: 'flex',
               }}
             >
-              Wholesale &amp; Distribution Supplier
-            </div>
+              Retail + Wholesale + Distribution
+            </span>
 
-            {/* Headline */}
             <div
               style={{
-                color: '#FFFFFF',
-                fontSize: 76,
-                fontWeight: 900,
-                lineHeight: 0.95,
-                letterSpacing: '-0.02em',
-                marginBottom: 24,
                 display: 'flex',
                 flexDirection: 'column',
+                lineHeight: 0.9,
+                letterSpacing: '-0.02em',
               }}
             >
-              <span>Gloves for</span>
-              <span style={{ color: '#C8922A' }}>Every Industry.</span>
-            </div>
-
-            {/* Sub */}
-            <div
-              style={{
-                color: 'rgba(255,255,255,0.6)',
-                fontSize: 22,
-                lineHeight: 1.5,
-                maxWidth: 560,
-                display: 'flex',
-              }}
-            >
-              Professional-grade disposable gloves and trimming supplies.
-              Case pricing for retail, wholesale, and distribution.
+              <span
+                style={{
+                  color: '#1C1C1C',
+                  fontSize: 74,
+                  fontWeight: 900,
+                  display: 'flex',
+                }}
+              >
+                Professional
+              </span>
+              <span
+                style={{
+                  color: '#1C1C1C',
+                  fontSize: 74,
+                  fontWeight: 900,
+                  display: 'flex',
+                }}
+              >
+                Gloves &amp;
+              </span>
+              <span
+                style={{
+                  fontSize: 74,
+                  fontWeight: 900,
+                  display: 'flex',
+                  color: '#1B3A2D',
+                }}
+              >
+                Supplies.
+              </span>
             </div>
           </div>
 
-          {/* Bottom: Tier pills */}
-          <div style={{ display: 'flex', gap: 12 }}>
-            {[
-              { label: 'Retail', sub: 'Standard pricing' },
-              { label: 'Wholesale', sub: '20% off' },
-              { label: 'Distribution', sub: '30% off' },
-            ].map(({ label, sub }) => (
-              <div
-                key={label}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 12,
-                  padding: '14px 24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                }}
-              >
-                <span style={{ color: '#fff', fontSize: 16, fontWeight: 700 }}>{label}</span>
-                <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{sub}</span>
-              </div>
-            ))}
-
-            {/* Divider */}
-            <div style={{ flex: 1, display: 'flex' }} />
-
-            {/* CTA chip */}
-            <div
+          {/* Bottom: sub + CTA */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <span
               style={{
-                backgroundColor: '#C8922A',
-                borderRadius: 12,
-                padding: '14px 28px',
+                color: '#6B6660',
+                fontSize: 20,
+                lineHeight: 1.55,
                 display: 'flex',
-                alignItems: 'center',
-                gap: 8,
               }}
             >
-              <span style={{ color: '#fff', fontSize: 16, fontWeight: 800, letterSpacing: '0.05em' }}>
-                Shop Now →
+              Nitrile · Latex · Vinyl · Trimming Tools
+            </span>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+              }}
+            >
+              {/* CTA pill */}
+              <div
+                style={{
+                  backgroundColor: '#C8922A',
+                  borderRadius: 999,
+                  padding: '14px 28px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#fff',
+                    fontSize: 16,
+                    fontWeight: 800,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    display: 'flex',
+                  }}
+                >
+                  Order by the Case →
+                </span>
+              </div>
+              {/* Ghost pill */}
+              <div
+                style={{
+                  borderRadius: 999,
+                  padding: '14px 24px',
+                  border: '2px solid #1B3A2D',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#1B3A2D',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    display: 'flex',
+                  }}
+                >
+                  Wholesale Pricing
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Thin divider */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 690,
+            top: 40,
+            bottom: 40,
+            width: 1,
+            backgroundColor: '#D8D4CD',
+            display: 'flex',
+          }}
+        />
+
+        {/* ═══════════ RIGHT — Product card (42%) ═══════════ */}
+        <div
+          style={{
+            flex: 1,
+            height: 630,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '48px 40px',
+            gap: 16,
+            position: 'relative',
+          }}
+        >
+          {/* Amber glow behind card */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: '10%',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(200,146,42,0.12) 0%, transparent 70%)',
+              display: 'flex',
+            }}
+          />
+
+          {/* Best Seller card */}
+          <div
+            style={{
+              width: '100%',
+              backgroundColor: '#1B3A2D',
+              borderRadius: 20,
+              padding: '28px 28px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: -40,
+                right: -40,
+                width: 160,
+                height: 160,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(200,146,42,0.20) 0%, transparent 70%)',
+                display: 'flex',
+              }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <span
+                style={{
+                  backgroundColor: '#C8922A',
+                  borderRadius: 999,
+                  padding: '4px 12px',
+                  color: '#fff',
+                  fontSize: 11,
+                  fontWeight: 800,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  display: 'flex',
+                }}
+              >
+                Best Seller
               </span>
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 600, display: 'flex' }}>
+                100 ct / case
+              </span>
+            </div>
+            <span
+              style={{
+                color: '#fff',
+                fontSize: 19,
+                fontWeight: 800,
+                lineHeight: 1.2,
+                display: 'flex',
+              }}
+            >
+              Nitrile Disposable Gloves — 4 mil
+            </span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{ color: '#E5B84A', fontSize: 34, fontWeight: 900, display: 'flex' }}>$18.99</span>
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, display: 'flex' }}>/ case</span>
+            </div>
+          </div>
+
+          {/* Two tier mini-cards */}
+          <div style={{ display: 'flex', gap: 10, width: '100%' }}>
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: '#fff',
+                borderRadius: 14,
+                padding: '16px 16px',
+                border: '1px solid #E4E1DB',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              }}
+            >
+              <span style={{ color: '#4A7C59', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
+                Wholesale
+              </span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>20% Off</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>5+ cases/mo</span>
+            </div>
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: '#fff',
+                borderRadius: 14,
+                padding: '16px 16px',
+                border: '1px solid #E4E1DB',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              }}
+            >
+              <span style={{ color: '#C8922A', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
+                Distribution
+              </span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>30% Off</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>NET 30 terms</span>
             </div>
           </div>
         </div>

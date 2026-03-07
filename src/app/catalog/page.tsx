@@ -5,7 +5,18 @@ import { ArrowRight } from 'lucide-react';
 import PRODUCTS from '@/lib/products';
 import { formatPrice } from '@/lib/pricing';
 
-export const metadata: Metadata = { title: 'Catalog' };
+export const metadata: Metadata = {
+  title: 'Product Catalog — Gloves, Trimmers & Cannabis Supplies',
+  description:
+    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Plus cannabis trimming scissors, precision snips, and harvest accessories. Retail, wholesale (20% off), and distribution (30% off) pricing available.',
+  keywords: ['buy nitrile gloves bulk', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'glove catalog', 'wholesale gloves online'],
+  openGraph: {
+    title: 'Product Catalog | ValueSuppliers.co',
+    description: 'Nitrile, latex, vinyl gloves and cannabis trimming tools by the case. Wholesale and distribution pricing available.',
+    url: 'https://valuesuppliers.co/catalog',
+  },
+  alternates: { canonical: 'https://valuesuppliers.co/catalog' },
+};
 
 const CATEGORIES = ['All', 'Gloves', 'Trimmers', 'Accessories'] as const;
 
@@ -16,20 +27,41 @@ export default function CatalogPage() {
     Accessories: PRODUCTS.filter((p) => p.category === 'Accessories'),
   };
 
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'ValueSuppliers.co Product Catalog',
+    description: 'Professional-grade disposable gloves and cannabis trimming supplies.',
+    url: 'https://valuesuppliers.co/catalog',
+    numberOfItems: PRODUCTS.length,
+    itemListElement: PRODUCTS.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://valuesuppliers.co/catalog/${p.slug}`,
+      name: p.name,
+    })),
+  };
+
   return (
-    <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
+    <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
 
       {/* Header */}
-      <div style={{ backgroundColor: 'var(--color-forest)', padding: '48px 24px 40px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <span className="label-caps" style={{ color: 'var(--color-amber)' }}>Products</span>
+      <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '56px 24px 48px', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle amber glow */}
+        <div style={{ position: 'absolute', top: '-40%', right: '5%', width: 400, height: 400, borderRadius: '50%', background: 'rgba(200,146,42,0.07)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
+          <span className="label-caps" style={{ color: 'var(--color-amber)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 24, height: 1.5, backgroundColor: 'var(--color-amber)', display: 'inline-block' }} />
+            Products
+          </span>
           <h1
             className="font-display"
-            style={{ color: '#fff', fontSize: 'clamp(2rem, 5vw, 3rem)', marginTop: 8 }}
+            style={{ color: 'var(--color-charcoal)', fontSize: 'clamp(2rem, 5vw, 3rem)', marginTop: 10 }}
           >
             Full Product Catalog
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.65)', marginTop: 12, maxWidth: 480 }}>
+          <p style={{ color: 'var(--color-warm-gray)', marginTop: 14, maxWidth: 480, fontSize: '0.95rem', lineHeight: 1.75 }}>
             Stocked and ready to ship. All products available by the case at retail, wholesale, and distribution pricing.
           </p>
         </div>
@@ -93,7 +125,7 @@ export default function CatalogPage() {
               Gloves
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
+          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
             {grouped.Gloves.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
@@ -108,7 +140,7 @@ export default function CatalogPage() {
               Trimmers & Scissors
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
+          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
             {grouped.Trimmers.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
@@ -123,7 +155,7 @@ export default function CatalogPage() {
               Accessories
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
+          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
             {grouped.Accessories.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
@@ -132,57 +164,64 @@ export default function CatalogPage() {
 
         {/* Wholesale CTA */}
         <div
+          className="vs-dot-grid"
           style={{
             backgroundColor: 'var(--color-forest)',
-            borderRadius: 20,
-            padding: '40px 36px',
+            borderRadius: 24,
+            padding: '44px 40px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: 24,
+            gap: 28,
+            overflow: 'hidden',
+            position: 'relative',
           }}
         >
-          <div>
-            <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem', marginBottom: 8 }}>Volume Pricing</div>
-            <h3 className="font-display" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#fff', marginBottom: 8 }}>
-              Wholesale accounts save 20%. Distribution saves 30%.
+          <div style={{ position: 'absolute', top: '-30%', right: '10%', width: 300, height: 300, borderRadius: '50%', background: 'rgba(200,146,42,0.10)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'relative' }}>
+            <div className="label-caps" style={{ color: 'rgba(200,146,42,0.85)', fontSize: '0.65rem', marginBottom: 10 }}>Volume Pricing</div>
+            <h3 className="font-display" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#fff', marginBottom: 8, lineHeight: 1.1 }}>
+              Wholesale saves 20%. Distribution saves 30%.
             </h3>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.88rem', lineHeight: 1.6 }}>
               Apply online — approval within 1 business day.
             </p>
           </div>
-          <div className="vs-btn-group">
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', position: 'relative' }}>
             <Link
               href="/wholesale"
+              className="vs-btn-amber"
               style={{
                 backgroundColor: 'var(--color-amber)',
                 color: '#fff',
                 padding: '13px 28px',
-                borderRadius: 8,
+                borderRadius: 9999,
                 fontFamily: "'Barlow', Arial, sans-serif",
                 fontWeight: 700,
-                fontSize: '0.85rem',
-                letterSpacing: '0.08em',
+                fontSize: '0.8rem',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
+                boxShadow: 'var(--shadow-amber)',
               }}
             >
               Apply for Wholesale
             </Link>
             <Link
               href="/distribution"
+              className="vs-btn-ghost"
               style={{
                 backgroundColor: 'transparent',
                 color: '#fff',
                 padding: '13px 28px',
-                borderRadius: 8,
-                border: '2px solid rgba(255,255,255,0.3)',
+                borderRadius: 9999,
+                border: '1.5px solid rgba(255,255,255,0.28)',
                 fontFamily: "'Barlow', Arial, sans-serif",
                 fontWeight: 600,
-                fontSize: '0.85rem',
-                letterSpacing: '0.08em',
+                fontSize: '0.8rem',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
@@ -212,7 +251,8 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[number] }) {
           flexDirection: 'column',
         }}
       >
-        <div style={{ height: 180, position: 'relative', backgroundColor: 'var(--color-sage-light)', flexShrink: 0 }}>
+        <div className="vs-img-shine" style={{ height: 180, position: 'relative', backgroundColor: 'var(--color-sage-light)', flexShrink: 0 }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(200,146,42,0.09) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 1 }} />
           <Image
             src={product.img}
             alt={product.name}
@@ -222,11 +262,12 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[number] }) {
           />
           {product.badge && (
             <span
-              className="label-caps"
+              className="label-caps vs-badge-pulse"
               style={{
                 position: 'absolute', top: 10, right: 10,
                 backgroundColor: 'var(--color-amber)', color: '#fff',
-                padding: '4px 10px', borderRadius: 4, fontSize: '0.65rem',
+                padding: '4px 12px', borderRadius: 9999, fontSize: '0.62rem',
+                zIndex: 2,
               }}
             >
               {product.badge}
@@ -255,13 +296,14 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[number] }) {
               <span style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginLeft: 4 }}>{product.unit}</span>
             </div>
             <span
+              className="vs-card-arrow"
               style={{
                 color: 'var(--color-forest)',
-                fontSize: '0.78rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
+                fontFamily: "'Barlow', Arial, sans-serif",
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
               }}
             >
               View <ArrowRight size={12} />

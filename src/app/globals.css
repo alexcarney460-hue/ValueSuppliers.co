@@ -19,7 +19,7 @@
   --color-alert-red:      #C0392B;
 
   /* Semantic */
-  --color-bg:             #F7F5F1;
+  --color-bg:             #FFFFFF;
   --color-bg-card:        #FFFFFF;
   --color-bg-dark:        #1B3A2D;
   --color-text:           #1C1C1C;
@@ -91,7 +91,7 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   font-family: 'Barlow', Arial, sans-serif;
   font-weight: 700;
   font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
 }
 
@@ -118,8 +118,8 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 .vs-fade-up   { animation: fadeUp 0.7s var(--ease-out-expo) both; }
 .vs-fade-up-1 { animation: fadeUp 0.7s var(--ease-out-expo) 0.10s both; }
@@ -127,19 +127,96 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 .vs-fade-up-3 { animation: fadeUp 0.7s var(--ease-out-expo) 0.32s both; }
 .vs-fade-up-4 { animation: fadeUp 0.7s var(--ease-out-expo) 0.44s both; }
 
-@keyframes shimmer {
-  from { background-position: -400px 0; }
-  to   { background-position:  400px 0; }
+/* Scroll-triggered reveal (toggled via IntersectionObserver) */
+.vs-animate-in {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition: opacity 0.65s var(--ease-out-expo), transform 0.65s var(--ease-out-expo);
+  will-change: opacity, transform;
 }
+.vs-animate-in.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* CSS-only grid stagger (page-load — no JS needed) */
+.vs-grid-stagger > * {
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  animation: fadeUp 0.65s var(--ease-out-expo) both;
+}
+.vs-grid-stagger > *:nth-child(1)  { animation-delay:   0ms; }
+.vs-grid-stagger > *:nth-child(2)  { animation-delay:  75ms; }
+.vs-grid-stagger > *:nth-child(3)  { animation-delay: 150ms; }
+.vs-grid-stagger > *:nth-child(4)  { animation-delay: 225ms; }
+.vs-grid-stagger > *:nth-child(5)  { animation-delay: 300ms; }
+.vs-grid-stagger > *:nth-child(6)  { animation-delay: 375ms; }
+.vs-grid-stagger > *:nth-child(7)  { animation-delay: 450ms; }
+.vs-grid-stagger > *:nth-child(8)  { animation-delay: 525ms; }
+.vs-grid-stagger > *:nth-child(9)  { animation-delay: 600ms; }
+.vs-grid-stagger > *:nth-child(10) { animation-delay: 675ms; }
+.vs-grid-stagger > *:nth-child(11) { animation-delay: 750ms; }
+.vs-grid-stagger > *:nth-child(12) { animation-delay: 825ms; }
+
+/* Float — gentle bobbing for hero images */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-10px); }
+}
+.vs-float { animation: floatY 5s ease-in-out infinite; }
+
+/* Badge glow pulse */
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 4px 12px rgba(200,146,42,0.35); }
+  50%       { box-shadow: 0 4px 24px rgba(200,146,42,0.60), 0 0 0 6px rgba(200,146,42,0.10); }
+}
+.vs-badge-pulse { animation: badgePulse 2.8s ease-in-out infinite; }
+
+/* Shimmer sweep on hover over card image */
+.vs-img-shine {
+  position: relative;
+  overflow: hidden;
+}
+.vs-img-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 38%,
+    rgba(255,255,255,0.22) 50%,
+    transparent 62%
+  );
+  transform: translateX(-100%) skewX(-8deg);
+  transition: transform 650ms var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 2;
+}
+.vs-img-shine:hover::after {
+  transform: translateX(120%) skewX(-8deg);
+}
+
+/* Stat number count-up shimmer */
+@keyframes statReveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.vs-stat { animation: statReveal 0.7s var(--ease-out-expo) both; }
+.vs-stat-1 { animation-delay: 0.55s; }
+.vs-stat-2 { animation-delay: 0.65s; }
+.vs-stat-3 { animation-delay: 0.75s; }
+.vs-stat-4 { animation-delay: 0.85s; }
 
 /* ── Cards ── */
 .tilt-card {
-  transition: transform 360ms var(--ease-out-expo), box-shadow 360ms var(--ease-out-expo);
+  transition: transform 380ms var(--ease-out-expo),
+              box-shadow 380ms var(--ease-out-expo),
+              border-color 380ms ease;
   will-change: transform;
 }
 .tilt-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg), 0 0 0 1.5px rgba(200,146,42,0.18) !important;
 }
 
 /* Image zoom inside tilt cards */
@@ -147,7 +224,25 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   transition: transform 700ms var(--ease-out-expo) !important;
 }
 .tilt-card:hover img {
-  transform: scale(1.07) !important;
+  transform: scale(1.08) !important;
+}
+
+/* CTA arrow slide on card hover */
+.vs-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 220ms var(--ease-out-expo), color 220ms ease;
+}
+.tilt-card:hover .vs-card-arrow {
+  gap: 8px;
+  color: var(--color-amber) !important;
+}
+
+/* Partner logo hover — reveal color */
+.vs-partner-logo:hover {
+  opacity: 1 !important;
+  filter: grayscale(0%) !important;
 }
 
 /* Nav link hover underline */
@@ -222,6 +317,47 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 .vs-input:focus {
   border-color: var(--color-forest) !important;
   box-shadow: 0 0 0 3px rgba(27,58,45,0.10) !important;
+}
+
+/* Amber glow blob — decorative background element */
+.vs-glow-amber {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(200,146,42,0.10);
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Dot grid overlay — use on dark sections */
+.vs-dot-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Floating badge — info chip that hovers over images */
+.vs-float-badge {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Amber icon circle — used in feature items */
+.vs-icon-circle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: rgba(200,146,42,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Section divider ── */

@@ -42,8 +42,8 @@ export async function POST(req: NextRequest) {
       note: item.plan === 'autoship' ? 'Monthly autoship — 10% off' : undefined,
     }));
 
-    // Create Square payment link
-    const response = await squareClient.checkoutApi.createPaymentLink({
+    // Create Square payment link (new SDK: squareClient.checkout.paymentLinks.create)
+    const response = await squareClient.checkout.paymentLinks.create({
       idempotencyKey: randomUUID(),
       order: {
         locationId: SQUARE_LOCATION_ID,
@@ -59,12 +59,9 @@ export async function POST(req: NextRequest) {
         redirectUrl: `${origin}/checkout/success`,
         askForShippingAddress: true,
       },
-      prePopulatedData: {
-        // Square supports pre-populating buyer email if passed in request
-      },
     });
 
-    const paymentLink = response.result.paymentLink;
+    const paymentLink = response.paymentLink;
     if (!paymentLink?.url) {
       throw new Error('Square did not return a payment link URL.');
     }

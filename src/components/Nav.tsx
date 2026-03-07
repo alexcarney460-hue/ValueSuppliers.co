@@ -3,22 +3,27 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import SearchModal from '@/components/SearchModal';
 
 const NAV_LINKS = [
   { label: 'Catalog', href: '/catalog' },
   { label: 'Services', href: '/services' },
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'Distribution', href: '/distribution' },
+  { label: 'Affiliate', href: '/affiliate' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { count, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 8);
@@ -93,8 +98,8 @@ export default function Nav() {
           {/* Right icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {[
-              { Icon: Search, label: 'Search', onClick: undefined },
-              { Icon: User, label: 'Account', onClick: undefined },
+              { Icon: Search, label: 'Search', onClick: () => setSearchOpen(true) },
+              { Icon: User, label: 'Account', onClick: () => router.push('/account') },
             ].map(({ Icon, label, onClick }) => (
               <button
                 key={label}
@@ -338,6 +343,8 @@ export default function Nav() {
           .mobile-menu-btn { display: flex !important; }
         }
       `}</style>
+
+      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

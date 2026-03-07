@@ -19,9 +19,36 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return {};
+
+  const url = `https://valuesuppliers.co/catalog/${product.slug}`;
+  const imgUrl = `https://valuesuppliers.co${product.img}`;
+  const wholesalePrice = (product.price * 0.80).toFixed(2);
+
   return {
-    title: product.name,
-    description: product.tagline,
+    title: `${product.name} — Buy by the Case`,
+    description: `${product.tagline} ${product.description.slice(0, 120)}. Retail $${product.price}${product.unit}, wholesale from $${wholesalePrice}. In stock, ships fast.`,
+    keywords: [
+      ...product.useCases,
+      product.category.toLowerCase(),
+      `${product.shortName} wholesale`,
+      `buy ${product.shortName} bulk`,
+      'disposable gloves case',
+      'ValueSuppliers',
+    ],
+    openGraph: {
+      title: `${product.name} | ValueSuppliers.co`,
+      description: `${product.tagline} Available by the case with wholesale and distribution pricing.`,
+      url,
+      type: 'website',
+      images: [{ url: imgUrl, width: 800, height: 800, alt: product.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} | ValueSuppliers.co`,
+      description: product.tagline,
+      images: [imgUrl],
+    },
+    alternates: { canonical: url },
   };
 }
 
@@ -39,8 +66,72 @@ export default async function ProductPage({
   const wholesalePrice = priceForAccount(product.price, 'wholesale');
   const distroPrice = priceForAccount(product.price, 'distribution');
 
+  const productUrl = `https://valuesuppliers.co/catalog/${product.slug}`;
+
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: `https://valuesuppliers.co${product.img}`,
+    sku: product.slug,
+    brand: { '@type': 'Brand', name: 'ValueSuppliers.co' },
+    category: product.category,
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'USD',
+      lowPrice: distroPrice.toFixed(2),
+      highPrice: product.price.toFixed(2),
+      offerCount: 3,
+      offers: [
+        {
+          '@type': 'Offer',
+          name: 'Retail',
+          price: product.price.toFixed(2),
+          priceCurrency: 'USD',
+          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: productUrl,
+          priceValidUntil: '2026-12-31',
+          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
+        },
+        {
+          '@type': 'Offer',
+          name: 'Wholesale (20% off)',
+          price: wholesalePrice.toFixed(2),
+          priceCurrency: 'USD',
+          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: 'https://valuesuppliers.co/wholesale',
+          eligibleCustomerType: 'https://schema.org/Business',
+          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
+        },
+        {
+          '@type': 'Offer',
+          name: 'Distribution (30% off)',
+          price: distroPrice.toFixed(2),
+          priceCurrency: 'USD',
+          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: 'https://valuesuppliers.co/distribution',
+          eligibleCustomerType: 'https://schema.org/Business',
+          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
+        },
+      ],
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home',    item: 'https://valuesuppliers.co' },
+      { '@type': 'ListItem', position: 2, name: 'Catalog', item: 'https://valuesuppliers.co/catalog' },
+      { '@type': 'ListItem', position: 3, name: product.category, item: `https://valuesuppliers.co/catalog#${product.category.toLowerCase()}` },
+      { '@type': 'ListItem', position: 4, name: product.shortName, item: productUrl },
+    ],
+  };
+
   return (
-    <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
+    <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([productSchema, breadcrumbSchema]) }} />
 
       {/* Breadcrumb */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '12px 24px' }}>
@@ -61,14 +152,18 @@ export default async function ProductPage({
 
           {/* Left — Image */}
           <div style={{ position: 'sticky', top: 'calc(var(--nav-height) + 24px)' }} className="vs-product-image-col">
+            {/* Amber glow behind image */}
+            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: '-10%', borderRadius: '50%', background: 'rgba(200,146,42,0.10)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
             <div
               style={{
                 backgroundColor: 'var(--color-sage-light)',
-                borderRadius: 20,
+                borderRadius: 24,
                 overflow: 'hidden',
                 aspectRatio: '1 / 1',
                 position: 'relative',
-                boxShadow: 'var(--shadow-md)',
+                boxShadow: 'var(--shadow-xl)',
+                zIndex: 1,
               }}
             >
               <Image
@@ -89,8 +184,9 @@ export default async function ProductPage({
                     backgroundColor: 'var(--color-amber)',
                     color: '#fff',
                     padding: '6px 14px',
-                    borderRadius: 6,
+                    borderRadius: 9999,
                     fontSize: '0.7rem',
+                    boxShadow: 'var(--shadow-amber)',
                   }}
                 >
                   {product.badge}
@@ -126,6 +222,7 @@ export default async function ProductPage({
                 </div>
               ))}
             </div>
+            </div>{/* /position:relative wrapper */}
           </div>
 
           {/* Right — Buy panel */}
