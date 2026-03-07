@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { getSupabase } from '@/lib/supabase';
 import type { Profile } from '@/lib/account';
 
-type View = 'login' | 'dashboard';
+type View = 'login' | 'signup' | 'dashboard';
 
 export default function AccountPage() {
   const [view, setView] = useState<View>('login');
@@ -13,6 +13,7 @@ export default function AccountPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -46,6 +47,33 @@ export default function AccountPage() {
     );
     setView('dashboard');
     setChecking(false);
+  }
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+    const supabase = getSupabase();
+    const { data, error: authError } = await supabase.auth.signUp({ email, password });
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+    if (data.user) {
+      // Create profile row
+      await supabase.from('profiles').upsert({
+        user_id: data.user.id,
+        email: data.user.email ?? email,
+        account_type: 'retail',
+        approved: false,
+      });
+      setSuccess('Account created! Check your email to confirm, then sign in.');
+      setView('login');
+      setPassword('');
+    }
+    setLoading(false);
   }
 
   async function handleLogin(e: React.FormEvent) {
@@ -93,22 +121,24 @@ export default function AccountPage() {
       <section style={{ borderBottom: '1px solid var(--color-border)', padding: '56px 24px 48px' }}>
         <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
           <p className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem', marginBottom: 12 }}>
-            {view === 'dashboard' ? 'My Account' : 'Sign In'}
+            {view === 'dashboard' ? 'My Account' : view === 'signup' ? 'Create Account' : 'Sign In'}
           </p>
           <h1 className="font-display" style={{ fontSize: '2.2rem', color: 'var(--color-charcoal)', lineHeight: 1.15, marginBottom: 8 }}>
-            {view === 'dashboard' ? `Welcome back` : 'Account Login'}
+            {view === 'dashboard' ? `Welcome back` : view === 'signup' ? 'Create Your Account' : 'Account Login'}
           </h1>
           <p style={{ fontSize: '0.9rem', color: 'var(--color-warm-gray)' }}>
             {view === 'dashboard'
               ? profile?.company_name ?? profile?.email
-              : 'Sign in to access your pricing tier and order history.'}
+              : view === 'signup'
+                ? 'Create an account to get started.'
+                : 'Sign in to access your pricing tier and order history.'}
           </p>
         </div>
       </section>
 
       {/* Content */}
       <section style={{ padding: '48px 24px', maxWidth: 480, margin: '0 auto' }}>
-        {view === 'login' ? (
+        {(view === 'login' || view === 'signup') ? (
           <div
             style={{
               backgroundColor: '#fff',
@@ -118,7 +148,12 @@ export default function AccountPage() {
               boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {success && (
+              <div style={{ fontSize: '0.8rem', color: '#166534', backgroundColor: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px', marginBottom: 16 }}>
+                {success}
+              </div>
+            )}
+            <form onSubmit={view === 'signup' ? handleSignup : handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-charcoal)', marginBottom: 6 }}>
                   Email
@@ -191,44 +226,73 @@ export default function AccountPage() {
                   marginTop: 4,
                 }}
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? (view === 'signup' ? 'Creating Account...' : 'Signing in...') : (view === 'signup' ? 'Create Account' : 'Sign In')}
               </button>
             </form>
 
             <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--color-border)', textAlign: 'center' }}>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginBottom: 12 }}>
-                Don&apos;t have an account?
-              </p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Link
-                  href="/wholesale"
-                  style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    color: 'var(--color-forest)',
-                    textDecoration: 'none',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 9999,
-                    padding: '6px 14px',
-                  }}
-                >
-                  Apply for Wholesale
-                </Link>
-                <Link
-                  href="/distribution"
-                  style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    color: 'var(--color-forest)',
-                    textDecoration: 'none',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 9999,
-                    padding: '6px 14px',
-                  }}
-                >
-                  Apply for Distribution
-                </Link>
-              </div>
+              {view === 'login' ? (
+                <>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginBottom: 12 }}>
+                    Don&apos;t have an account?
+                  </p>
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={() => { setView('signup'); setError(''); setSuccess(''); }}
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: 'var(--color-forest)',
+                        background: 'none',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 9999,
+                        padding: '6px 14px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Create Account
+                    </button>
+                    <Link
+                      href="/wholesale"
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: 'var(--color-forest)',
+                        textDecoration: 'none',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 9999,
+                        padding: '6px 14px',
+                      }}
+                    >
+                      Apply for Wholesale
+                    </Link>
+                    <Link
+                      href="/distribution"
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: 'var(--color-forest)',
+                        textDecoration: 'none',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 9999,
+                        padding: '6px 14px',
+                      }}
+                    >
+                      Apply for Distribution
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)' }}>
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => { setView('login'); setError(''); setSuccess(''); }}
+                    style={{ color: 'var(--color-forest)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
+                  >
+                    Sign In
+                  </button>
+                </p>
+              )}
             </div>
           </div>
         ) : (
