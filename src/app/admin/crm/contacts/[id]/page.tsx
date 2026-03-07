@@ -65,10 +65,10 @@ export default function ContactDetailPage() {
     if (res.ok) router.push('/admin/crm/contacts');
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center"><div className="text-slate-400 text-sm">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center py-20"><div className="text-slate-400 text-sm">Loading...</div></div>;
 
   if (!contact) return (
-    <div className="min-h-screen bg-slate-950 p-8">
+    <div>
       <button onClick={() => router.push('/admin/crm/contacts')} className="text-sky-400 text-sm mb-4 hover:underline">&larr; Back</button>
       <div className="text-slate-400">Contact not found (ID: {id})</div>
     </div>
@@ -83,7 +83,7 @@ export default function ContactDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 lg:p-8">
+    <div>
       <button onClick={() => router.push('/admin/crm/contacts')} className="text-sky-400 text-sm mb-6 hover:underline">&larr; Back to Contacts</button>
 
       {/* Header */}

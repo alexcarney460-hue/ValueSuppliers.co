@@ -75,7 +75,7 @@ export default function ListsPage() {
   const inputCls = "w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500";
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold text-white">Lists</h1>
         <button onClick={openCreate} className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium rounded-lg transition-colors">+ Create List</button>
