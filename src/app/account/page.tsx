@@ -36,15 +36,19 @@ export default function AccountPage() {
       .eq('user_id', userId)
       .maybeSingle();
 
-    setProfile(
-      (data as unknown as Profile) ?? {
-        user_id: userId,
-        email: userEmail,
-        account_type: 'retail',
-        company_name: null,
-        approved: false,
-      }
-    );
+    const prof = (data as unknown as Profile) ?? {
+      user_id: userId,
+      email: userEmail,
+      account_type: 'retail',
+      company_name: null,
+      approved: false,
+    };
+    // Auto-approve admin
+    if (userEmail.toLowerCase() === 'gardenablaze@gmail.com' && !prof.approved) {
+      await (supabase.from('profiles') as any).upsert({ user_id: userId, email: userEmail, approved: true });
+      prof.approved = true;
+    }
+    setProfile(prof);
     setView('dashboard');
     setChecking(false);
   }
@@ -63,11 +67,12 @@ export default function AccountPage() {
     }
     if (data.user) {
       // Create profile row
+      const isAdmin = (data.user.email ?? email).toLowerCase() === 'gardenablaze@gmail.com';
       await (supabase.from('profiles') as any).upsert({
         user_id: data.user.id,
         email: data.user.email ?? email,
-        account_type: 'retail',
-        approved: false,
+        account_type: isAdmin ? 'retail' : 'retail',
+        approved: isAdmin ? true : false,
       });
       setSuccess('Account created! Check your email to confirm, then sign in.');
       setView('login');
@@ -331,6 +336,7 @@ export default function AccountPage() {
               <p className="label-caps" style={{ color: 'var(--color-warm-gray)', fontSize: '0.6rem', marginBottom: 16 }}>Quick Links</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
+                  ...(profile?.email?.toLowerCase() === 'gardenablaze@gmail.com' ? [{ label: 'Admin Dashboard', href: '/admin' }] : []),
                   { label: 'Browse Catalog', href: '/catalog' },
                   { label: 'Wholesale Program', href: '/wholesale' },
                   { label: 'Distribution Program', href: '/distribution' },
