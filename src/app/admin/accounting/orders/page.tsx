@@ -25,7 +25,7 @@ interface Pagination {
 const token = process.env.NEXT_PUBLIC_ADMIN_ANALYTICS_TOKEN ?? '';
 async function apiFetch(path: string) {
   const headers: Record<string, string> = {};
-  if (token) headers['Authorization'] = `Bearer `;
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(path, { headers });
   return res.json();
 }
@@ -35,6 +35,6 @@ function fmtCurrency(n: number): string {
 }
 
 function fmtDate(iso: string): string {
-  if (\!iso) return '--';
+  if (!iso) return '--';
   return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
