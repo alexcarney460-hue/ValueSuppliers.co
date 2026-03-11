@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { crmFetch } from '../components/api';
 
 interface CrmList {
@@ -101,7 +102,11 @@ export default function ListsPage() {
               ) : (
                 lists.map((item) => (
                   <tr key={String(item.id)} className="border-b border-slate-800/50 hover:bg-slate-800/50 transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">{item.name}</td>
+                    <td className="px-4 py-3">
+                      <Link href={`/admin/crm/lists/${item.id}`} className="text-white font-medium hover:text-sky-400 transition-colors">
+                        {item.name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-slate-300">{item.description || '--'}</td>
                     <td className="px-4 py-3">
                       <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-slate-800 text-slate-300 capitalize">{item.type || '--'}</span>

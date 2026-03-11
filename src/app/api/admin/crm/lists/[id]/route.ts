@@ -19,7 +19,34 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
   if (error || !data) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
 
-  return NextResponse.json({ ok: true, data });
+  // Fetch company members for this list
+  const url = new URL(req.url);
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '50')));
+  const offset = (page - 1) * limit;
+  const search = url.searchParams.get('q') || '';
+
+  let query = supabase
+    .from('list_companies')
+    .select('company_id, companies!inner(id, name, domain, phone, city, state)', { count: 'exact' })
+    .eq('list_id', id)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (search) {
+    query = query.ilike('companies.name', `%${search}%`);
+  }
+
+  const { data: members, count: memberCount, error: memberErr } = await query;
+
+  const companies = (members ?? []).map((m: any) => m.companies);
+
+  return NextResponse.json({
+    ok: true,
+    data,
+    companies,
+    totalCompanies: memberCount ?? 0,
+  });
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
