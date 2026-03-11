@@ -1,7 +1,7 @@
 import { SquareClient, SquareEnvironment } from 'square';
 
 const accessToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
-const isProd = process.env.SQUARE_ENVIRONMENT === 'production';
+const isProd = process.env.SQUARE_ENVIRONMENT?.trim() === 'production';
 
 export const squareClient = accessToken
   ? new SquareClient({
@@ -10,7 +10,7 @@ export const squareClient = accessToken
     })
   : null;
 
-export const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID ?? '';
+export const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID?.trim() ?? '';
 
 // Subscription plan variation IDs (create once in Square Dashboard → Items → Subscriptions)
 // Set these env vars after creating plans in Square Dashboard
