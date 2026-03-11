@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle } from 'lucide-react';
+import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { calculateShipping, FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 
 export default function CartDrawer() {
   const { items, removeItem, updateQty, total, count, isOpen, closeCart, clearCart } = useCart();
@@ -325,15 +326,67 @@ export default function CartDrawer() {
               </div>
             )}
 
-            {/* Total */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.85rem' }}>
-                {hasAutoship ? 'Monthly total' : 'Subtotal'}
-              </span>
-              <span className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-charcoal)' }}>
-                ${total.toFixed(2)}
-              </span>
-            </div>
+            {/* Shipping estimate */}
+            {(() => {
+              const shipping = calculateShipping(
+                items.map((i) => ({ slug: i.id, quantity: i.quantity, price: i.price }))
+              );
+              const orderTotal = total + shipping.shippingCost;
+              const amountToFree = FREE_SHIPPING_THRESHOLD - total;
+
+              return (
+                <>
+                  {/* Subtotal */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
+                      {hasAutoship ? 'Monthly subtotal' : 'Subtotal'}
+                    </span>
+                    <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                      ${total.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Shipping line */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <Truck size={13} /> Shipping
+                    </span>
+                    <span className="font-mono" style={{
+                      fontSize: '0.95rem',
+                      fontWeight: 600,
+                      color: shipping.isFreeShipping ? '#16A34A' : 'var(--color-charcoal)',
+                    }}>
+                      {shipping.isFreeShipping ? 'FREE' : `$${shipping.shippingCost.toFixed(2)}`}
+                    </span>
+                  </div>
+
+                  {/* Free shipping progress hint */}
+                  {!shipping.isFreeShipping && amountToFree > 0 && (
+                    <div style={{
+                      fontSize: '0.72rem',
+                      color: '#16A34A',
+                      marginBottom: 10,
+                      textAlign: 'right',
+                    }}>
+                      Add ${amountToFree.toFixed(2)} more for free shipping
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: 10 }} />
+
+                  {/* Order total */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <span style={{ color: 'var(--color-charcoal)', fontSize: '0.9rem', fontWeight: 700 }}>
+                      Estimated Total
+                    </span>
+                    <span className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-charcoal)' }}>
+                      ${orderTotal.toFixed(2)}
+                    </span>
+                  </div>
+                </>
+              );
+            })()}
 
             {error && (
               <p style={{ color: 'var(--color-alert-red)', fontSize: '0.78rem', marginBottom: 10 }}>{error}</p>
@@ -362,7 +415,7 @@ export default function CartDrawer() {
                 gap: 8,
               }}
             >
-              {loading ? 'Redirecting...' : `Checkout — $${total.toFixed(2)}`}
+              {loading ? 'Redirecting...' : 'Proceed to Checkout'}
               {!loading && <ArrowRight size={16} />}
             </button>
 

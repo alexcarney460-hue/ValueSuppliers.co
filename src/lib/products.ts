@@ -23,8 +23,8 @@ const PRODUCTS: Product[] = [
     id: 1,
     slug: 'nitrile-4mil',
     category: 'Gloves',
-    name: 'Nitrile Disposable Gloves — 4 mil',
-    shortName: 'Nitrile Gloves 4 mil',
+    name: 'Nitrile Disposable Gloves — 5 mil',
+    shortName: 'Nitrile Gloves 5 mil',
     tagline: 'The industry standard. Powder-free, puncture-resistant, latex-free.',
     price: 18.99,
     unit: '/ case',
@@ -33,7 +33,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-1.avif'],
     specs: [
       { label: 'Material', value: 'Nitrile' },
-      { label: 'Thickness', value: '4 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Blue' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'XS, S, M, L, XL, XXL' },
@@ -42,7 +42,7 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'Our best-selling 4 mil nitrile glove covers every industry from cannabis cultivation to food service, janitorial, and general labor. Powder-free and latex-free for allergy-safe applications. Strong enough for daily industrial use, comfortable enough to wear all day.',
+      'Our best-selling 5 mil nitrile glove covers every industry from cannabis cultivation to food service, janitorial, and general labor. Powder-free and latex-free for allergy-safe applications. Strong enough for daily industrial use, comfortable enough to wear all day.',
     features: [
       'Powder-free — no residue contamination risk',
       'Latex-free — safe for latex-sensitive workers',
@@ -65,8 +65,8 @@ const PRODUCTS: Product[] = [
     id: 2,
     slug: 'nitrile-6mil',
     category: 'Gloves',
-    name: 'Nitrile Disposable Gloves — 6 mil',
-    shortName: 'Nitrile Gloves 6 mil',
+    name: 'Nitrile Disposable Gloves — 5 mil',
+    shortName: 'Nitrile Gloves 5 mil',
     tagline: 'Heavy-duty protection for chemical and high-abrasion environments.',
     price: 24.99,
     unit: '/ case',
@@ -75,7 +75,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-2.avif'],
     specs: [
       { label: 'Material', value: 'Nitrile' },
-      { label: 'Thickness', value: '6 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Blue' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL' },
@@ -84,9 +84,9 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'When 4 mil isn\'t enough. Our 6 mil heavy-duty nitrile is built for environments with chemical exposure, prolonged wear, and abrasive surfaces. 50% thicker than standard, yet still flexible enough for dexterous tasks. Trusted by extraction labs, maintenance crews, and chemical handlers.',
+      'When 5 mil isn\'t enough. Our 5 mil heavy-duty nitrile is built for environments with chemical exposure, prolonged wear, and abrasive surfaces. 50% thicker than standard, yet still flexible enough for dexterous tasks. Trusted by extraction labs, maintenance crews, and chemical handlers.',
     features: [
-      '6 mil thickness — 50% thicker than standard',
+      '5 mil thickness — 50% thicker than standard',
       'Enhanced chemical resistance',
       'Extended cuff for additional wrist protection',
       'Micro-textured fingertips for grip',
@@ -107,7 +107,7 @@ const PRODUCTS: Product[] = [
     id: 3,
     slug: 'latex-exam-gloves',
     category: 'Gloves',
-    name: 'Latex Exam Gloves — 3 mil',
+    name: 'Latex Exam Gloves — 5 mil',
     shortName: 'Latex Exam Gloves',
     tagline: 'Natural rubber latex. Exam-grade sensitivity and superior fit.',
     price: 14.99,
@@ -117,7 +117,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-3.avif'],
     specs: [
       { label: 'Material', value: 'Natural Rubber Latex' },
-      { label: 'Thickness', value: '3 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Natural / Cream' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL' },
@@ -159,7 +159,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-4.avif'],
     specs: [
       { label: 'Material', value: 'PVC (Vinyl)' },
-      { label: 'Thickness', value: '3.5 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Clear' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL' },
@@ -191,7 +191,7 @@ const PRODUCTS: Product[] = [
     id: 5,
     slug: 'black-nitrile-4mil',
     category: 'Gloves',
-    name: 'Black Nitrile Gloves — 4 mil',
+    name: 'Black Nitrile Gloves — 5 mil',
     shortName: 'Black Nitrile Gloves',
     tagline: 'Black nitrile for cannabis, tattooing, auto, and professional trades.',
     price: 21.99,
@@ -201,7 +201,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-5.avif'],
     specs: [
       { label: 'Material', value: 'Nitrile' },
-      { label: 'Thickness', value: '4 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Black' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL, XXL' },
@@ -210,10 +210,10 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'The same reliable 4 mil nitrile protection — in black. Popular in cannabis operations, tattoo studios, automotive shops, and professional kitchens where black gloves are the standard. Conceals residue, projects professionalism, and performs exactly like our standard nitrile.',
+      'The same reliable 5 mil nitrile protection — in black. Popular in cannabis operations, tattoo studios, automotive shops, and professional kitchens where black gloves are the standard. Conceals residue, projects professionalism, and performs exactly like our standard nitrile.',
     features: [
       'Black color — conceals terpene and resin residue',
-      'Same spec as our standard 4 mil nitrile',
+      'Same spec as our standard 5 mil nitrile',
       'Powder-free and latex-free',
       'Textured fingertip grip',
       'Professional appearance',
@@ -243,7 +243,7 @@ const PRODUCTS: Product[] = [
     images: ['/products/product-6.avif'],
     specs: [
       { label: 'Material', value: 'Nitrile' },
-      { label: 'Thickness', value: '4 mil' },
+      { label: 'Thickness', value: '5 mil' },
       { label: 'Color', value: 'Blue' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Size', value: 'XL Only' },
@@ -252,10 +252,10 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'Sized for larger hands — no compromises. Our XL nitrile box delivers the same 4 mil powder-free nitrile performance as our standard line, sized up for the workers who need it. Available by the box for retail or full cases for wholesale operations.',
+      'Sized for larger hands — no compromises. Our XL nitrile box delivers the same 5 mil powder-free nitrile performance as our standard line, sized up for the workers who need it. Available by the box for retail or full cases for wholesale operations.',
     features: [
       'Extra-large sizing for bigger hand profiles',
-      'Same 4 mil nitrile performance spec',
+      'Same 5 mil nitrile performance spec',
       'Powder-free and latex-free',
       'Textured fingertip grip',
       'Ambidextrous design',

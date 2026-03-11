@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square';
+import { calculateShipping } from '@/lib/shipping';
 import type { CartItem } from '@/context/CartContext';
 
 export async function POST(req: NextRequest) {
@@ -41,6 +42,23 @@ export async function POST(req: NextRequest) {
       },
       note: item.plan === 'autoship' ? 'Monthly autoship — 10% off' : undefined,
     }));
+
+    // Calculate and add shipping
+    const shipping = calculateShipping(
+      items.map((i) => ({ slug: i.id, quantity: i.quantity, price: i.price }))
+    );
+
+    if (shipping.shippingCost > 0) {
+      lineItems.push({
+        name: `Shipping — ${shipping.tierLabel}`,
+        quantity: '1',
+        basePriceMoney: {
+          amount: BigInt(Math.round(shipping.shippingCost * 100)),
+          currency: 'USD' as const,
+        },
+        note: `${shipping.totalWeight} lbs total weight`,
+      });
+    }
 
     // Create Square payment link (new SDK: squareClient.checkout.paymentLinks.create)
     const response = await squareClient.checkout.paymentLinks.create({

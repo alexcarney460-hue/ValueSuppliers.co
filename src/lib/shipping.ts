@@ -1,0 +1,78 @@
+/**
+ * Shipping calculator for Value Suppliers.
+ *
+ * Rates are weight-based with a free-shipping threshold.
+ * Weights are per-unit (case/box/unit) and stored in the DB
+ * with a static fallback here.
+ */
+
+export type ShippingTier = {
+  maxLbs: number;
+  rate: number;    // flat rate in USD
+  label: string;
+};
+
+// Default shipping tiers — can be overridden from admin settings
+export const SHIPPING_TIERS: ShippingTier[] = [
+  { maxLbs: 5,   rate: 7.99,  label: 'Light Package' },
+  { maxLbs: 15,  rate: 12.99, label: 'Standard Package' },
+  { maxLbs: 30,  rate: 18.99, label: 'Heavy Package' },
+  { maxLbs: 60,  rate: 29.99, label: 'Freight — Small' },
+  { maxLbs: 999, rate: 49.99, label: 'Freight — Large' },
+];
+
+export const FREE_SHIPPING_THRESHOLD = 150; // USD subtotal for free shipping
+
+// Default product weights (lbs per unit/case/box)
+// Used as fallback when DB doesn't have weight_lbs
+export const DEFAULT_WEIGHTS: Record<string, number> = {
+  'nitrile-4mil':             6.5,
+  'nitrile-6mil':             7.5,
+  'latex-exam-gloves':        5.5,
+  'vinyl-gloves':             5.0,
+  'black-nitrile-4mil':       6.5,
+  'nitrile-xl-box':           7.0,
+  'curved-trimming-scissors':  0.4,
+  'bonsai-precision-snips':    0.3,
+  'trimming-tray-large':       2.5,
+};
+
+export type ShippingEstimate = {
+  subtotal: number;
+  totalWeight: number;
+  shippingCost: number;
+  isFreeShipping: boolean;
+  tierLabel: string;
+};
+
+export function calculateShipping(
+  items: { slug: string; quantity: number; price: number; weightLbs?: number }[],
+): ShippingEstimate {
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+    return {
+      subtotal,
+      totalWeight: 0,
+      shippingCost: 0,
+      isFreeShipping: true,
+      tierLabel: 'Free Shipping',
+    };
+  }
+
+  const totalWeight = items.reduce((sum, i) => {
+    const w = i.weightLbs ?? DEFAULT_WEIGHTS[i.slug] ?? 5;
+    return sum + w * i.quantity;
+  }, 0);
+
+  const tier = SHIPPING_TIERS.find((t) => totalWeight <= t.maxLbs)
+    ?? SHIPPING_TIERS[SHIPPING_TIERS.length - 1];
+
+  return {
+    subtotal,
+    totalWeight: Math.round(totalWeight * 10) / 10,
+    shippingCost: tier.rate,
+    isFreeShipping: false,
+    tierLabel: tier.label,
+  };
+}

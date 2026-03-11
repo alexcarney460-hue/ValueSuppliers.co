@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { SHIPPING_TIERS, FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 
 /* types */
 
@@ -17,6 +18,8 @@ type ProductRow = {
   description: string;
   in_stock: boolean;
   sort_order: number;
+  quantity_on_hand: number;
+  low_stock_threshold: number;
 };
 
 type AdminConfig = {
@@ -76,6 +79,40 @@ export default function SettingsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<ProductRow>>({});
   const [saving, setSaving] = useState(false);
+  const [inventoryUpdates, setInventoryUpdates] = useState<Record<number, { qty: string; saving: boolean }>>({});
+
+  async function updateInventory(productId: number, field: 'quantity_on_hand' | 'low_stock_threshold', value: number) {
+    setInventoryUpdates((prev) => ({ ...prev, [productId]: { ...prev[productId], saving: true, qty: prev[productId]?.qty ?? '' } }));
+    try {
+      const res = await fetch('/api/admin/settings/products', {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ id: productId, [field]: value }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setProducts((prev) =>
+          prev.map((p) => (p.id === productId ? { ...p, [field]: value } : p))
+        );
+      } else {
+        alert(json.error || 'Update failed');
+      }
+    } catch {
+      alert('Network error');
+    } finally {
+      setInventoryUpdates((prev) => ({ ...prev, [productId]: { ...prev[productId], saving: false, qty: '' } }));
+    }
+  }
+
+  async function addInventory(productId: number) {
+    const addQty = parseInt(inventoryUpdates[productId]?.qty || '0');
+    if (!addQty || addQty <= 0) return;
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
+    await updateInventory(productId, 'quantity_on_hand', product.quantity_on_hand + addQty);
+    setInventoryUpdates((prev) => ({ ...prev, [productId]: { qty: '', saving: false } }));
+  }
+
   const [features, setFeatures] = useState({
     email_notifications: true,
     auto_approve_wholesale: false,
@@ -226,6 +263,27 @@ export default function SettingsPage() {
                       <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)' }}>{p.unit}</div>
                     </div>
 
+                    <div style={{ textAlign: 'center', minWidth: 80 }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginBottom: 2 }}>Stock</div>
+                      <div style={{
+                        fontWeight: 700,
+                        fontSize: '0.9rem',
+                        color: p.quantity_on_hand <= 0
+                          ? '#DC2626'
+                          : p.quantity_on_hand <= p.low_stock_threshold
+                            ? '#D97706'
+                            : '#16A34A',
+                      }}>
+                        {p.quantity_on_hand}
+                        {p.quantity_on_hand <= p.low_stock_threshold && p.quantity_on_hand > 0 && (
+                          <span style={{ fontSize: '0.65rem', display: 'block', color: '#D97706' }}>Low</span>
+                        )}
+                        {p.quantity_on_hand <= 0 && (
+                          <span style={{ fontSize: '0.65rem', display: 'block', color: '#DC2626' }}>Out</span>
+                        )}
+                      </div>
+                    </div>
+
                     <div style={{ textAlign: 'center', minWidth: 60 }}>
                       <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginBottom: 2 }}>Sort</div>
                       <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-charcoal)' }}>{p.sort_order}</div>
@@ -278,11 +336,96 @@ export default function SettingsPage() {
                       </label>
                     </div>
 
-                    <div style={{ marginBottom: 16 }}>
+                    <div style={{ marginBottom: 12 }}>
                       <label>
                         <span style={labelStyle}>Description</span>
                         <textarea rows={3} value={editForm.description ?? ''} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
                       </label>
+                    </div>
+
+                    {/* INVENTORY CONTROLS */}
+                    <div style={{ background: '#FAFAF8', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 16 }}>
+                      <div style={{ ...labelStyle, marginBottom: 12, fontSize: '0.78rem' }}>Inventory</div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-end' }}>
+                        <div>
+                          <span style={labelStyle}>Current Stock</span>
+                          <div style={{
+                            fontWeight: 800,
+                            fontSize: '1.4rem',
+                            color: p.quantity_on_hand <= 0
+                              ? '#DC2626'
+                              : p.quantity_on_hand <= p.low_stock_threshold
+                                ? '#D97706'
+                                : '#16A34A',
+                          }}>
+                            {p.quantity_on_hand}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+                          <label>
+                            <span style={labelStyle}>Add Qty</span>
+                            <input
+                              type="number"
+                              min="1"
+                              placeholder="0"
+                              value={inventoryUpdates[p.id]?.qty ?? ''}
+                              onChange={(e) => setInventoryUpdates((prev) => ({
+                                ...prev,
+                                [p.id]: { ...prev[p.id], qty: e.target.value, saving: prev[p.id]?.saving ?? false },
+                              }))}
+                              style={{ ...inputStyle, width: 80 }}
+                            />
+                          </label>
+                          <button
+                            onClick={() => addInventory(p.id)}
+                            disabled={inventoryUpdates[p.id]?.saving || !inventoryUpdates[p.id]?.qty}
+                            style={{
+                              padding: '8px 16px',
+                              borderRadius: 9999,
+                              border: 'none',
+                              background: '#16A34A',
+                              color: '#fff',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: inventoryUpdates[p.id]?.saving ? 'not-allowed' : 'pointer',
+                              opacity: inventoryUpdates[p.id]?.saving || !inventoryUpdates[p.id]?.qty ? 0.5 : 1,
+                              marginBottom: 1,
+                            }}
+                          >
+                            {inventoryUpdates[p.id]?.saving ? 'Adding...' : '+ Add Stock'}
+                          </button>
+                        </div>
+                        <label>
+                          <span style={labelStyle}>Set Exact Qty</span>
+                          <input
+                            type="number"
+                            min="0"
+                            defaultValue={p.quantity_on_hand}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value);
+                              if (!isNaN(val) && val !== p.quantity_on_hand) {
+                                updateInventory(p.id, 'quantity_on_hand', val);
+                              }
+                            }}
+                            style={{ ...inputStyle, width: 80 }}
+                          />
+                        </label>
+                        <label>
+                          <span style={labelStyle}>Low Stock Alert</span>
+                          <input
+                            type="number"
+                            min="0"
+                            defaultValue={p.low_stock_threshold}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value);
+                              if (!isNaN(val) && val !== p.low_stock_threshold) {
+                                updateInventory(p.id, 'low_stock_threshold', val);
+                              }
+                            }}
+                            style={{ ...inputStyle, width: 80 }}
+                          />
+                        </label>
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: 10 }}>
@@ -328,6 +471,128 @@ export default function SettingsPage() {
           ))}
         </div>
       </section>
+      {/* SHIPPING RATES */}
+      <section style={{ marginBottom: 48 }}>
+        <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-charcoal)', marginBottom: 4 }}>
+          Shipping Rates
+        </h2>
+        <p style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem', marginBottom: 20 }}>
+          Weight-based shipping tiers. Free shipping on orders over ${FREE_SHIPPING_THRESHOLD}.
+        </p>
+
+        <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: 16, padding: 24 }}>
+          {/* Free shipping banner */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            background: '#F0FDF4',
+            border: '1px solid #BBF7D0',
+            borderRadius: 10,
+            padding: '12px 16px',
+            marginBottom: 20,
+          }}>
+            <span style={{ fontSize: '1.1rem' }}>🚚</span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#16A34A' }}>
+                Free Shipping over ${FREE_SHIPPING_THRESHOLD}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#15803D' }}>
+                Applied automatically at checkout
+              </div>
+            </div>
+          </div>
+
+          {/* Rate table */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Weight Range</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Tier</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SHIPPING_TIERS.map((tier, i) => {
+                const prevMax = i > 0 ? SHIPPING_TIERS[i - 1].maxLbs : 0;
+                return (
+                  <tr key={tier.label} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                    <td style={{ padding: '10px 12px', color: 'var(--color-charcoal)', fontWeight: 600 }}>
+                      {prevMax}–{tier.maxLbs} lbs
+                    </td>
+                    <td style={{ padding: '10px 12px', color: 'var(--color-warm-gray)' }}>
+                      {tier.label}
+                    </td>
+                    <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: 'var(--color-charcoal)', fontFamily: 'monospace' }}>
+                      ${tier.rate.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginTop: 14, fontStyle: 'italic' }}>
+            Rates are based on total order weight. Product weights are configured per-product in the database.
+          </p>
+        </div>
+      </section>
+
+      {/* PRODUCT WEIGHTS */}
+      <section style={{ marginBottom: 48 }}>
+        <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-charcoal)', marginBottom: 4 }}>
+          Product Weights
+        </h2>
+        <p style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem', marginBottom: 20 }}>
+          Weight per unit ({products.length} products). Used for shipping calculation.
+        </p>
+
+        <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: 16, overflow: 'hidden' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+                <th style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Product</th>
+                <th style={{ textAlign: 'center', padding: '10px 16px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Unit</th>
+                <th style={{ textAlign: 'right', padding: '10px 16px', color: 'var(--color-warm-gray)', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Weight (lbs)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((p) => (
+                <tr key={p.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                  <td style={{ padding: '10px 16px', fontWeight: 600, color: 'var(--color-charcoal)' }}>{p.short_name}</td>
+                  <td style={{ padding: '10px 16px', textAlign: 'center', color: 'var(--color-warm-gray)' }}>{p.unit}</td>
+                  <td style={{ padding: '10px 16px', textAlign: 'right' }}>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      defaultValue={(p as ProductRow & { weight_lbs?: number }).weight_lbs ?? 5}
+                      onBlur={(e) => {
+                        const val = parseFloat(e.target.value);
+                        if (!isNaN(val) && val >= 0) {
+                          fetch('/api/admin/settings/products', {
+                            method: 'PATCH',
+                            headers: authHeaders(),
+                            body: JSON.stringify({ id: p.id, weight_lbs: val }),
+                          });
+                        }
+                      }}
+                      style={{
+                        ...inputStyle,
+                        width: 70,
+                        textAlign: 'right',
+                        fontWeight: 700,
+                        display: 'inline-block',
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {/* ADMIN CONFIG */}
       <section style={{ marginBottom: 48 }}>
         <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-charcoal)', marginBottom: 4 }}>
