@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto" style={{ background: 'var(--bg, #f8f8f6)' }}>
+    <div className="fixed inset-0 overflow-auto" style={{ background: 'var(--bg, #f8f8f6)', zIndex: 200 }}>
       {/* Admin top nav */}
       <nav
         className="sticky top-0 z-50"

@@ -8,211 +8,122 @@ export async function GET(req: NextRequest) {
 
   const supabase = getSupabaseServer();
   if (!supabase)
-    return NextResponse.json(
-      { ok: false, error: 'DB unavailable' },
-      { status: 503 },
-    );
+    return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   try {
     const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
 
-    // ---------- contacts ----------
-    const [
-      { count: totalContacts },
-      { count: newContactsThisMonth },
-    ] = await Promise.all([
-      supabase.from('contacts').select('*', { count: 'exact', head: true }),
-      supabase
-        .from('contacts')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', monthStart),
-    ]);
+    // Check if table exists
+    const { error: tableErr } = await supabase
+      .from('page_views')
+      .select('id', { count: 'exact', head: true });
 
-    // ---------- companies ----------
-    const [
-      { count: totalCompanies },
-      { count: newCompaniesThisMonth },
-    ] = await Promise.all([
-      supabase.from('companies').select('*', { count: 'exact', head: true }),
-      supabase
-        .from('companies')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', monthStart),
-    ]);
-
-    // ---------- orders (table may not exist yet) ----------
-    let totalOrders = 0;
-    let ordersThisMonth = 0;
-    let revenueThisMonth = 0;
-    let orderStatuses: { status: string; count: number }[] = [];
-    let monthlyTrend: { month: string; orders: number; revenue: number }[] = [];
-
-    const { error: orderErr } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true });
-
-    const ordersTableExists = !orderErr;
-
-    if (ordersTableExists) {
-      const [
-        { count: oc },
-        { count: ocMonth },
-        { data: revData },
-        { data: statusData },
-        { data: trendData },
-      ] = await Promise.all([
-        supabase.from('orders').select('*', { count: 'exact', head: true }),
-        supabase
-          .from('orders')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', monthStart),
-        supabase
-          .from('orders')
-          .select('total')
-          .gte('created_at', monthStart),
-        supabase.from('orders').select('status'),
-        supabase
-          .from('orders')
-          .select('created_at, total, status')
-          .gte('created_at', sixMonthsAgo)
-          .order('created_at', { ascending: true }),
-      ]);
-
-      totalOrders = oc ?? 0;
-      ordersThisMonth = ocMonth ?? 0;
-      revenueThisMonth = (revData ?? []).reduce(
-        (sum: number, r: any) => sum + (Number(r.total) || 0),
-        0,
-      );
-
-      // Group statuses
-      const statusMap: Record<string, number> = {};
-      for (const row of statusData ?? []) {
-        const s = row.status || 'unknown';
-        statusMap[s] = (statusMap[s] || 0) + 1;
-      }
-      orderStatuses = Object.entries(statusMap).map(([status, count]) => ({
-        status,
-        count,
-      }));
-
-      // Monthly trend
-      const trendMap: Record<string, { orders: number; revenue: number }> = {};
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        trendMap[key] = { orders: 0, revenue: 0 };
-      }
-      for (const row of trendData ?? []) {
-        const d = new Date(row.created_at);
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        if (trendMap[key]) {
-          trendMap[key].orders += 1;
-          trendMap[key].revenue += Number(row.total) || 0;
-        }
-      }
-      monthlyTrend = Object.entries(trendMap).map(([month, v]) => ({
-        month,
-        ...v,
-      }));
-    } else {
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        monthlyTrend.push({ month: key, orders: 0, revenue: 0 });
-      }
+    if (tableErr) {
+      // Table doesn't exist yet — return empty state
+      return NextResponse.json({
+        ok: true,
+        data: {
+          totals: { today: 0, thisWeek: 0, thisMonth: 0 },
+          daily: [],
+          topPages: [],
+          topReferrers: [],
+          topCountries: [],
+        },
+      });
     }
 
-    // ---------- top sources (contacts.source) ----------
-    const { data: sourceRows } = await supabase
-      .from('contacts')
-      .select('source');
-    const sourceMap: Record<string, number> = {};
-    for (const row of sourceRows ?? []) {
-      const s = row.source || 'Unknown';
-      sourceMap[s] = (sourceMap[s] || 0) + 1;
+    // Run all queries in parallel
+    const [
+      { count: today },
+      { count: thisWeek },
+      { count: thisMonth },
+      { data: last30 },
+      { data: pathRows },
+      { data: refRows },
+      { data: countryRows },
+    ] = await Promise.all([
+      supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
+      supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo),
+      supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', monthStart),
+      supabase.from('page_views').select('created_at').gte('created_at', thirtyDaysAgo).order('created_at', { ascending: true }),
+      supabase.from('page_views').select('path').gte('created_at', thirtyDaysAgo),
+      supabase.from('page_views').select('referrer').gte('created_at', thirtyDaysAgo).not('referrer', 'is', null),
+      supabase.from('page_views').select('country').gte('created_at', thirtyDaysAgo).not('country', 'is', null),
+    ]);
+
+    // Daily views for last 30 days
+    const dailyMap: Record<string, number> = {};
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 86400000);
+      const key = d.toISOString().slice(0, 10);
+      dailyMap[key] = 0;
     }
-    const sources = Object.entries(sourceMap)
-      .map(([source, count]) => ({ source, count }))
-      .sort((a, b) => b.count - a.count)
+    for (const row of last30 ?? []) {
+      const key = new Date(row.created_at).toISOString().slice(0, 10);
+      if (dailyMap[key] !== undefined) dailyMap[key]++;
+    }
+    const daily = Object.entries(dailyMap).map(([date, views]) => ({ date, views }));
+
+    // Top pages
+    const pageMap: Record<string, number> = {};
+    for (const row of pathRows ?? []) {
+      const p = row.path || '/';
+      pageMap[p] = (pageMap[p] || 0) + 1;
+    }
+    const topPages = Object.entries(pageMap)
+      .map(([path, views]) => ({ path, views }))
+      .sort((a, b) => b.views - a.views)
       .slice(0, 10);
 
-    // ---------- top industries ----------
-    // Try the industry column first; fall back to source on companies
-    const { data: industryRows } = await supabase
-      .from('companies')
-      .select('industry');
-
-    let industries: { industry: string; count: number }[] = [];
-    if (industryRows && industryRows.length > 0 && (industryRows[0] as any)?.industry !== undefined) {
-      const indMap: Record<string, number> = {};
-      for (const row of industryRows) {
-        const ind = (row as any).industry || 'Unknown';
-        indMap[ind] = (indMap[ind] || 0) + 1;
+    // Top referrers
+    const refMap: Record<string, number> = {};
+    for (const row of refRows ?? []) {
+      let ref = row.referrer || '';
+      if (!ref) continue;
+      // Extract domain from referrer URL
+      try {
+        ref = new URL(ref).hostname;
+      } catch {
+        // keep as-is
       }
-      industries = Object.entries(indMap)
-        .map(([industry, count]) => ({ industry, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 10);
-    } else {
-      // Fallback: group companies by source
-      const { data: companyRows } = await supabase
-        .from('companies')
-        .select('source');
-      const indMap: Record<string, number> = {};
-      for (const row of companyRows ?? []) {
-        const s = row.source || 'Unknown';
-        indMap[s] = (indMap[s] || 0) + 1;
-      }
-      industries = Object.entries(indMap)
-        .map(([industry, count]) => ({ industry, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 10);
+      refMap[ref] = (refMap[ref] || 0) + 1;
     }
+    const topReferrers = Object.entries(refMap)
+      .map(([referrer, views]) => ({ referrer, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 10);
 
-    // ---------- recent activity ----------
-    const [{ data: recentContacts }, { data: recentOrders }] = await Promise.all([
-      supabase
-        .from('contacts')
-        .select('id, firstname, lastname, email, source, created_at')
-        .order('created_at', { ascending: false })
-        .limit(10),
-      ordersTableExists
-        ? supabase
-            .from('orders')
-            .select('id, total, status, created_at')
-            .order('created_at', { ascending: false })
-            .limit(10)
-        : Promise.resolve({ data: [] as any[] }),
-    ]);
+    // Top countries
+    const countryMap: Record<string, number> = {};
+    for (const row of countryRows ?? []) {
+      const c = row.country || 'Unknown';
+      countryMap[c] = (countryMap[c] || 0) + 1;
+    }
+    const topCountries = Object.entries(countryMap)
+      .map(([country, views]) => ({ country, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 10);
 
     return NextResponse.json({
       ok: true,
       data: {
         totals: {
-          totalContacts: totalContacts ?? 0,
-          newContactsThisMonth: newContactsThisMonth ?? 0,
-          totalCompanies: totalCompanies ?? 0,
-          newCompaniesThisMonth: newCompaniesThisMonth ?? 0,
-          totalOrders,
-          ordersThisMonth,
-          revenueThisMonth,
+          today: today ?? 0,
+          thisWeek: thisWeek ?? 0,
+          thisMonth: thisMonth ?? 0,
         },
-        sources,
-        industries,
-        order_statuses: orderStatuses,
-        monthly_trend: monthlyTrend,
-        recent_contacts: recentContacts ?? [],
-        recent_orders: recentOrders ?? [],
+        daily,
+        topPages,
+        topReferrers,
+        topCountries,
       },
     });
   } catch (err: any) {
     console.error('[analytics] error', err);
-    return NextResponse.json(
-      { ok: false, error: err?.message ?? 'Internal error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ ok: false, error: err?.message ?? 'Internal error' }, { status: 500 });
   }
 }

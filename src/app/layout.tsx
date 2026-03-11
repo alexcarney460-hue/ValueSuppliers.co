@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { CartProvider } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer';
 import ChatWidget from '@/components/ChatWidget';
+import PageTracker from '@/components/PageTracker';
 
 const BASE = 'https://valuesuppliers.co';
 
@@ -112,6 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main>{children}</main>
           <Footer />
           <ChatWidget />
+          <PageTracker />
         </CartProvider>
       </body>
     </html>
