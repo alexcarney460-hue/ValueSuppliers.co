@@ -7,7 +7,7 @@ import AnimateIn from '@/components/AnimateIn';
 export const metadata: Metadata = {
   title: 'Commercial Disposable Gloves — Bulk Pricing for Every Industry | Value Suppliers',
   description:
-    'Professional-grade nitrile, latex, and vinyl disposable gloves for food service, medical, janitorial, automotive, and industrial operations. Bulk case pricing with wholesale and distribution tiers. Free shipping over $150.',
+    'Professional-grade nitrile, latex, and vinyl disposable gloves for food service, medical, janitorial, automotive, and industrial operations. Bulk case pricing with wholesale and distribution tiers. Fast nationwide shipping.',
   alternates: { canonical: 'https://valuesuppliers.co/commercial' },
   openGraph: {
     title: 'Value Suppliers — Commercial Disposable Gloves at Bulk Pricing',
@@ -76,8 +76,8 @@ const FAQ_ITEMS = [
     a: 'No minimum for retail customers — order as few or as many cases as you need. Wholesale accounts (20% off) typically order 5+ cases per month. Distribution accounts (30% off) are designed for larger recurring orders.',
   },
   {
-    q: 'Do you offer free shipping?',
-    a: 'Yes — free shipping on all orders over $150. Orders under $150 ship at flat weight-based rates starting at $7.99. We ship to all 48 contiguous states with 1–2 day processing.',
+    q: 'What are your shipping rates?',
+    a: 'Shipping is calculated by weight, starting at $7.99 for light packages. We automatically select the cheapest carrier rate for every order. We ship to all 48 contiguous states with 1–2 day processing.',
   },
   {
     q: 'Can I set up recurring orders?',
@@ -99,7 +99,7 @@ const STATS = [
 const FEATURE_ITEMS = [
   { icon: Package, label: 'Bulk Case Pricing', sub: 'Volume discounts that scale with your business' },
   { icon: BadgeCheck, label: 'ASTM Certified', sub: 'Industrial and exam-grade certifications' },
-  { icon: Truck, label: 'Free Shipping $150+', sub: 'Fast fulfillment to all 48 states' },
+  { icon: Truck, label: 'Fast Shipping', sub: 'Best-rate carriers to all 48 states' },
 ];
 
 export default function CommercialPage() {
@@ -124,7 +124,7 @@ export default function CommercialPage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Free Shipping $150+ &nbsp;·&nbsp; Wholesale Available &nbsp;·&nbsp; No Minimums &nbsp;·&nbsp; All Industries Served
+              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Wholesale Available &nbsp;·&nbsp; No Minimums &nbsp;·&nbsp; All Industries Served
             </span>
           ))}
         </div>

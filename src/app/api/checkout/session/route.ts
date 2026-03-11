@@ -48,17 +48,15 @@ export async function POST(req: NextRequest) {
       items.map((i) => ({ slug: i.id, quantity: i.quantity, price: i.price }))
     );
 
-    if (shipping.shippingCost > 0) {
-      lineItems.push({
-        name: `Shipping — ${shipping.tierLabel}`,
-        quantity: '1',
-        basePriceMoney: {
-          amount: BigInt(Math.round(shipping.shippingCost * 100)),
-          currency: 'USD' as const,
-        },
-        note: `${shipping.totalWeight} lbs total weight`,
-      });
-    }
+    lineItems.push({
+      name: `Shipping — ${shipping.tierLabel}`,
+      quantity: '1',
+      basePriceMoney: {
+        amount: BigInt(Math.round(shipping.shippingCost * 100)),
+        currency: 'USD' as const,
+      },
+      note: `${shipping.totalWeight} lbs total weight`,
+    });
 
     // Create Square payment link (new SDK: squareClient.checkout.paymentLinks.create)
     const response = await squareClient.checkout.paymentLinks.create({

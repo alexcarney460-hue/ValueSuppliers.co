@@ -1,18 +1,17 @@
 /**
  * Shipping calculator for Value Suppliers.
  *
- * Rates are weight-based with a free-shipping threshold.
- * Weights are per-unit (case/box/unit) and stored in the DB
- * with a static fallback here.
+ * Rates are weight-based. Actual carrier rates are determined by Shippo
+ * at fulfillment time — these tiers are used as estimates in the cart.
  */
 
 export type ShippingTier = {
   maxLbs: number;
-  rate: number;    // flat rate in USD
+  rate: number;    // flat rate estimate in USD
   label: string;
 };
 
-// Default shipping tiers — can be overridden from admin settings
+// Shipping estimate tiers for cart display
 export const SHIPPING_TIERS: ShippingTier[] = [
   { maxLbs: 5,   rate: 7.99,  label: 'Light Package' },
   { maxLbs: 15,  rate: 12.99, label: 'Standard Package' },
@@ -20,8 +19,6 @@ export const SHIPPING_TIERS: ShippingTier[] = [
   { maxLbs: 60,  rate: 29.99, label: 'Freight — Small' },
   { maxLbs: 999, rate: 49.99, label: 'Freight — Large' },
 ];
-
-export const FREE_SHIPPING_THRESHOLD = 150; // USD subtotal for free shipping
 
 // Default product weights (lbs per unit/case/box)
 // Used as fallback when DB doesn't have weight_lbs
@@ -41,7 +38,6 @@ export type ShippingEstimate = {
   subtotal: number;
   totalWeight: number;
   shippingCost: number;
-  isFreeShipping: boolean;
   tierLabel: string;
 };
 
@@ -49,16 +45,6 @@ export function calculateShipping(
   items: { slug: string; quantity: number; price: number; weightLbs?: number }[],
 ): ShippingEstimate {
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
-    return {
-      subtotal,
-      totalWeight: 0,
-      shippingCost: 0,
-      isFreeShipping: true,
-      tierLabel: 'Free Shipping',
-    };
-  }
 
   const totalWeight = items.reduce((sum, i) => {
     const w = i.weightLbs ?? DEFAULT_WEIGHTS[i.slug] ?? 5;
@@ -72,7 +58,6 @@ export function calculateShipping(
     subtotal,
     totalWeight: Math.round(totalWeight * 10) / 10,
     shippingCost: tier.rate,
-    isFreeShipping: false,
     tierLabel: tier.label,
   };
 }

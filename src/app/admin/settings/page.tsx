@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { SHIPPING_TIERS, FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
+import { SHIPPING_TIERS } from '@/lib/shipping';
 
 /* types */
 
@@ -477,31 +477,10 @@ export default function SettingsPage() {
           Shipping Rates
         </h2>
         <p style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem', marginBottom: 20 }}>
-          Weight-based shipping tiers. Free shipping on orders over ${FREE_SHIPPING_THRESHOLD}.
+          Weight-based shipping estimate tiers. Actual rates determined by Shippo at fulfillment.
         </p>
 
         <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: 16, padding: 24 }}>
-          {/* Free shipping banner */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            background: '#F0FDF4',
-            border: '1px solid #BBF7D0',
-            borderRadius: 10,
-            padding: '12px 16px',
-            marginBottom: 20,
-          }}>
-            <span style={{ fontSize: '1.1rem' }}>🚚</span>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#16A34A' }}>
-                Free Shipping over ${FREE_SHIPPING_THRESHOLD}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: '#15803D' }}>
-                Applied automatically at checkout
-              </div>
-            </div>
-          </div>
 
           {/* Rate table */}
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
