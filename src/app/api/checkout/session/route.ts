@@ -85,10 +85,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: paymentLink.url, id: paymentLink.id });
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    const errStack = err instanceof Error ? err.stack : '';
-    const errBody = (err as Record<string, unknown>)?.body ?? (err as Record<string, unknown>)?.statusCode ?? '';
-    console.error('[Square] checkout error:', errMsg);
-    console.error('[Square] checkout detail:', JSON.stringify({ errBody, errStack: errStack?.slice(0, 500) }));
-    return NextResponse.json({ error: 'Unable to start checkout.' }, { status: 500 });
+    const errBody = (err as Record<string, unknown>)?.body ?? '';
+    const errStatus = (err as Record<string, unknown>)?.statusCode ?? '';
+    console.error('[Square] checkout error:', errMsg, errBody, errStatus);
+    return NextResponse.json({
+      error: 'Unable to start checkout.',
+      debug: { message: errMsg, body: errBody, statusCode: errStatus },
+    }, { status: 500 });
   }
 }
