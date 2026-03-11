@@ -50,14 +50,16 @@ async function findOrCreateContact(
 }
 
 export async function POST(req: NextRequest) {
-  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
-  const notificationUrl = process.env.SQUARE_WEBHOOK_URL ?? 'https://valuesuppliers.co/api/square/webhook';
+  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim();
+  const notificationUrl = (process.env.SQUARE_WEBHOOK_URL?.trim()) ?? 'https://valuesuppliers.co/api/square/webhook';
 
   const rawBody = await req.text();
   const signature = req.headers.get('x-square-hmacsha256-signature');
 
+  console.log('[Square Webhook] Received event, signature present:', !!signature, 'key present:', !!signatureKey);
+
   if (signatureKey && !verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
-    console.error('[Square Webhook] Signature verification failed');
+    console.error('[Square Webhook] Signature verification failed. URL used:', notificationUrl);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
@@ -71,10 +73,18 @@ export async function POST(req: NextRequest) {
   const supabase = getSupabaseServer();
 
   switch (event.type) {
-    case 'payment.completed': {
+    case 'payment.created':
+    case 'payment.updated': {
       const paymentObj = event.data?.object as Record<string, unknown> | undefined;
       const payment = paymentObj?.payment as Record<string, unknown> | undefined;
       if (!payment || !supabase) break;
+
+      // Only process completed payments
+      const paymentStatus = (payment.status as string) || '';
+      if (paymentStatus !== 'COMPLETED') {
+        console.log('[Square] payment event with status:', paymentStatus, '— skipping');
+        break;
+      }
 
       const orderId = payment.order_id as string | undefined;
       const amountMoney = payment.amount_money as { amount?: number; currency?: string } | undefined;
@@ -82,6 +92,21 @@ export async function POST(req: NextRequest) {
       const currency = amountMoney?.currency ?? 'USD';
       const buyerEmail = (payment.buyer_email_address as string) || '';
       const receiptUrl = payment.receipt_url as string | undefined;
+
+      // Deduplicate — skip if we already processed this payment
+      const paymentId = payment.id as string;
+      if (paymentId) {
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('id')
+          .eq('square_payment_id', paymentId)
+          .limit(1)
+          .single();
+        if (existingOrder) {
+          console.log('[Square] Payment already processed:', paymentId);
+          break;
+        }
+      }
 
       // Shipping address from payment
       const shippingAddr = payment.shipping_address as Record<string, string> | undefined;
@@ -119,7 +144,7 @@ export async function POST(req: NextRequest) {
       // Try to get line items from the order via Square API
       if (orderId && order) {
         try {
-          const squareToken = process.env.SQUARE_ACCESS_TOKEN;
+          const squareToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
           if (squareToken) {
             const orderRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
               headers: { 'Authorization': `Bearer ${squareToken}`, 'Content-Type': 'application/json' },
