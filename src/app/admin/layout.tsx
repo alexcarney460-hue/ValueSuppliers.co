@@ -10,6 +10,7 @@ const navItems = [
   { label: 'CRM', href: '/admin/crm' },
   { label: 'Analytics', href: '/admin/analytics' },
   { label: 'Accounting', href: '/admin/accounting' },
+  { label: 'Shipping', href: '/admin/shipping' },
   { label: 'Marketing', href: '/admin/marketing' },
   { label: 'Settings', href: '/admin/settings' },
 ];
