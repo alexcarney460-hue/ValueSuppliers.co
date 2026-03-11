@@ -7,7 +7,16 @@ import type { CartItem } from '@/context/CartContext';
 export async function POST(req: NextRequest) {
   try {
     if (!squareClient) {
-      return NextResponse.json({ error: 'Square is not configured.' }, { status: 500 });
+      return NextResponse.json({
+        error: 'Square is not configured.',
+        envCheck: {
+          hasToken: !!process.env.SQUARE_ACCESS_TOKEN,
+          tokenLength: process.env.SQUARE_ACCESS_TOKEN?.trim().length ?? 0,
+          tokenPrefix: process.env.SQUARE_ACCESS_TOKEN?.trim().substring(0, 4) ?? '',
+          environment: process.env.SQUARE_ENVIRONMENT ?? 'NOT SET',
+          hasLocation: !!process.env.SQUARE_LOCATION_ID,
+        },
+      }, { status: 500 });
     }
     if (!SQUARE_LOCATION_ID) {
       return NextResponse.json({ error: 'Square location not configured.' }, { status: 500 });
@@ -90,7 +99,18 @@ export async function POST(req: NextRequest) {
     console.error('[Square] checkout error:', errMsg, errBody, errStatus);
     return NextResponse.json({
       error: 'Unable to start checkout.',
-      debug: { message: errMsg, body: errBody, statusCode: errStatus },
+      debug: {
+        message: errMsg,
+        body: errBody,
+        statusCode: errStatus,
+        envCheck: {
+          hasToken: !!process.env.SQUARE_ACCESS_TOKEN,
+          tokenLength: process.env.SQUARE_ACCESS_TOKEN?.trim().length ?? 0,
+          tokenPrefix: process.env.SQUARE_ACCESS_TOKEN?.trim().substring(0, 4) ?? '',
+          environment: process.env.SQUARE_ENVIRONMENT ?? 'NOT SET',
+          locationId: process.env.SQUARE_LOCATION_ID ?? 'NOT SET',
+        },
+      },
     }, { status: 500 });
   }
 }

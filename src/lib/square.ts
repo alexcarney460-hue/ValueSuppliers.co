@@ -1,6 +1,6 @@
 import { SquareClient, SquareEnvironment } from 'square';
 
-const accessToken = process.env.SQUARE_ACCESS_TOKEN;
+const accessToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
 const isProd = process.env.SQUARE_ENVIRONMENT === 'production';
 
 export const squareClient = accessToken
