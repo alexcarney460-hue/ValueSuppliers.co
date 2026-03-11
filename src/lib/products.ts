@@ -84,9 +84,9 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'When 5 mil isn\'t enough. Our 5 mil heavy-duty nitrile is built for environments with chemical exposure, prolonged wear, and abrasive surfaces. 50% thicker than standard, yet still flexible enough for dexterous tasks. Trusted by extraction labs, maintenance crews, and chemical handlers.',
+      'Our heavy-duty 5 mil nitrile is built for environments with chemical exposure, prolonged wear, and abrasive surfaces. Enhanced durability yet still flexible enough for dexterous tasks. Trusted by extraction labs, maintenance crews, and chemical handlers.',
     features: [
-      '5 mil thickness — 50% thicker than standard',
+      '5 mil thickness — heavy-duty protection',
       'Enhanced chemical resistance',
       'Extended cuff for additional wrist protection',
       'Micro-textured fingertips for grip',

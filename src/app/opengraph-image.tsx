@@ -320,7 +320,7 @@ export default function Image() {
                 display: 'flex',
               }}
             >
-              Nitrile Disposable Gloves — 4 mil
+              Nitrile Disposable Gloves — 5 mil
             </span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
               <span style={{ color: '#E5B84A', fontSize: 34, fontWeight: 900, display: 'flex' }}>$18.99</span>

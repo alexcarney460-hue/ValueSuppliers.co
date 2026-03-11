@@ -53,9 +53,9 @@ const FEATURE_ITEMS = [
 ];
 
 const PRODUCT_TEASERS = [
-  { slug: 'nitrile-4mil', category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '4 mil · XS–XXL · 100 ct', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
-  { slug: 'latex-exam-gloves', category: 'Gloves', name: 'Latex Exam Gloves', detail: '3 mil · S–XL · 100 ct', price: '$14.99', badge: null, img: '/products/product-3.avif' },
-  { slug: 'black-nitrile-4mil', category: 'Gloves', name: 'Black Nitrile Gloves', detail: '4 mil · S–XXL · 100 ct', price: '$21.99', badge: null, img: '/products/product-5.avif' },
+  { slug: 'nitrile-4mil', category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '5 mil · XS–XXL · 100 ct', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
+  { slug: 'latex-exam-gloves', category: 'Gloves', name: 'Latex Exam Gloves', detail: '5 mil · S–XL · 100 ct', price: '$14.99', badge: null, img: '/products/product-3.avif' },
+  { slug: 'black-nitrile-4mil', category: 'Gloves', name: 'Black Nitrile Gloves', detail: '5 mil · S–XXL · 100 ct', price: '$21.99', badge: null, img: '/products/product-5.avif' },
   { slug: 'nitrile-xl-box', category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL · 100 ct', price: '$22.99', badge: null, img: '/products/product-6.avif' },
 ];
 
@@ -69,7 +69,7 @@ const SERVICE_FEATURES = [
 const FAQ_ITEMS = [
   {
     q: 'What types of gloves do you carry?',
-    a: 'We stock nitrile (4 mil and 6 mil), latex exam-grade, vinyl, and black nitrile gloves in sizes XS through XXL. All gloves are powder-free, latex-free options available, and sold by the 100-count case. Wholesale and distribution pricing available.',
+    a: 'We stock nitrile, latex exam-grade, vinyl, and black nitrile gloves — all 5 mil thickness — in sizes XS through XXL. All gloves are powder-free, latex-free options available, and sold by the 100-count case. Wholesale and distribution pricing available.',
   },
   {
     q: 'What is the minimum order quantity?',
@@ -345,7 +345,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-charcoal)' }}>Best Seller</div>
-                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>4 mil Nitrile — from $18.99</div>
+                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>5 mil Nitrile — from $18.99</div>
                 </div>
               </div>
 
@@ -697,7 +697,11 @@ export default function HomePage() {
             Trusted Partners
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 56, flexWrap: 'wrap' }}>
-            {[1, 2, 3].map((n) => (
+            {[
+              { n: 1, alt: 'Cannabis industry supply partner' },
+              { n: 2, alt: 'Professional glove distribution partner' },
+              { n: 3, alt: 'Commercial grow operation partner' },
+            ].map(({ n, alt }) => (
               <div
                 key={n}
                 className="vs-partner-logo"
@@ -712,7 +716,7 @@ export default function HomePage() {
               >
                 <Image
                   src={`/partners/partner-${n}.avif`}
-                  alt={`Partner ${n}`}
+                  alt={alt}
                   fill
                   style={{ objectFit: 'contain' }}
                   sizes="160px"
