@@ -1,11 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck } from 'lucide-react';
+import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck, Loader2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { calculateShipping } from '@/lib/shipping';
+
+type ShippingRate = {
+  id: string;
+  carrier: string;
+  service: string;
+  price: number;
+  estimatedDays: number | null;
+  description: string;
+};
 
 export default function CartDrawer() {
   const { items, removeItem, updateQty, total, count, isOpen, closeCart, clearCart } = useCart();
@@ -13,9 +21,25 @@ export default function CartDrawer() {
   const [error, setError] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
+  // Shipping state
+  const [zip, setZip] = useState('');
+  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
+  const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const [ratesError, setRatesError] = useState<string | null>(null);
+  const [ratesFetched, setRatesFetched] = useState(false);
+
   const hasAutoship = items.some((i) => i.plan === 'autoship');
   const hasOneTime  = items.some((i) => i.plan === 'one-time');
   const mixedPlans  = hasAutoship && hasOneTime;
+
+  // Reset shipping when cart changes
+  useEffect(() => {
+    setShippingRates([]);
+    setSelectedRate(null);
+    setRatesFetched(false);
+    setRatesError(null);
+  }, [items.length, total]);
 
   // Close on Escape
   useEffect(() => {
@@ -24,15 +48,58 @@ export default function CartDrawer() {
     return () => window.removeEventListener('keydown', handler);
   }, [closeCart]);
 
+  const fetchRates = useCallback(async () => {
+    if (!zip || zip.length < 5) {
+      setRatesError('Enter a valid 5-digit zip code');
+      return;
+    }
+    setRatesLoading(true);
+    setRatesError(null);
+    setShippingRates([]);
+    setSelectedRate(null);
+    try {
+      const res = await fetch('/api/shipping/estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zip,
+          items: items.map((i) => ({ id: i.id, quantity: i.quantity, price: i.price })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to get rates');
+      if (!data.rates || data.rates.length === 0) {
+        setRatesError('No shipping options available for this zip code');
+      } else {
+        setShippingRates(data.rates);
+        // Auto-select cheapest
+        setSelectedRate(data.rates[0]);
+      }
+      setRatesFetched(true);
+    } catch (err) {
+      setRatesError(err instanceof Error ? err.message : 'Failed to get shipping rates');
+    } finally {
+      setRatesLoading(false);
+    }
+  }, [zip, items]);
+
   async function handleCheckout() {
-    if (mixedPlans) return;
+    if (mixedPlans || !selectedRate) return;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch('/api/checkout/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({
+          items,
+          shipping: {
+            carrier: selectedRate.carrier,
+            service: selectedRate.service,
+            price: selectedRate.price,
+            estimatedDays: selectedRate.estimatedDays,
+          },
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Checkout failed');
@@ -42,6 +109,8 @@ export default function CartDrawer() {
       setLoading(false);
     }
   }
+
+  const orderTotal = selectedRate ? total + selectedRate.price : total;
 
   return (
     <>
@@ -283,6 +352,8 @@ export default function CartDrawer() {
               padding: '20px 24px',
               flexShrink: 0,
               backgroundColor: '#fff',
+              maxHeight: '55vh',
+              overflowY: 'auto',
             }}
           >
             {/* Mixed plan warning */}
@@ -326,50 +397,167 @@ export default function CartDrawer() {
               </div>
             )}
 
-            {/* Shipping estimate */}
-            {(() => {
-              const shipping = calculateShipping(
-                items.map((i) => ({ slug: i.id, quantity: i.quantity, price: i.price }))
-              );
-              const orderTotal = total + shipping.shippingCost;
+            {/* Subtotal */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
+                {hasAutoship ? 'Monthly subtotal' : 'Subtotal'}
+              </span>
+              <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                ${total.toFixed(2)}
+              </span>
+            </div>
 
-              return (
-                <>
-                  {/* Subtotal */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
-                      {hasAutoship ? 'Monthly subtotal' : 'Subtotal'}
-                    </span>
-                    <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
-                      ${total.toFixed(2)}
-                    </span>
-                  </div>
+            {/* Shipping zip + rate selection */}
+            <div style={{
+              backgroundColor: 'var(--color-sage-light)',
+              borderRadius: 10,
+              padding: '14px 14px',
+              marginBottom: 14,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                <Truck size={14} color="var(--color-charcoal)" />
+                <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                  Shipping
+                </span>
+              </div>
 
-                  {/* Shipping line */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <Truck size={13} /> Shipping ({shipping.tierLabel})
-                    </span>
-                    <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
-                      ${shipping.shippingCost.toFixed(2)}
-                    </span>
-                  </div>
+              {/* Zip input row */}
+              <div style={{ display: 'flex', gap: 8, marginBottom: ratesFetched ? 10 : 0 }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={5}
+                  placeholder="Zip code"
+                  value={zip}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 5);
+                    setZip(v);
+                    if (ratesFetched) {
+                      setRatesFetched(false);
+                      setShippingRates([]);
+                      setSelectedRate(null);
+                    }
+                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && zip.length === 5) fetchRates(); }}
+                  style={{
+                    flex: 1,
+                    padding: '9px 12px',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 7,
+                    fontSize: '0.85rem',
+                    fontFamily: "'Barlow', Arial, sans-serif",
+                    outline: 'none',
+                    backgroundColor: '#fff',
+                  }}
+                />
+                <button
+                  onClick={fetchRates}
+                  disabled={ratesLoading || zip.length < 5}
+                  style={{
+                    padding: '9px 16px',
+                    backgroundColor: 'var(--color-forest)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 7,
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    fontFamily: "'Barlow', Arial, sans-serif",
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    cursor: ratesLoading || zip.length < 5 ? 'not-allowed' : 'pointer',
+                    opacity: ratesLoading || zip.length < 5 ? 0.5 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {ratesLoading ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : 'Get Rates'}
+                </button>
+              </div>
 
-                  {/* Divider */}
-                  <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: 10 }} />
+              {/* Rates error */}
+              {ratesError && (
+                <p style={{ color: 'var(--color-alert-red)', fontSize: '0.75rem', margin: '6px 0 0' }}>{ratesError}</p>
+              )}
 
-                  {/* Order total */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <span style={{ color: 'var(--color-charcoal)', fontSize: '0.9rem', fontWeight: 700 }}>
-                      Estimated Total
-                    </span>
-                    <span className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-charcoal)' }}>
-                      ${orderTotal.toFixed(2)}
-                    </span>
-                  </div>
-                </>
-              );
-            })()}
+              {/* Rate options */}
+              {shippingRates.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {shippingRates.slice(0, 6).map((rate) => (
+                    <label
+                      key={rate.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        padding: '10px 12px',
+                        backgroundColor: selectedRate?.id === rate.id ? '#EDF7F0' : '#fff',
+                        border: selectedRate?.id === rate.id ? '2px solid var(--color-forest)' : '1px solid var(--color-border)',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        transition: 'all 150ms ease',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="shipping-rate"
+                        checked={selectedRate?.id === rate.id}
+                        onChange={() => setSelectedRate(rate)}
+                        style={{ accentColor: 'var(--color-forest)', margin: 0 }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                          {rate.carrier} {rate.service}
+                        </div>
+                        {rate.estimatedDays && (
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-warm-gray)' }}>
+                            Est. {rate.estimatedDays} business day{rate.estimatedDays !== 1 ? 's' : ''}
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-mono" style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-charcoal)', whiteSpace: 'nowrap' }}>
+                        ${rate.price.toFixed(2)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {/* Prompt if no rates fetched yet */}
+              {!ratesFetched && !ratesLoading && !ratesError && (
+                <p style={{ color: 'var(--color-warm-gray)', fontSize: '0.72rem', margin: '8px 0 0', textAlign: 'center' }}>
+                  Enter your zip code to see shipping options
+                </p>
+              )}
+            </div>
+
+            {/* Shipping line (if selected) */}
+            {selectedRate && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
+                    Shipping ({selectedRate.carrier} {selectedRate.service})
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                    ${selectedRate.price.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Divider */}
+                <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: 10 }} />
+
+                {/* Order total */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <span style={{ color: 'var(--color-charcoal)', fontSize: '0.9rem', fontWeight: 700 }}>
+                    Estimated Total
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-charcoal)' }}>
+                    ${orderTotal.toFixed(2)}
+                  </span>
+                </div>
+              </>
+            )}
 
             {error && (
               <p style={{ color: 'var(--color-alert-red)', fontSize: '0.78rem', marginBottom: 10 }}>{error}</p>
@@ -377,12 +565,12 @@ export default function CartDrawer() {
 
             <button
               onClick={handleCheckout}
-              disabled={loading || mixedPlans}
+              disabled={loading || mixedPlans || !selectedRate}
               className="vs-btn-forest"
               style={{
                 width: '100%',
-                backgroundColor: mixedPlans ? 'var(--color-border)' : 'var(--color-forest)',
-                color: mixedPlans ? 'var(--color-warm-gray)' : '#fff',
+                backgroundColor: (mixedPlans || !selectedRate) ? 'var(--color-border)' : 'var(--color-forest)',
+                color: (mixedPlans || !selectedRate) ? 'var(--color-warm-gray)' : '#fff',
                 border: 'none',
                 borderRadius: 10,
                 padding: '15px 24px',
@@ -391,15 +579,15 @@ export default function CartDrawer() {
                 fontSize: '0.9rem',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                cursor: mixedPlans ? 'not-allowed' : 'pointer',
+                cursor: (mixedPlans || !selectedRate) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
               }}
             >
-              {loading ? 'Redirecting...' : 'Proceed to Checkout'}
-              {!loading && <ArrowRight size={16} />}
+              {loading ? 'Redirecting...' : !selectedRate ? 'Select Shipping to Continue' : 'Proceed to Checkout'}
+              {!loading && selectedRate && <ArrowRight size={16} />}
             </button>
 
             <button
@@ -425,6 +613,7 @@ export default function CartDrawer() {
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
     </>
   );

@@ -1,6 +1,6 @@
 import { Shippo } from 'shippo';
 
-const apiKey = process.env.SHIPPO_API_KEY;
+const apiKey = process.env.SHIPPO_API_KEY?.trim();
 
 export const shippoClient = apiKey
   ? new Shippo({ apiKeyHeader: apiKey })
@@ -268,6 +268,52 @@ export async function autoShipOrder(
     rate: best.rate.amount,
     eta: label.eta,
   };
+}
+
+/**
+ * Get live shipping rates for a destination zip code + weight.
+ * Groups the cheapest rate per carrier+service across all parcel strategies.
+ * Used to show shipping options to the customer before checkout.
+ */
+export async function getRatesForZip(
+  zip: string,
+  weightLbs: number,
+): Promise<ShippoRate[]> {
+  if (!shippoClient) return [];
+
+  const addressTo: ShippoAddress = {
+    name: 'Customer',
+    street1: '123 Main St',
+    city: 'Anytown',
+    state: '',
+    zip,
+    country: 'US',
+  };
+
+  const strategies = buildParcelStrategies(weightLbs);
+
+  const results = await Promise.allSettled(
+    strategies.map((parcels) => createShipmentWithParcels(addressTo, parcels)),
+  );
+
+  // Collect all rates, dedup by provider+servicelevel keeping cheapest
+  const rateMap = new Map<string, ShippoRate>();
+
+  for (const result of results) {
+    if (result.status === 'fulfilled' && result.value) {
+      for (const rate of result.value.rates) {
+        const key = `${rate.provider}|${rate.servicelevel}`;
+        const existing = rateMap.get(key);
+        if (!existing || parseFloat(rate.amount) < parseFloat(existing.amount)) {
+          rateMap.set(key, rate);
+        }
+      }
+    }
+  }
+
+  const rates = Array.from(rateMap.values());
+  rates.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount));
+  return rates;
 }
 
 /**
