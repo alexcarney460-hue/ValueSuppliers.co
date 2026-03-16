@@ -164,9 +164,9 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {[
-                  { label: '1-20 cases', price: product.casePrice!, tier: 'Retail' },
-                  { label: '21-120 cases', price: product.wholesalePrice!, tier: 'Wholesale' },
-                  { label: '121+ cases', price: product.distributorPrice!, tier: 'Distributor' },
+                  { label: '1-29 cases', price: product.casePrice!, tier: 'Retail' },
+                  { label: '30-119 cases', price: product.wholesalePrice!, tier: 'Wholesale' },
+                  { label: '120+ cases', price: product.distributorPrice!, tier: 'Distributor' },
                 ].map(({ label, price: tierPrice, tier }) => (
                   <div
                     key={tier}

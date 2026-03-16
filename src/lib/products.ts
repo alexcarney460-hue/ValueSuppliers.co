@@ -19,11 +19,11 @@ export type Product = {
 
   // Case/box pricing (gloves only)
   boxPrice?: number;          // price per individual box (100 gloves)
-  casePrice?: number;         // price per case at retail tier (1-20 cases)
+  casePrice?: number;         // price per case at retail tier (1-29 cases)
   caseBoxCount?: number;      // boxes per case (default 10)
   caseGloveCount?: number;    // gloves per case (default 1000)
-  wholesalePrice?: number;    // price per case at wholesale tier (21-120 cases)
-  distributorPrice?: number;  // price per case at distributor tier (121+ cases)
+  wholesalePrice?: number;    // price per case at wholesale tier (30-119 cases)
+  distributorPrice?: number;  // price per case at distributor tier (120+ cases)
 };
 
 const PRODUCTS: Product[] = [
@@ -93,13 +93,13 @@ const PRODUCTS: Product[] = [
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'The same premium 5 mil nitrile glove — sold by the case. 10 boxes per case, 1,000 gloves total. At $8.00 per box you save $2.00 per box compared to buying individually. Volume discounts available for wholesale (21+ cases) and distributor (121+ cases) orders.',
+      'The same premium 5 mil nitrile glove — sold by the case. 10 boxes per case, 1,000 gloves total. At $8.00 per box you save $2.00 per box compared to buying individually. Volume discounts available for wholesale (30+ cases) and distributor (120+ cases) orders.',
     features: [
       '10 boxes per case — 1,000 gloves total',
       '$8.00/box — save $2.00 vs individual box price',
       'Same 5 mil nitrile spec as individual boxes',
       'Powder-free and latex-free',
-      'Volume discounts: 21+ cases wholesale, 121+ distributor',
+      'Volume discounts: 30+ cases wholesale, 120+ distributor',
       'Textured fingertips, beaded cuff, ambidextrous',
     ],
     useCases: [
