@@ -14,7 +14,7 @@ export default function Image() {
           height: 630,
           display: 'flex',
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: 'linear-gradient(135deg, #ffffff 0%, #f5f7fa 50%, #eef2f7 100%)',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f5f7f5 50%, #ecf2ed 100%)',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -28,7 +28,7 @@ export default function Image() {
             width: 520,
             height: 520,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(30,58,95,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(27,58,45,0.06) 0%, transparent 70%)',
             display: 'flex',
           }}
         />
@@ -41,7 +41,7 @@ export default function Image() {
             width: 340,
             height: 340,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(200,146,42,0.08) 0%, transparent 70%)',
             display: 'flex',
           }}
         />
@@ -65,8 +65,8 @@ export default function Image() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                backgroundColor: 'rgba(37,99,235,0.10)',
-                border: '1.5px solid rgba(37,99,235,0.28)',
+                backgroundColor: 'rgba(200,146,42,0.10)',
+                border: '1.5px solid rgba(200,146,42,0.28)',
                 borderRadius: 999,
                 padding: '6px 18px',
               }}
@@ -76,13 +76,13 @@ export default function Image() {
                   width: 6,
                   height: 6,
                   borderRadius: '50%',
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#C8922A',
                   display: 'flex',
                 }}
               />
               <span
                 style={{
-                  color: '#2563EB',
+                  color: '#C8922A',
                   fontSize: 13,
                   fontWeight: 800,
                   letterSpacing: '0.22em',
@@ -98,7 +98,7 @@ export default function Image() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span
               style={{
-                color: '#64748B',
+                color: '#9A9590',
                 fontSize: 15,
                 fontWeight: 700,
                 letterSpacing: '0.3em',
@@ -120,7 +120,7 @@ export default function Image() {
             >
               <span
                 style={{
-                  color: '#0F172A',
+                  color: '#1C1C1C',
                   fontSize: 74,
                   fontWeight: 900,
                   display: 'flex',
@@ -130,7 +130,7 @@ export default function Image() {
               </span>
               <span
                 style={{
-                  color: '#0F172A',
+                  color: '#1C1C1C',
                   fontSize: 74,
                   fontWeight: 900,
                   display: 'flex',
@@ -143,7 +143,7 @@ export default function Image() {
                   fontSize: 74,
                   fontWeight: 900,
                   display: 'flex',
-                  color: '#1E3A5F',
+                  color: '#1B3A2D',
                 }}
               >
                 Supplies.
@@ -155,7 +155,7 @@ export default function Image() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <span
               style={{
-                color: '#475569',
+                color: '#6B6660',
                 fontSize: 20,
                 lineHeight: 1.55,
                 display: 'flex',
@@ -174,7 +174,7 @@ export default function Image() {
               {/* CTA pill */}
               <div
                 style={{
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#C8922A',
                   borderRadius: 999,
                   padding: '14px 28px',
                   display: 'flex',
@@ -199,14 +199,14 @@ export default function Image() {
                 style={{
                   borderRadius: 999,
                   padding: '14px 24px',
-                  border: '2px solid #1E3A5F',
+                  border: '2px solid #1B3A2D',
                   display: 'flex',
                   alignItems: 'center',
                 }}
               >
                 <span
                   style={{
-                    color: '#1E3A5F',
+                    color: '#1B3A2D',
                     fontSize: 16,
                     fontWeight: 700,
                     letterSpacing: '0.06em',
@@ -229,7 +229,7 @@ export default function Image() {
             top: 40,
             bottom: 40,
             width: 1,
-            backgroundColor: '#CBD5E1',
+            backgroundColor: '#D8D4CD',
             display: 'flex',
           }}
         />
@@ -254,7 +254,7 @@ export default function Image() {
               position: 'absolute',
               inset: '10%',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(200,146,42,0.12) 0%, transparent 70%)',
               display: 'flex',
             }}
           />
@@ -263,7 +263,7 @@ export default function Image() {
           <div
             style={{
               width: '100%',
-              backgroundColor: '#1E3A5F',
+              backgroundColor: '#1B3A2D',
               borderRadius: 20,
               padding: '28px 28px',
               display: 'flex',
@@ -281,7 +281,7 @@ export default function Image() {
                 width: 160,
                 height: 160,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(37,99,235,0.20) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(200,146,42,0.20) 0%, transparent 70%)',
                 display: 'flex',
               }}
             />
@@ -294,7 +294,7 @@ export default function Image() {
             >
               <span
                 style={{
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#C8922A',
                   borderRadius: 999,
                   padding: '4px 12px',
                   color: '#fff',
@@ -323,7 +323,7 @@ export default function Image() {
               Nitrile Disposable Gloves — 5 mil
             </span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <span style={{ color: '#60A5FA', fontSize: 34, fontWeight: 900, display: 'flex' }}>$18.99</span>
+              <span style={{ color: '#E5B84A', fontSize: 34, fontWeight: 900, display: 'flex' }}>$18.99</span>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, display: 'flex' }}>/ case</span>
             </div>
           </div>
@@ -336,18 +336,18 @@ export default function Image() {
                 backgroundColor: '#fff',
                 borderRadius: 14,
                 padding: '16px 16px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #E4E1DB',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 3,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
               }}
             >
-              <span style={{ color: '#2563EB', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
+              <span style={{ color: '#4A7C59', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
                 Wholesale
               </span>
-              <span style={{ color: '#0F172A', fontSize: 20, fontWeight: 900, display: 'flex' }}>20% Off</span>
-              <span style={{ color: '#64748B', fontSize: 12, display: 'flex' }}>5+ cases/mo</span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>20% Off</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>5+ cases/mo</span>
             </div>
             <div
               style={{
@@ -355,18 +355,18 @@ export default function Image() {
                 backgroundColor: '#fff',
                 borderRadius: 14,
                 padding: '16px 16px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #E4E1DB',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 3,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
               }}
             >
-              <span style={{ color: '#2563EB', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
+              <span style={{ color: '#C8922A', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
                 Distribution
               </span>
-              <span style={{ color: '#0F172A', fontSize: 20, fontWeight: 900, display: 'flex' }}>30% Off</span>
-              <span style={{ color: '#64748B', fontSize: 12, display: 'flex' }}>NET 30 terms</span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>30% Off</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>NET 30 terms</span>
             </div>
           </div>
         </div>

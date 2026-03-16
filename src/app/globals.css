@@ -3,29 +3,29 @@
 @import "tailwindcss";
 
 :root {
-  /* Colors — Industrial Blue Palette */
-  --color-forest:         #1E3A5F;
-  --color-forest-light:   #2563EB;
-  --color-forest-dark:    #0F172A;
-  --color-amber:          #2563EB;
-  --color-amber-hover:    #1D4ED8;
-  --color-amber-light:    #DBEAFE;
-  --color-charcoal:       #0F172A;
-  --color-off-white:      #F8FAFC;
-  --color-muted-green:    #2563EB;
-  --color-sage-light:     #EFF6FF;
-  --color-warm-gray:      #64748B;
-  --color-border:         #E2E8F0;
-  --color-alert-red:      #DC2626;
+  /* Colors */
+  --color-forest:         #1B3A2D;
+  --color-forest-light:   #24503D;
+  --color-forest-dark:    #122A20;
+  --color-amber:          #C8922A;
+  --color-amber-hover:    #A67320;
+  --color-amber-light:    #F0D9A8;
+  --color-charcoal:       #1C1C1C;
+  --color-off-white:      #F5F4F0;
+  --color-muted-green:    #4A7C59;
+  --color-sage-light:     #E8EDE9;
+  --color-warm-gray:      #9A9590;
+  --color-border:         #E4E1DB;
+  --color-alert-red:      #C0392B;
 
   /* Semantic */
   --color-bg:             #FFFFFF;
   --color-bg-card:        #FFFFFF;
-  --color-bg-dark:        #1E3A5F;
-  --color-text:           #0F172A;
-  --color-text-muted:     #64748B;
-  --color-accent:         #2563EB;
-  --color-accent-hover:   #1D4ED8;
+  --color-bg-dark:        #1B3A2D;
+  --color-text:           #1C1C1C;
+  --color-text-muted:     #9A9590;
+  --color-accent:         #C8922A;
+  --color-accent-hover:   #A67320;
   --nav-height:           140px;
 
   /* Premium shadows */
@@ -34,8 +34,8 @@
   --shadow-md:  0 8px 24px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
   --shadow-lg:  0 20px 48px rgba(0,0,0,0.09), 0 6px 16px rgba(0,0,0,0.05);
   --shadow-xl:  0 40px 80px rgba(0,0,0,0.11), 0 12px 24px rgba(0,0,0,0.05);
-  --shadow-amber: 0 8px 28px rgba(37,99,235,0.30);
-  --shadow-forest: 0 8px 28px rgba(30,58,95,0.25);
+  --shadow-amber: 0 8px 28px rgba(200,146,42,0.30);
+  --shadow-forest: 0 8px 28px rgba(27,58,45,0.25);
 
   /* Transitions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -56,9 +56,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Blue selection */
+/* Amber selection */
 ::selection {
-  background: rgba(37,99,235,0.18);
+  background: rgba(200,146,42,0.22);
   color: var(--color-charcoal);
 }
 
@@ -95,9 +95,9 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   text-transform: uppercase;
 }
 
-/* Gradient text — industrial blue */
+/* Gradient text — amber gold */
 .vs-gradient-text {
-  background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 45%, #1E3A5F 100%);
+  background: linear-gradient(135deg, #C8922A 0%, #E8C060 45%, #C8922A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -167,8 +167,8 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 
 /* Badge glow pulse */
 @keyframes badgePulse {
-  0%, 100% { box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
-  50%       { box-shadow: 0 4px 24px rgba(37,99,235,0.60), 0 0 0 6px rgba(37,99,235,0.10); }
+  0%, 100% { box-shadow: 0 4px 12px rgba(200,146,42,0.35); }
+  50%       { box-shadow: 0 4px 24px rgba(200,146,42,0.60), 0 0 0 6px rgba(200,146,42,0.10); }
 }
 .vs-badge-pulse { animation: badgePulse 2.8s ease-in-out infinite; }
 
@@ -216,7 +216,7 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 }
 .tilt-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-lg), 0 0 0 1.5px rgba(37,99,235,0.18) !important;
+  box-shadow: var(--shadow-lg), 0 0 0 1.5px rgba(200,146,42,0.18) !important;
 }
 
 /* Image zoom inside tilt cards */
@@ -264,7 +264,7 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   width: 100%;
 }
 
-/* Premium accent button */
+/* Premium amber button */
 .vs-btn-amber {
   position: relative;
   overflow: hidden;
@@ -282,7 +282,7 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   box-shadow: var(--shadow-amber);
 }
 
-/* Premium primary button */
+/* Premium forest button */
 .vs-btn-forest {
   position: relative;
   overflow: hidden;
@@ -316,14 +316,14 @@ a { transition: color 150ms ease, opacity 150ms ease; }
 }
 .vs-input:focus {
   border-color: var(--color-forest) !important;
-  box-shadow: 0 0 0 3px rgba(30,58,95,0.10) !important;
+  box-shadow: 0 0 0 3px rgba(27,58,45,0.10) !important;
 }
 
-/* Blue glow blob — decorative background element */
+/* Amber glow blob — decorative background element */
 .vs-glow-amber {
   position: absolute;
   border-radius: 50%;
-  background: rgba(37,99,235,0.08);
+  background: rgba(200,146,42,0.10);
   filter: blur(100px);
   pointer-events: none;
   z-index: 0;
@@ -348,13 +348,13 @@ a { transition: color 150ms ease, opacity 150ms ease; }
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* Blue icon circle — used in feature items */
+/* Amber icon circle — used in feature items */
 .vs-icon-circle {
   width: 44px;
   height: 44px;
   min-width: 44px;
   border-radius: 12px;
-  background: rgba(37,99,235,0.10);
+  background: rgba(200,146,42,0.12);
   display: flex;
   align-items: center;
   justify-content: center;

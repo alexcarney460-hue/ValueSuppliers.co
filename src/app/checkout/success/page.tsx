@@ -24,7 +24,7 @@ export default function CheckoutSuccessPage() {
           style={{
             width: 72,
             height: 72,
-            backgroundColor: '#EFF6FF',
+            backgroundColor: '#EDF7F0',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
@@ -71,8 +71,8 @@ export default function CheckoutSuccessPage() {
           </div>
           <div
             style={{
-              backgroundColor: '#EFF6FF',
-              border: '1px solid rgba(37,99,235,0.2)',
+              backgroundColor: '#EDF7F0',
+              border: '1px solid rgba(74,124,89,0.2)',
               borderRadius: 14,
               padding: '20px 18px',
               textAlign: 'left',

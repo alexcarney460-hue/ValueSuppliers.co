@@ -154,7 +154,7 @@ export default async function ProductPage({
           <div style={{ position: 'sticky', top: 'calc(var(--nav-height) + 24px)' }} className="vs-product-image-col">
             {/* Amber glow behind image */}
             <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: '-10%', borderRadius: '50%', background: 'rgba(37,99,235,0.10)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
+            <div style={{ position: 'absolute', inset: '-10%', borderRadius: '50%', background: 'rgba(200,146,42,0.10)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
             <div
               style={{
                 backgroundColor: 'var(--color-sage-light)',
@@ -317,7 +317,7 @@ export default async function ProductPage({
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                     <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem' }}>Distribution</div>
-                    <span style={{ backgroundColor: '#DBEAFE', color: 'var(--color-amber)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>30% OFF</span>
+                    <span style={{ backgroundColor: '#FEF3DC', color: 'var(--color-amber)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>30% OFF</span>
                   </div>
                   <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>25+ cases/month · NET 30 terms available</div>
                 </div>
@@ -418,7 +418,7 @@ export default async function ProductPage({
                     fontWeight: 600,
                     padding: '6px 14px',
                     borderRadius: 9999,
-                    border: '1px solid rgba(30,58,95,0.12)',
+                    border: '1px solid rgba(27,58,45,0.12)',
                   }}
                 >
                   {u}

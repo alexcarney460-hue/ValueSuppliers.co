@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const INDUSTRIES = [
   { icon: Utensils, name: 'Food Service', desc: 'Restaurants, catering, delis, and food processing', color: '#E65100' },
-  { icon: Stethoscope, name: 'Medical & Dental', desc: 'Clinics, offices, and exam-grade applications', color: '#2563EB' },
+  { icon: Stethoscope, name: 'Medical & Dental', desc: 'Clinics, offices, and exam-grade applications', color: '#1565C0' },
   { icon: Building2, name: 'Janitorial & Facilities', desc: 'Commercial cleaning, maintenance, and sanitation', color: '#2E7D32' },
   { icon: Wrench, name: 'Automotive & Trades', desc: 'Mechanics, body shops, painting, and detailing', color: '#37474F' },
   { icon: Beaker, name: 'Laboratory & Research', desc: 'Scientific, quality control, and testing environments', color: '#6A1B9A' },
@@ -45,7 +45,7 @@ const TIER_CARDS = [
   {
     tier: 'Wholesale',
     color: 'var(--color-muted-green)',
-    accentBg: '#EFF6FF',
+    accentBg: '#EDF7F0',
     headline: 'Volume Discounts',
     description: '20% off retail for businesses ordering 5+ cases per month. Fast restock and priority fulfillment.',
     cta: 'Get Wholesale Pricing',
@@ -108,7 +108,7 @@ export default function CommercialPage() {
 
       {/* MARQUEE TRUST BAR */}
       <div
-        style={{ backgroundColor: '#0F172A', padding: '14px 0', overflow: 'hidden' }}
+        style={{ backgroundColor: '#1C1C1C', padding: '14px 0', overflow: 'hidden' }}
         className="vs-marquee"
       >
         <div className="vs-marquee__track">
@@ -174,9 +174,9 @@ export default function CommercialPage() {
           <div>
             <span
               className="label-caps vs-fade-up"
-              style={{ color: '#2563EB', display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 24 }}
+              style={{ color: '#1565C0', display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 24 }}
             >
-              <span style={{ width: 28, height: 1.5, backgroundColor: '#2563EB', display: 'inline-block', borderRadius: 99 }} />
+              <span style={{ width: 28, height: 1.5, backgroundColor: '#1565C0', display: 'inline-block', borderRadius: 99 }} />
               Commercial &amp; Industrial Supply
             </span>
 
@@ -188,7 +188,7 @@ export default function CommercialPage() {
               <br />
               for Every
               <br />
-              <span style={{ color: '#2563EB' }}>Industry.</span>
+              <span style={{ color: '#1565C0' }}>Industry.</span>
             </h1>
 
             <p
@@ -205,7 +205,7 @@ export default function CommercialPage() {
                 href="/catalog"
                 className="vs-btn-amber"
                 style={{
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#1565C0',
                   color: '#fff',
                   padding: '14px 30px',
                   borderRadius: 9999,
@@ -218,7 +218,7 @@ export default function CommercialPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  boxShadow: '0 4px 20px rgba(37,99,235,0.25)',
+                  boxShadow: '0 4px 20px rgba(21,101,192,0.25)',
                 }}
               >
                 Shop Gloves <ArrowRight size={14} />
@@ -280,7 +280,7 @@ export default function CommercialPage() {
                 position: 'absolute',
                 inset: '-18%',
                 borderRadius: '50%',
-                background: 'rgba(37,99,235,0.08)',
+                background: 'rgba(21,101,192,0.08)',
                 filter: 'blur(72px)',
                 pointerEvents: 'none',
                 zIndex: 0,
@@ -324,14 +324,14 @@ export default function CommercialPage() {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    backgroundColor: '#EFF6FF',
+                    backgroundColor: '#E3F2FD',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}
                 >
-                  <Shield size={18} color="#2563EB" />
+                  <Shield size={18} color="#1565C0" />
                 </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-charcoal)' }}>ASTM Certified</div>
@@ -346,7 +346,7 @@ export default function CommercialPage() {
                   top: 20,
                   right: -16,
                   zIndex: 2,
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#1565C0',
                   color: '#fff',
                   borderRadius: 9999,
                   padding: '7px 16px',
@@ -355,7 +355,7 @@ export default function CommercialPage() {
                   fontWeight: 700,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
-                  boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                  boxShadow: '0 4px 16px rgba(21,101,192,0.3)',
                 }}
               >
                 100 ct / case
@@ -366,7 +366,7 @@ export default function CommercialPage() {
       </section>
 
       {/* FEATURE BAR */}
-      <section style={{ backgroundColor: '#F8FAFC', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', padding: '32px 24px' }}>
+      <section style={{ backgroundColor: '#F8FAF8', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', padding: '32px 24px' }}>
         <div
           style={{
             maxWidth: 1100,
@@ -380,7 +380,7 @@ export default function CommercialPage() {
           {FEATURE_ITEMS.map(({ icon: Icon, label, sub }, i) => (
             <AnimateIn key={label} delay={i * 90} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <div className="vs-icon-circle">
-                <Icon size={20} color="#2563EB" />
+                <Icon size={20} color="#1565C0" />
               </div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-charcoal)' }}>{label}</div>
@@ -395,7 +395,7 @@ export default function CommercialPage() {
       <section style={{ backgroundColor: '#fff', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <AnimateIn style={{ textAlign: 'center', marginBottom: 56 }}>
-            <span className="label-caps" style={{ color: '#2563EB' }}>
+            <span className="label-caps" style={{ color: '#1565C0' }}>
               Industries We Serve
             </span>
             <h2
@@ -456,7 +456,7 @@ export default function CommercialPage() {
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <AnimateIn style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48, flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <span className="label-caps" style={{ color: '#2563EB' }}>
+              <span className="label-caps" style={{ color: '#1565C0' }}>
                 Our Products
               </span>
               <h2
@@ -469,7 +469,7 @@ export default function CommercialPage() {
             <Link
               href="/catalog"
               style={{
-                color: '#2563EB',
+                color: '#1565C0',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -510,7 +510,7 @@ export default function CommercialPage() {
                         style={{
                           position: 'absolute',
                           inset: 0,
-                          background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(37,99,235,0.08) 0%, transparent 70%)',
+                          background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(21,101,192,0.08) 0%, transparent 70%)',
                           pointerEvents: 'none',
                           zIndex: 1,
                         }}
@@ -529,7 +529,7 @@ export default function CommercialPage() {
                             position: 'absolute',
                             top: 12,
                             right: 12,
-                            backgroundColor: '#2563EB',
+                            backgroundColor: '#1565C0',
                             color: '#fff',
                             padding: '5px 12px',
                             borderRadius: 9999,
@@ -543,7 +543,7 @@ export default function CommercialPage() {
                     </div>
 
                     <div style={{ padding: '20px 20px 24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <span className="label-caps" style={{ color: '#2563EB', fontSize: '0.62rem' }}>
+                      <span className="label-caps" style={{ color: '#1565C0', fontSize: '0.62rem' }}>
                         {product.category}
                       </span>
                       <h3 className="font-heading" style={{ fontSize: '1rem', marginTop: 6, marginBottom: 4, color: 'var(--color-charcoal)' }}>
@@ -556,7 +556,7 @@ export default function CommercialPage() {
                         <span className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
                           {product.price}
                         </span>
-                        <span className="vs-card-arrow label-caps" style={{ color: '#2563EB', fontSize: '0.68rem' }}>
+                        <span className="vs-card-arrow label-caps" style={{ color: '#1565C0', fontSize: '0.68rem' }}>
                           View <ArrowRight size={12} />
                         </span>
                       </div>
@@ -573,7 +573,7 @@ export default function CommercialPage() {
       <section style={{ backgroundColor: '#fff', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <AnimateIn style={{ textAlign: 'center', marginBottom: 56 }}>
-            <span className="label-caps" style={{ color: '#2563EB' }}>
+            <span className="label-caps" style={{ color: '#1565C0' }}>
               Pricing Programs
             </span>
             <h2
@@ -659,8 +659,8 @@ export default function CommercialPage() {
       <section style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 72, alignItems: 'center' }}>
           <AnimateIn>
-            <span className="label-caps" style={{ color: '#2563EB', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 24, height: 1.5, backgroundColor: '#2563EB', display: 'inline-block', borderRadius: 99 }} />
+            <span className="label-caps" style={{ color: '#1565C0', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ width: 24, height: 1.5, backgroundColor: '#1565C0', display: 'inline-block', borderRadius: 99 }} />
               Why Value Suppliers
             </span>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginTop: 14, marginBottom: 20, color: 'var(--color-charcoal)', lineHeight: 1.05 }}>
@@ -679,7 +679,7 @@ export default function CommercialPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                backgroundColor: '#2563EB',
+                backgroundColor: '#1565C0',
                 color: '#fff',
                 padding: '13px 28px',
                 borderRadius: 9999,
@@ -717,14 +717,14 @@ export default function CommercialPage() {
                       width: 32,
                       height: 32,
                       borderRadius: 9,
-                      backgroundColor: '#EFF6FF',
+                      backgroundColor: '#E3F2FD',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginBottom: 12,
                     }}
                   >
-                    <BadgeCheck size={15} color="#2563EB" />
+                    <BadgeCheck size={15} color="#1565C0" />
                   </div>
                   <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-charcoal)', marginBottom: 4 }}>{label}</div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', lineHeight: 1.5 }}>{sub}</div>
@@ -739,7 +739,7 @@ export default function CommercialPage() {
       <section style={{ backgroundColor: '#fff', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
           <AnimateIn style={{ textAlign: 'center', marginBottom: 56 }}>
-            <span className="label-caps" style={{ color: '#2563EB' }}>Common Questions</span>
+            <span className="label-caps" style={{ color: '#1565C0' }}>Common Questions</span>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginTop: 10, color: 'var(--color-charcoal)' }}>
               Frequently Asked Questions
             </h2>
@@ -758,7 +758,7 @@ export default function CommercialPage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                    <ChevronRight size={16} color="#2563EB" style={{ marginTop: 3, flexShrink: 0 }} />
+                    <ChevronRight size={16} color="#1565C0" style={{ marginTop: 3, flexShrink: 0 }} />
                     <div>
                       <h3 className="font-heading" style={{ fontSize: '1rem', color: 'var(--color-charcoal)', marginBottom: 8, lineHeight: 1.3 }}>
                         {item.q}
@@ -776,7 +776,7 @@ export default function CommercialPage() {
           <AnimateIn style={{ textAlign: 'center', marginTop: 40 }}>
             <p style={{ fontSize: '0.88rem', color: 'var(--color-warm-gray)' }}>
               Have a different question?{' '}
-              <Link href="/contact" style={{ color: '#2563EB', fontWeight: 700, textDecoration: 'none' }}>
+              <Link href="/contact" style={{ color: '#1565C0', fontWeight: 700, textDecoration: 'none' }}>
                 Contact us →
               </Link>
             </p>
@@ -804,7 +804,7 @@ export default function CommercialPage() {
       <section
         className="vs-dot-grid"
         style={{
-          backgroundColor: '#0F172A',
+          backgroundColor: '#1C1C1C',
           padding: '100px 24px',
           textAlign: 'center',
           color: '#fff',
@@ -814,11 +814,11 @@ export default function CommercialPage() {
       >
         <div
           className="vs-glow-amber"
-          style={{ width: 640, height: 400, top: '-30%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(37,99,235,0.12)' }}
+          style={{ width: 640, height: 400, top: '-30%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(21,101,192,0.12)' }}
         />
 
         <AnimateIn style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <span className="label-caps" style={{ color: 'rgba(37,99,235,0.85)', display: 'block', marginBottom: 20 }}>
+          <span className="label-caps" style={{ color: 'rgba(21,101,192,0.85)', display: 'block', marginBottom: 20 }}>
             Get Started Today
           </span>
           <h2
@@ -836,7 +836,7 @@ export default function CommercialPage() {
               href="/catalog"
               className="vs-btn-amber"
               style={{
-                backgroundColor: '#2563EB',
+                backgroundColor: '#1565C0',
                 color: '#fff',
                 padding: '15px 34px',
                 borderRadius: 9999,
@@ -849,7 +849,7 @@ export default function CommercialPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                boxShadow: '0 4px 20px rgba(37,99,235,0.3)',
+                boxShadow: '0 4px 20px rgba(21,101,192,0.3)',
               }}
             >
               Shop Now <ArrowRight size={14} />
