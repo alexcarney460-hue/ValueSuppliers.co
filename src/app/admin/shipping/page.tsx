@@ -21,11 +21,7 @@ interface Order {
   label_url: string | null;
   shipping_carrier: string | null;
   shipping_service: string | null;
-  shipping_cost: number | null;
-  shipping_status: string | null;
   shipped_at: string | null;
-  printed_at: string | null;
-  label_created_at: string | null;
   created_at: string;
 }
 
@@ -61,13 +57,12 @@ export default function ShippingPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'ready' | 'shipped'>('ready');
   const [unprintedCount, setUnprintedCount] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const statusFilter = tab === 'ready' ? 'shipped' : 'shipped';
-    const params = new URLSearchParams({ status: statusFilter, limit: '50' });
+    // Fetch both paid (needs shipping) and shipped orders
+    const params = new URLSearchParams({ limit: '50' });
     const json = await apiFetch(`/api/admin/accounting/orders?${params}`);
 
     if (json.ok) {
@@ -97,13 +92,13 @@ export default function ShippingPage() {
     } catch { /* skip */ }
 
     setLoading(false);
-  }, [tab]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
-  // Split: orders with labels (ready to pack) vs without (pending shippo)
+  // Split: orders with labels (ready to pack) vs paid without labels (pending shippo)
   const readyToPack = orders.filter((o) => o.label_url);
-  const pendingLabel = orders.filter((o) => !o.label_url && o.status === 'paid');
+  const pendingLabel = orders.filter((o) => !o.label_url && (o.status === 'paid' || o.status === 'pending' || o.status === 'processing'));
 
   const cardStyle: React.CSSProperties = {
     background: '#fff',
@@ -178,7 +173,7 @@ export default function ShippingPage() {
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: 80, color: 'var(--color-warm-gray)' }}>Loading...</div>
-      ) : readyToPack.length === 0 && pendingLabel.length === 0 ? (
+      ) : orders.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 80, color: 'var(--color-warm-gray)' }}>
           <CheckCircle size={40} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
           <p style={{ fontSize: '1rem', fontWeight: 600 }}>All caught up!</p>
@@ -186,7 +181,7 @@ export default function ShippingPage() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {readyToPack.map((order) => {
+          {[...pendingLabel, ...readyToPack].map((order) => {
             const orderItems = items[order.id] ?? [];
             return (
               <div key={order.id} style={cardStyle}>
@@ -202,6 +197,13 @@ export default function ShippingPage() {
                     </span>
                     <span style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)' }}>
                       {timeSince(order.created_at)}
+                    </span>
+                    <span style={{
+                      fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 9999,
+                      background: order.label_url ? '#dcfce7' : '#fef3c7',
+                      color: order.label_url ? '#166534' : '#92400e',
+                    }}>
+                      {order.label_url ? 'Label Ready' : order.status === 'paid' ? 'Needs Label' : order.status}
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
@@ -266,14 +268,9 @@ export default function ShippingPage() {
                         <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: '#6d28d9', marginTop: 2 }}>
                           {order.tracking_number}
                         </div>
-                        {order.shipping_cost != null && (
-                          <div style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginTop: 4 }}>
-                            Label cost: ${order.shipping_cost.toFixed(2)}
-                          </div>
-                        )}
-                        {order.label_created_at && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginTop: 2 }}>
-                            Label created {fmtDate(order.label_created_at)}
+                        {order.shipped_at && (
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginTop: 4 }}>
+                            Shipped {fmtDate(order.shipped_at)}
                           </div>
                         )}
                       </div>
