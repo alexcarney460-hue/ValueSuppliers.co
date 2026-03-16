@@ -428,19 +428,30 @@ function OrderRow({
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-        <a
-          href={`/admin/shipping/print/${order.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
+        {order.label_url ? (
+          <a
+            href={`/admin/shipping/print/${order.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4,
+              padding: '6px 12px', borderRadius: 6,
+              backgroundColor: '#1b3a2d', color: '#fff',
+              fontWeight: 700, fontSize: '0.75rem', textDecoration: 'none',
+            }}
+          >
+            <Printer size={12} /> Print
+          </a>
+        ) : (
+          <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4,
             padding: '6px 12px', borderRadius: 6,
-            backgroundColor: '#1b3a2d', color: '#fff',
-            fontWeight: 700, fontSize: '0.75rem', textDecoration: 'none',
-          }}
-        >
-          <Printer size={12} /> Print
-        </a>
+            backgroundColor: '#fef3c7', color: '#92400e',
+            fontWeight: 700, fontSize: '0.75rem',
+          }}>
+            Needs Label
+          </span>
+        )}
         <button
           onClick={onMarkPrinted}
           disabled={marking}

@@ -4,7 +4,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 
 /**
  * GET /api/admin/shipping/print-queue
- * Returns orders with labels that haven't been printed yet.
+ * Returns orders (paid/processing/shipped) that haven't been printed yet.
  * Query params:
  *   - from: ISO date string (filter created_at >= from)
  *   - to:   ISO date string (filter created_at <= to)
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
         ].join(', '),
         { count: 'exact' },
       )
-      .not('label_url', 'is', null);
+      .in('status', ['paid', 'processing', 'shipped']);
 
     if (!includePrinted) {
       query = query.is('printed_at', null);
