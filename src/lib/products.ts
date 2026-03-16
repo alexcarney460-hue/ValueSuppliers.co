@@ -142,21 +142,21 @@ export function hasCasePricing(product: Product): boolean {
 
 /** Get the per-case price based on total case quantity in the order. */
 export function getCasePriceForQuantity(product: Product, caseQty: number): number {
-  if (caseQty >= 121) return product.distributorPrice ?? product.casePrice ?? product.price;
-  if (caseQty >= 21) return product.wholesalePrice ?? product.casePrice ?? product.price;
+  if (caseQty >= 120) return product.distributorPrice ?? product.casePrice ?? product.price;
+  if (caseQty >= 30) return product.wholesalePrice ?? product.casePrice ?? product.price;
   return product.casePrice ?? product.price;
 }
 
 /** Get the tier name based on total case quantity. */
 export function getTierName(caseQty: number): 'Retail' | 'Wholesale' | 'Distributor' {
-  if (caseQty >= 121) return 'Distributor';
-  if (caseQty >= 21) return 'Wholesale';
+  if (caseQty >= 120) return 'Distributor';
+  if (caseQty >= 30) return 'Wholesale';
   return 'Retail';
 }
 
 /** Get how many more cases needed to reach the next tier, or null if at highest. */
 export function casesToNextTier(caseQty: number): { needed: number; tierName: string; tierPrice?: number } | null {
-  if (caseQty >= 121) return null; // already at highest tier
-  if (caseQty >= 21) return { needed: 121 - caseQty, tierName: 'Distributor' };
-  return { needed: 21 - caseQty, tierName: 'Wholesale' };
+  if (caseQty >= 120) return null; // already at highest tier
+  if (caseQty >= 30) return { needed: 120 - caseQty, tierName: 'Distributor' };
+  return { needed: 30 - caseQty, tierName: 'Wholesale' };
 }
