@@ -106,9 +106,9 @@ export default function AccountPage() {
   }
 
   const accountLabel: Record<string, string> = {
-    retail: 'Retail',
-    wholesale: 'Wholesale (20% off)',
-    distribution: 'Distribution (30% off)',
+    retail: 'Retail ($80/case)',
+    wholesale: 'Wholesale ($70/case)',
+    distribution: 'Distribution ($60/case)',
   };
 
   if (checking) {

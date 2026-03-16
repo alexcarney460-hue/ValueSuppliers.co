@@ -484,10 +484,10 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
       >
         <div>
           <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-forest)', marginBottom: 2 }}>
-            Buying 5+ cases / month?
+            Buying 30+ cases?
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--color-muted-green)' }}>
-            Wholesale accounts save 20% on every order
+            Wholesale accounts save $10/case on every order
           </div>
         </div>
         <Link

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://valuesuppliers.co/commercial' },
   openGraph: {
     title: 'Value Suppliers — Commercial Disposable Gloves at Bulk Pricing',
-    description: 'Nitrile, latex, and vinyl gloves for every industry. Case pricing, wholesale 20% off, distribution 30% off. No minimums.',
+    description: 'Nitrile, latex, and vinyl gloves for every industry. Retail $80/case, wholesale $70/case (30+), distribution $60/case (120+).',
     url: 'https://valuesuppliers.co/commercial',
   },
 };
@@ -36,7 +36,7 @@ const TIER_CARDS = [
     color: 'var(--color-warm-gray)',
     accentBg: '#F7F7F6',
     headline: 'Order What You Need',
-    description: 'No minimums. Buy by the case at competitive pricing — perfect for small businesses and offices.',
+    description: '$80/case ($8/box) for 1–29 cases. No application needed — perfect for small businesses and offices.',
     cta: 'Shop Now',
     href: '/catalog',
   },
@@ -45,7 +45,7 @@ const TIER_CARDS = [
     color: 'var(--color-muted-green)',
     accentBg: '#EDF7F0',
     headline: 'Volume Discounts',
-    description: '20% off retail for businesses ordering 5+ cases per month. Fast restock and priority fulfillment.',
+    description: '$70/case ($7/box) on 30+ case orders. Save $10/case with fast restock and priority fulfillment.',
     cta: 'Get Wholesale Pricing',
     href: '/wholesale',
   },
@@ -54,7 +54,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Enterprise Programs',
-    description: '30% off retail with NET terms, dedicated account rep, and bulk freight pricing for large operations.',
+    description: '$60/case ($6/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk freight pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -71,7 +71,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Is there a minimum order?',
-    a: 'No minimum for retail customers — order as few or as many cases as you need. Wholesale accounts (20% off) typically order 5+ cases per month. Distribution accounts (30% off) are designed for larger recurring orders.',
+    a: 'Retail customers can order 1–29 cases at $80/case with no application needed. Wholesale accounts ($70/case) require 30+ cases per order. Distribution accounts ($60/case) require 120+ cases per order and are designed for commercial operations and resellers.',
   },
   {
     q: 'What are your shipping rates?',
@@ -122,7 +122,7 @@ export default function CommercialPage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Wholesale Available &nbsp;·&nbsp; No Minimums &nbsp;·&nbsp; All Industries Served
+              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Wholesale $70/case &nbsp;·&nbsp; Distribution $60/case &nbsp;·&nbsp; All Industries Served
             </span>
           ))}
         </div>
@@ -695,7 +695,7 @@ export default function CommercialPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             {[
-              { label: 'No Minimums', sub: 'Order as little or as much as you need' },
+              { label: 'Retail from 1 Case', sub: 'No application needed for 1–29 cases' },
               { label: 'Fast Processing', sub: '1–2 business day turnaround on all orders' },
               { label: 'Subscribe & Save', sub: 'Auto-delivery with 10% off every month' },
               { label: 'Dedicated Support', sub: 'Real people, not chatbots, for account help' },

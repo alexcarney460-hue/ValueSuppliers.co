@@ -22,7 +22,7 @@ export async function generateMetadata({
 
   const url = `https://valuesuppliers.co/catalog/${product.slug}`;
   const imgUrl = `https://valuesuppliers.co${product.img}`;
-  const wholesalePrice = (product.price * 0.80).toFixed(2);
+  const wholesalePrice = (product.price * 0.875).toFixed(2);
 
   return {
     title: `${product.name} — Buy by the Case`,
@@ -96,7 +96,7 @@ export default async function ProductPage({
         },
         {
           '@type': 'Offer',
-          name: 'Wholesale (20% off)',
+          name: 'Wholesale ($70/case — save $10/case)',
           price: wholesalePrice.toFixed(2),
           priceCurrency: 'USD',
           availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -106,7 +106,7 @@ export default async function ProductPage({
         },
         {
           '@type': 'Offer',
-          name: 'Distribution (30% off)',
+          name: 'Distribution ($60/case — save $20/case)',
           price: distroPrice.toFixed(2),
           priceCurrency: 'USD',
           availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -200,7 +200,7 @@ export default async function ProductPage({
                 { icon: Package, label: 'Case Pricing', sub: 'Buy by the case' },
                 { icon: Truck, label: 'Fast Restock', sub: 'Reliable fulfillment' },
                 { icon: ShieldCheck, label: 'Pro Grade', sub: 'Industrial specs' },
-                { icon: Tag, label: 'Wholesale Avail.', sub: '20–30% off' },
+                { icon: Tag, label: 'Wholesale Avail.', sub: 'Save $10–$20/case' },
               ].map(({ icon: Icon, label, sub }) => (
                 <div
                   key={label}
@@ -288,9 +288,9 @@ export default async function ProductPage({
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                     <div className="label-caps" style={{ color: 'var(--color-muted-green)', fontSize: '0.65rem' }}>Wholesale</div>
-                    <span style={{ backgroundColor: 'var(--color-sage-light)', color: 'var(--color-forest)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>20% OFF</span>
+                    <span style={{ backgroundColor: 'var(--color-sage-light)', color: 'var(--color-forest)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>SAVE $10/CASE</span>
                   </div>
-                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>5+ cases/month · Approved accounts only</div>
+                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>30+ cases · Approved accounts only</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-forest)' }}>
@@ -317,9 +317,9 @@ export default async function ProductPage({
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                     <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem' }}>Distribution</div>
-                    <span style={{ backgroundColor: '#FEF3DC', color: 'var(--color-amber)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>30% OFF</span>
+                    <span style={{ backgroundColor: '#FEF3DC', color: 'var(--color-amber)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>SAVE $20/CASE</span>
                   </div>
-                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>25+ cases/month · NET 30 terms available</div>
+                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>120+ cases · NET 30 terms available</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-amber)' }}>
@@ -522,7 +522,7 @@ export default async function ProductPage({
             Buying in Volume?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: 28 }}>
-            Wholesale accounts get 20% off. Distribution accounts get 30% off with NET 30 terms. Apply in minutes.
+            Wholesale accounts pay $70/case (save $10/case). Distribution accounts pay $60/case (save $20/case) with NET 30 terms. Apply in minutes.
           </p>
           <div className="vs-btn-group" style={{ maxWidth: 380, margin: '0 auto' }}>
             <Link

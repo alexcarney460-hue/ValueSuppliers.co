@@ -33,9 +33,9 @@ type AdminConfig = {
 };
 
 const PRICING_TIERS = [
-  { name: 'Retail', discount: '0%', label: 'Full price', color: '#1B3A2D', minOrder: '1 case' },
-  { name: 'Wholesale', discount: '20%', label: '20% off retail', color: '#C8922A', minOrder: '5 cases' },
-  { name: 'Distribution', discount: '30%', label: '30% off retail', color: '#1C1C1C', minOrder: '25 cases' },
+  { name: 'Retail', discount: '$80/case', label: '$8/box · 1–29 cases', color: '#1B3A2D', minOrder: '1 case' },
+  { name: 'Wholesale', discount: '$70/case', label: 'Save $10/case · $7/box', color: '#C8922A', minOrder: '30 cases' },
+  { name: 'Distribution', discount: '$60/case', label: 'Save $20/case · $6/box', color: '#1C1C1C', minOrder: '120 cases' },
 ];
 
 /* helpers */

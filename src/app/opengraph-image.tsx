@@ -346,8 +346,8 @@ export default function Image() {
               <span style={{ color: '#4A7C59', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
                 Wholesale
               </span>
-              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>20% Off</span>
-              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>5+ cases/mo</span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>$70/case</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>30+ cases</span>
             </div>
             <div
               style={{
@@ -365,8 +365,8 @@ export default function Image() {
               <span style={{ color: '#C8922A', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
                 Distribution
               </span>
-              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>30% Off</span>
-              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>NET 30 terms</span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>$60/case</span>
+              <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>120+ cases</span>
             </div>
           </div>
         </div>

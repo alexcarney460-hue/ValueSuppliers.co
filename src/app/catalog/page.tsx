@@ -8,7 +8,7 @@ import { formatPrice } from '@/lib/pricing';
 export const metadata: Metadata = {
   title: 'Product Catalog — Gloves, Trimmers & Cannabis Supplies',
   description:
-    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Plus cannabis trimming scissors, precision snips, and harvest accessories. Retail, wholesale (20% off), and distribution (30% off) pricing available.',
+    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Plus cannabis trimming scissors, precision snips, and harvest accessories. Retail $80/case, wholesale $70/case (30+ cases), distribution $60/case (120+ cases).',
   keywords: ['buy nitrile gloves bulk', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'glove catalog', 'wholesale gloves online'],
   openGraph: {
     title: 'Product Catalog | ValueSuppliers.co',
@@ -182,7 +182,7 @@ export default function CatalogPage() {
           <div style={{ position: 'relative' }}>
             <div className="label-caps" style={{ color: 'rgba(200,146,42,0.85)', fontSize: '0.65rem', marginBottom: 10 }}>Volume Pricing</div>
             <h3 className="font-display" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#fff', marginBottom: 8, lineHeight: 1.1 }}>
-              Wholesale saves 20%. Distribution saves 30%.
+              Wholesale $70/case. Distribution $60/case.
             </h3>
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.88rem', lineHeight: 1.6 }}>
               Apply online — approval within 1 business day.

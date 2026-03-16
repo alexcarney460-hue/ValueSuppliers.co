@@ -1,10 +1,10 @@
 import type { AccountType } from '@/lib/account';
 
-// Same discount structure as BlueLabel Wholesale
+// Discount tiers — Wholesale saves $10/case, Distribution saves $20/case off $80 retail
 export const DISCOUNTS: Record<AccountType, number> = {
-  retail:       0,     // full price
-  wholesale:    0.20,  // 20% off retail
-  distribution: 0.30,  // 30% off retail
+  retail:       0,      // full price ($80/case, $8/box)
+  wholesale:    0.125,  // $70/case ($7/box) — save $10/case
+  distribution: 0.25,   // $60/case ($6/box) — save $20/case
 };
 
 export function roundMoney(n: number): number {
@@ -22,13 +22,13 @@ export function formatPrice(n: number): string {
 
 // Minimum order quantities per tier
 export const MIN_ORDER: Record<AccountType, number> = {
-  retail:       1,    // 1 case minimum
-  wholesale:    5,    // 5 cases minimum
-  distribution: 25,   // 25 cases minimum
+  retail:       1,     // 1–29 cases
+  wholesale:    30,    // 30+ cases
+  distribution: 120,   // 120+ cases
 };
 
-// Qualification thresholds (monthly case volume to apply for each tier)
+// Qualification thresholds (case volume to qualify for each tier)
 export const TIER_THRESHOLDS = {
-  wholesale:    { min: 5,  label: '5+ cases / month' },
-  distribution: { min: 25, label: '25+ cases / month' },
+  wholesale:    { min: 30,  label: '30+ cases' },
+  distribution: { min: 120, label: '120+ cases' },
 };

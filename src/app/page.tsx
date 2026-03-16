@@ -7,11 +7,11 @@ import AnimateIn from '@/components/AnimateIn';
 export const metadata: Metadata = {
   title: 'Professional Gloves & Cannabis Trimming Supplies — Buy by the Case',
   description:
-    'ValueSuppliers.co: professional-grade nitrile, latex, and vinyl disposable gloves and cannabis trimming equipment. No minimums. Wholesale 20% off · Distribution 30% off. Serving cannabis, food service, medical, and industrial industries nationwide.',
+    'ValueSuppliers.co: professional-grade nitrile, latex, and vinyl disposable gloves and cannabis trimming equipment. Retail from $80/case. Wholesale $70/case (30+ cases). Distribution $60/case (120+ cases). Serving cannabis, food service, medical, and industrial industries nationwide.',
   alternates: { canonical: 'https://valuesuppliers.co' },
   openGraph: {
     title: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies',
-    description: 'Case pricing for retail, wholesale, and distribution. Nitrile, latex, vinyl gloves and cannabis trimming tools. No minimums to start.',
+    description: 'Case pricing for retail ($80/case), wholesale ($70/case, 30+), and distribution ($60/case, 120+). Nitrile, latex, vinyl gloves and cannabis trimming tools.',
     url: 'https://valuesuppliers.co',
   },
 };
@@ -22,7 +22,7 @@ const TIER_CARDS = [
     color: 'var(--color-warm-gray)',
     accentBg: '#F7F7F6',
     headline: 'Start Small, Stock Smart',
-    description: 'No minimums to start. Order by the case at competitive retail pricing.',
+    description: '$80/case ($8/box). Order 1–29 cases at retail pricing — no application needed.',
     cta: 'Shop Now',
     href: '/catalog',
   },
@@ -31,7 +31,7 @@ const TIER_CARDS = [
     color: 'var(--color-muted-green)',
     accentBg: '#EDF7F0',
     headline: 'Case Pricing for the Trade',
-    description: 'Hydro stores, dispensaries, and grows get volume discounts and fast restock.',
+    description: '$70/case ($7/box) on 30+ case orders. Save $10/case with fast restock for hydro stores, dispensaries, and grows.',
     cta: 'Get Wholesale Pricing',
     href: '/wholesale',
   },
@@ -40,7 +40,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Full Distribution Programs',
-    description: 'NET terms, dedicated rep, and bulk pricing for commercial operations and resellers.',
+    description: '$60/case ($6/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -71,11 +71,11 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What is the minimum order quantity?',
-    a: 'There is no minimum order for retail customers — order as few or as many cases as you need. Wholesale accounts require an approved application and typically reorder 5+ cases per month to maintain pricing. Distribution accounts are for commercial operations placing large recurring orders.',
+    a: 'Retail customers can order 1–29 cases at $80/case with no application needed. Wholesale pricing ($70/case) requires 30+ cases per order and an approved application. Distribution pricing ($60/case) requires 120+ cases per order and is designed for commercial operations and resellers.',
   },
   {
     q: 'How much do wholesale accounts save?',
-    a: 'Wholesale accounts save 20% off retail pricing on every product, every order. Distribution accounts save 30% off retail. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
+    a: 'Wholesale accounts pay $70/case ($7/box) — saving $10/case off the $80 retail price on 30+ case orders. Distribution accounts pay $60/case ($6/box) — saving $20/case on 120+ case orders. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
   },
   {
     q: 'Do you ship to all 50 states?',
@@ -124,7 +124,7 @@ export default function HomePage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              Professional Grade &nbsp;·&nbsp; Case Pricing &nbsp;·&nbsp; Fast Restock &nbsp;·&nbsp; Wholesale Available &nbsp;·&nbsp; No Minimums to Start &nbsp;·&nbsp; Supplied for the Grow
+              Professional Grade &nbsp;·&nbsp; Case Pricing &nbsp;·&nbsp; Fast Restock &nbsp;·&nbsp; Wholesale $70/case &nbsp;·&nbsp; Distribution $60/case &nbsp;·&nbsp; Supplied for the Grow
             </span>
           ))}
         </div>
@@ -199,7 +199,7 @@ export default function HomePage() {
               style={{ fontSize: '1.05rem', color: 'var(--color-warm-gray)', maxWidth: 420, lineHeight: 1.8, marginBottom: 40 }}
             >
               Professional-grade disposable gloves and cannabis trimming equipment.
-              Case pricing for every operation size — no minimums to start.
+              Case pricing for every operation size — retail, wholesale, and distribution tiers.
             </p>
 
             <div className="vs-fade-up-3" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>

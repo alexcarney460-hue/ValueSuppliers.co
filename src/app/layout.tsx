@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s | ValueSuppliers.co',
   },
   description:
-    'Professional-grade disposable gloves and cannabis trimming equipment. Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Serving cannabis, food service, medical, and industrial operations nationwide.',
+    'Professional-grade disposable gloves and cannabis trimming equipment. Nitrile gloves by the case. Wholesale pricing at 30+ cases · Distribution pricing at 120+ cases. Serving cannabis, food service, medical, and industrial operations nationwide.',
   keywords: [
     'disposable gloves wholesale',
     'nitrile gloves bulk',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ValueSuppliers.co — Professional Gloves & Cannabis Supplies',
     description:
-      'Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Cannabis trimming scissors and accessories.',
+      'Nitrile gloves by the case. Wholesale $70/case (30+ cases) · Distribution $60/case (120+ cases). Cannabis trimming supplies and accessories.',
     creator: '@valuesuppliers',
     images: ['/og-image.jpg'],
   },

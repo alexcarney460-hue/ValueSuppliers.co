@@ -5,20 +5,20 @@ import AnimateIn from '@/components/AnimateIn';
 import WholesaleForm from '@/components/forms/WholesaleForm';
 
 export const metadata: Metadata = {
-  title: 'Wholesale Pricing — 20% Off Every Order',
+  title: 'Wholesale Pricing — $70/Case (30+ Cases)',
   description:
-    'Wholesale accounts at ValueSuppliers.co save 20% on every order. Nitrile, latex, and vinyl gloves by the case. Priority fulfillment, dedicated support, and NET 30 available. Cannabis dispensaries, hydro stores, and grow operations welcome.',
+    'Wholesale accounts at ValueSuppliers.co get $70/case pricing on 30+ case orders. Nitrile gloves by the case. Priority fulfillment, dedicated support, and NET 30 available. Cannabis dispensaries, hydro stores, and grow operations welcome.',
   keywords: ['wholesale gloves', 'bulk nitrile gloves', 'wholesale disposable gloves', 'cannabis dispensary supplies', 'hydro store gloves', 'wholesale glove supplier'],
   openGraph: {
-    title: 'Wholesale Glove Pricing — 20% Off | ValueSuppliers.co',
-    description: 'Wholesale accounts save 20% on all products. Priority fulfillment and dedicated support. Apply online — approval within 1 business day.',
+    title: 'Wholesale Glove Pricing — $70/Case | ValueSuppliers.co',
+    description: 'Wholesale accounts get $70/case on 30+ case orders. Priority fulfillment and dedicated support. Apply online — approval within 1 business day.',
     url: 'https://valuesuppliers.co/wholesale',
   },
   alternates: { canonical: 'https://valuesuppliers.co/wholesale' },
 };
 
 const BENEFITS = [
-  { icon: DollarSign, title: 'Volume Discounts', desc: 'Case pricing drops further at 10, 25, and 50 case orders.' },
+  { icon: DollarSign, title: 'Volume Discounts', desc: '$70/case at 30+ cases. Distribution pricing ($60/case) at 120+ cases.' },
   { icon: Truck, title: 'Priority Fulfillment', desc: 'Wholesale accounts get restocked before retail.' },
   { icon: BadgeCheck, title: 'Dedicated Support', desc: 'Direct line to your account rep for reorders and custom requests.' },
   { icon: User, title: 'Net 30 Available', desc: 'Qualify for NET terms after your first three orders.' },
@@ -43,12 +43,12 @@ export default function WholesalePage() {
             Case Pricing for the Trade.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.05rem', maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.8 }}>
-            Hydro stores, dispensaries, and commercial grows — apply once and get 20% off every product, every order.
+            Hydro stores, dispensaries, and commercial grows — apply once and get $70/case pricing on orders of 30+ cases.
           </p>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: 'rgba(200,146,42,0.08)', border: '1px solid rgba(200,146,42,0.25)', borderRadius: 16, padding: '18px 32px' }}>
-            <span className="font-display" style={{ fontSize: '2.25rem', color: 'var(--color-amber)', lineHeight: 1 }}>20%</span>
+            <span className="font-display" style={{ fontSize: '2.25rem', color: 'var(--color-amber)', lineHeight: 1 }}>$70</span>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ color: 'var(--color-charcoal)', fontWeight: 700, fontSize: '0.9rem' }}>Off Retail — Wholesale Tier</div>
+              <div style={{ color: 'var(--color-charcoal)', fontWeight: 700, fontSize: '0.9rem' }}>/case — Wholesale Tier (30+ cases)</div>
               <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.8rem' }}>Apply online · Approval in 1 business day</div>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function WholesalePage() {
             Looking for Distribution Pricing?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 36, lineHeight: 1.75 }}>
-            Distribution accounts save 30% off retail with NET 30 terms and a dedicated rep.
+            Distribution accounts get $60/case pricing (120+ cases) with NET 30 terms and a dedicated rep.
           </p>
           <Link
             href="/distribution"

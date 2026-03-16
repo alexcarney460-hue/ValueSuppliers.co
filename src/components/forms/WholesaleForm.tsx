@@ -51,10 +51,10 @@ export default function WholesaleForm() {
             <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Estimated Monthly Volume</label>
             <select required value={values.monthly_volume} onChange={(e) => onChange('monthly_volume', e.target.value)} style={inputStyle}>
               <option value="">Select volume range</option>
-              <option>1-5 cases / month</option>
-              <option>6-25 cases / month</option>
-              <option>26-100 cases / month</option>
-              <option>100+ cases / month</option>
+              <option>30-59 cases</option>
+              <option>60-119 cases</option>
+              <option>120-499 cases</option>
+              <option>500+ cases</option>
             </select>
           </div>
           <button type="submit" disabled={status === 'submitting'} style={{
