@@ -27,7 +27,7 @@ export async function GET(req: Request) {
           'shipping_city', 'shipping_state', 'shipping_zip', 'shipping_country',
           'label_url', 'tracking_number', 'tracking_url',
           'shipping_carrier', 'shipping_service', 'shipping_cost',
-          'shipping_status', 'shipped_at', 'printed_at', 'label_created_at',
+          'shipping_status', 'shipped_at', 'label_created_at',
           'created_at', 'updated_at',
         ].join(', '),
         { count: 'exact' },
