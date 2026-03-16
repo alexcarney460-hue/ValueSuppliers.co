@@ -78,8 +78,8 @@ export default function AffiliatePage() {
 
       {/* HERO */}
       <section style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '72px 24px 80px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '5%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(200,146,42,0.07)', filter: 'blur(80px)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', left: '3%', width: 300, height: 300, borderRadius: '50%', background: 'rgba(27,58,45,0.05)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-20%', right: '5%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(37,99,235,0.07)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', left: '3%', width: 300, height: 300, borderRadius: '50%', background: 'rgba(30,58,95,0.05)', filter: 'blur(60px)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <span className="label-caps" style={{ color: 'var(--color-amber)', display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <span style={{ width: 24, height: 1.5, backgroundColor: 'var(--color-amber)', display: 'inline-block', borderRadius: 99 }} />
@@ -201,7 +201,7 @@ export default function AffiliatePage() {
           </div>
 
           <AnimateIn>
-            <div style={{ marginTop: 24, padding: '20px 28px', backgroundColor: 'rgba(200,146,42,0.06)', border: '1px solid rgba(200,146,42,0.22)', borderRadius: 14 }}>
+            <div style={{ marginTop: 24, padding: '20px 28px', backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.22)', borderRadius: 14 }}>
               <p style={{ fontSize: '0.875rem', color: 'var(--color-charcoal)', lineHeight: 1.7, margin: 0 }}>
                 <strong style={{ color: 'var(--color-amber)' }}>NET-7 Payouts</strong> — Available for Elite & Apex partners. Get paid within 7 days subject to account review. Perfect for high-volume partners who need faster cash flow.
               </p>
@@ -352,7 +352,7 @@ export default function AffiliatePage() {
       {/* Compliance notice */}
       <section style={{ backgroundColor: '#FAFAFA', padding: '40px 24px', borderBottom: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <div style={{ backgroundColor: 'rgba(200,146,42,0.06)', border: '1px solid rgba(200,146,42,0.22)', borderRadius: 16, padding: '24px 28px', textAlign: 'center' }}>
+          <div style={{ backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.22)', borderRadius: 16, padding: '24px 28px', textAlign: 'center' }}>
             <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem', display: 'block', marginBottom: 8 }}>
               Platform Compliance
             </span>
@@ -368,7 +368,7 @@ export default function AffiliatePage() {
         className="vs-dot-grid"
         style={{ backgroundColor: 'var(--color-forest)', padding: '80px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}
       >
-        <div style={{ position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)', width: 500, height: 300, borderRadius: '50%', background: 'rgba(200,146,42,0.09)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)', width: 500, height: 300, borderRadius: '50%', background: 'rgba(37,99,235,0.09)', filter: 'blur(80px)', pointerEvents: 'none' }} />
         <AnimateIn style={{ maxWidth: 560, margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <h2 className="font-display" style={{ color: '#fff', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginBottom: 16, lineHeight: 1.05 }}>
             Want Volume Pricing Instead?

@@ -318,7 +318,7 @@ export default function CartDrawer() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 4,
-                              backgroundColor: '#EDF7F0',
+                              backgroundColor: '#EFF6FF',
                               color: 'var(--color-muted-green)',
                               fontSize: '0.65rem',
                               fontWeight: 700,
@@ -352,8 +352,8 @@ export default function CartDrawer() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 3,
-                              backgroundColor: item.purchaseUnit === 'case' ? '#F0F4FF' : 'var(--color-sage-light)',
-                              color: item.purchaseUnit === 'case' ? '#4A6FA5' : 'var(--color-warm-gray)',
+                              backgroundColor: item.purchaseUnit === 'case' ? '#EFF6FF' : 'var(--color-sage-light)',
+                              color: item.purchaseUnit === 'case' ? '#2563EB' : 'var(--color-warm-gray)',
                               fontSize: '0.65rem',
                               fontWeight: 600,
                               padding: '3px 8px',
@@ -433,8 +433,8 @@ export default function CartDrawer() {
                   display: 'flex',
                   gap: 10,
                   alignItems: 'flex-start',
-                  backgroundColor: '#FFF8EC',
-                  border: '1px solid rgba(200,146,42,0.3)',
+                  backgroundColor: '#FEF3C7',
+                  border: '1px solid rgba(37,99,235,0.3)',
                   borderRadius: 8,
                   padding: '10px 12px',
                   marginBottom: 16,
@@ -454,7 +454,7 @@ export default function CartDrawer() {
                   display: 'flex',
                   gap: 8,
                   alignItems: 'center',
-                  backgroundColor: '#EDF7F0',
+                  backgroundColor: '#EFF6FF',
                   borderRadius: 8,
                   padding: '9px 12px',
                   marginBottom: 14,
@@ -475,7 +475,7 @@ export default function CartDrawer() {
                   gap: 8,
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  backgroundColor: currentTier === 'Distributor' ? '#F5F0FF' : currentTier === 'Wholesale' ? '#F0F8FF' : 'var(--color-sage-light)',
+                  backgroundColor: currentTier === 'Distributor' ? '#EFF6FF' : currentTier === 'Wholesale' ? '#EFF6FF' : 'var(--color-sage-light)',
                   borderRadius: 8,
                   padding: '9px 12px',
                   marginBottom: 14,
@@ -483,11 +483,11 @@ export default function CartDrawer() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Package size={13} color={currentTier === 'Distributor' ? '#6A5ACD' : currentTier === 'Wholesale' ? '#4682B4' : 'var(--color-forest)'} />
+                  <Package size={13} color={currentTier === 'Distributor' ? '#1E3A5F' : currentTier === 'Wholesale' ? '#2563EB' : 'var(--color-forest)'} />
                   <span style={{
                     fontSize: '0.75rem',
                     fontWeight: 700,
-                    color: currentTier === 'Distributor' ? '#6A5ACD' : currentTier === 'Wholesale' ? '#4682B4' : 'var(--color-forest)',
+                    color: currentTier === 'Distributor' ? '#1E3A5F' : currentTier === 'Wholesale' ? '#2563EB' : 'var(--color-forest)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                   }}>
@@ -504,8 +504,8 @@ export default function CartDrawer() {
             {nextTier && totalCaseCount > 0 && (
               <div
                 style={{
-                  backgroundColor: '#FFFBEB',
-                  border: '1px solid rgba(200,146,42,0.2)',
+                  backgroundColor: '#FEF3C7',
+                  border: '1px solid rgba(37,99,235,0.2)',
                   borderRadius: 8,
                   padding: '9px 12px',
                   marginBottom: 14,
@@ -516,7 +516,7 @@ export default function CartDrawer() {
                 }}
               >
                 Add {nextTier.needed} more case{nextTier.needed !== 1 ? 's' : ''} to unlock{' '}
-                <span style={{ color: nextTier.tierName === 'Distributor' ? '#6A5ACD' : '#4682B4', fontWeight: 700 }}>
+                <span style={{ color: nextTier.tierName === 'Distributor' ? '#1E3A5F' : '#2563EB', fontWeight: 700 }}>
                   {nextTier.tierName}
                 </span>{' '}
                 pricing!
@@ -618,7 +618,7 @@ export default function CartDrawer() {
                         alignItems: 'center',
                         gap: 10,
                         padding: '10px 12px',
-                        backgroundColor: selectedRate?.id === rate.id ? '#EDF7F0' : '#fff',
+                        backgroundColor: selectedRate?.id === rate.id ? '#EFF6FF' : '#fff',
                         border: selectedRate?.id === rate.id ? '2px solid var(--color-forest)' : '1px solid var(--color-border)',
                         borderRadius: 8,
                         cursor: 'pointer',

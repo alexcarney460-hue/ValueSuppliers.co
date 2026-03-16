@@ -1,28 +1,29 @@
 /* ============================================
-   ValueSuppliers.co — Design Tokens v1.0
+   ValueSuppliers.co — Design Tokens v2.0
+   Industrial Blue Palette
    ============================================ */
 
 :root {
   /* ─── Colors ─── */
 
-  /* Primary */
-  --color-forest:        #1B3A2D;
-  --color-forest-light:  #24503D;
-  --color-forest-dark:   #122A20;
-  --color-amber:         #C8922A;
-  --color-amber-hover:   #A67320;
-  --color-amber-light:   #F0D9A8;
-  --color-charcoal:      #1C1C1C;
-  --color-off-white:     #F5F4F0;
+  /* Primary — Industrial Blue */
+  --color-forest:        #1E3A5F;
+  --color-forest-light:  #2563EB;
+  --color-forest-dark:   #0F172A;
+  --color-amber:         #2563EB;
+  --color-amber-hover:   #1D4ED8;
+  --color-amber-light:   #DBEAFE;
+  --color-charcoal:      #0F172A;
+  --color-off-white:     #F8FAFC;
   --color-white:         #FFFFFF;
 
   /* Secondary */
-  --color-muted-green:   #4A7C59;
-  --color-sage-light:    #E8EDE9;
-  --color-warm-gray:     #9A9590;
-  --color-border:        #E2E0DB;
-  --color-border-dark:   #C8C4BE;
-  --color-alert-red:     #C0392B;
+  --color-muted-green:   #2563EB;
+  --color-sage-light:    #EFF6FF;
+  --color-warm-gray:     #64748B;
+  --color-border:        #E2E8F0;
+  --color-border-dark:   #CBD5E1;
+  --color-alert-red:     #DC2626;
 
   /* Semantic */
   --color-bg-primary:    var(--color-off-white);
@@ -34,7 +35,7 @@
   --color-text-inverse:  var(--color-white);
   --color-accent:        var(--color-amber);
   --color-accent-hover:  var(--color-amber-hover);
-  --color-success:       var(--color-muted-green);
+  --color-success:       #16A34A;
 
   /* Tier colors */
   --color-tier-retail:   var(--color-warm-gray);
@@ -100,7 +101,7 @@
   --shadow-md:  0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
   --shadow-lg:  0 10px 30px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
   --shadow-xl:  0 20px 50px rgba(0,0,0,0.12);
-  --shadow-amber:0 4px 20px rgba(200,146,42,0.25);
+  --shadow-amber:0 4px 20px rgba(37,99,235,0.25);
 
   /* ─── Transitions ─── */
   --transition-fast:   150ms ease;

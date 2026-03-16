@@ -49,7 +49,7 @@ export default function CatalogPage() {
       {/* Header */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '56px 24px 48px', position: 'relative', overflow: 'hidden' }}>
         {/* Subtle amber glow */}
-        <div style={{ position: 'absolute', top: '-40%', right: '5%', width: 400, height: 400, borderRadius: '50%', background: 'rgba(200,146,42,0.07)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-40%', right: '5%', width: 400, height: 400, borderRadius: '50%', background: 'rgba(37,99,235,0.07)', filter: 'blur(80px)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
           <span className="label-caps" style={{ color: 'var(--color-amber)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 24, height: 1.5, backgroundColor: 'var(--color-amber)', display: 'inline-block' }} />
@@ -178,9 +178,9 @@ export default function CatalogPage() {
             position: 'relative',
           }}
         >
-          <div style={{ position: 'absolute', top: '-30%', right: '10%', width: 300, height: 300, borderRadius: '50%', background: 'rgba(200,146,42,0.10)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '-30%', right: '10%', width: 300, height: 300, borderRadius: '50%', background: 'rgba(37,99,235,0.10)', filter: 'blur(60px)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative' }}>
-            <div className="label-caps" style={{ color: 'rgba(200,146,42,0.85)', fontSize: '0.65rem', marginBottom: 10 }}>Volume Pricing</div>
+            <div className="label-caps" style={{ color: 'rgba(37,99,235,0.85)', fontSize: '0.65rem', marginBottom: 10 }}>Volume Pricing</div>
             <h3 className="font-display" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#fff', marginBottom: 8, lineHeight: 1.1 }}>
               Wholesale saves 20%. Distribution saves 30%.
             </h3>
@@ -252,7 +252,7 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[number] }) {
         }}
       >
         <div className="vs-img-shine" style={{ height: 180, position: 'relative', backgroundColor: 'var(--color-sage-light)', flexShrink: 0 }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(200,146,42,0.09) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 1 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(37,99,235,0.09) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 1 }} />
           <Image
             src={product.img}
             alt={product.name}

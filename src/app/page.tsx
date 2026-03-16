@@ -29,7 +29,7 @@ const TIER_CARDS = [
   {
     tier: 'Wholesale',
     color: 'var(--color-muted-green)',
-    accentBg: '#EDF7F0',
+    accentBg: '#EFF6FF',
     headline: 'Case Pricing for the Trade',
     description: 'Hydro stores, dispensaries, and grows get volume discounts and fast restock.',
     cta: 'Get Wholesale Pricing',
@@ -159,8 +159,8 @@ export default function HomePage() {
         </div>
 
         {/* Ambient glow blobs */}
-        <div className="vs-glow-amber" style={{ width: 520, height: 520, top: '-20%', right: '6%', background: 'rgba(200,146,42,0.07)' }} />
-        <div className="vs-glow-amber" style={{ width: 280, height: 280, bottom: '-5%', left: '4%', background: 'rgba(27,58,45,0.05)' }} />
+        <div className="vs-glow-amber" style={{ width: 520, height: 520, top: '-20%', right: '6%', background: 'rgba(37,99,235,0.07)' }} />
+        <div className="vs-glow-amber" style={{ width: 280, height: 280, bottom: '-5%', left: '4%', background: 'rgba(30,58,95,0.05)' }} />
 
         <div
           style={{
@@ -288,7 +288,7 @@ export default function HomePage() {
                 position: 'absolute',
                 inset: '-18%',
                 borderRadius: '50%',
-                background: 'rgba(200,146,42,0.12)',
+                background: 'rgba(37,99,235,0.12)',
                 filter: 'blur(72px)',
                 pointerEvents: 'none',
                 zIndex: 0,
@@ -377,7 +377,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURE BAR ── */}
-      <section style={{ backgroundColor: '#F8FAF8', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', padding: '32px 24px' }}>
+      <section style={{ backgroundColor: '#F8FAFC', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', padding: '32px 24px' }}>
         <div
           style={{
             maxWidth: 1100,
@@ -550,7 +550,7 @@ export default function HomePage() {
                         style={{
                           position: 'absolute',
                           inset: 0,
-                          background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(200,146,42,0.10) 0%, transparent 70%)',
+                          background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(37,99,235,0.10) 0%, transparent 70%)',
                           pointerEvents: 'none',
                           zIndex: 1,
                         }}
@@ -807,11 +807,11 @@ export default function HomePage() {
         {/* Ambient glow */}
         <div
           className="vs-glow-amber"
-          style={{ width: 640, height: 400, top: '-30%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(200,146,42,0.09)' }}
+          style={{ width: 640, height: 400, top: '-30%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(37,99,235,0.09)' }}
         />
 
         <AnimateIn style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <span className="label-caps" style={{ color: 'rgba(200,146,42,0.85)', display: 'block', marginBottom: 20 }}>
+          <span className="label-caps" style={{ color: 'rgba(37,99,235,0.85)', display: 'block', marginBottom: 20 }}>
             Get Started Today
           </span>
           <h2
