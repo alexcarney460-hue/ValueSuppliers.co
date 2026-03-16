@@ -53,10 +53,8 @@ const FEATURE_ITEMS = [
 ];
 
 const PRODUCT_TEASERS = [
-  { slug: 'nitrile-4mil', category: 'Gloves', name: 'Nitrile Disposable Gloves', detail: '5 mil · XS–XXL · 100 ct', price: '$18.99', badge: 'Best Seller', img: '/products/product-1.avif' },
-  { slug: 'latex-exam-gloves', category: 'Gloves', name: 'Latex Exam Gloves', detail: '5 mil · S–XL · 100 ct', price: '$14.99', badge: null, img: '/products/product-3.avif' },
-  { slug: 'black-nitrile-4mil', category: 'Gloves', name: 'Black Nitrile Gloves', detail: '5 mil · S–XXL · 100 ct', price: '$21.99', badge: null, img: '/products/product-5.avif' },
-  { slug: 'nitrile-xl-box', category: 'Gloves', name: 'XL Nitrile Gloves — Box', detail: 'XL · 100 ct', price: '$22.99', badge: null, img: '/products/product-6.avif' },
+  { slug: 'nitrile-5mil-box', category: 'Gloves', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$10.00', badge: null, img: '/products/product-5.avif' },
+  { slug: 'nitrile-5mil-case', category: 'Gloves', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$80.00', badge: 'Best Value', img: '/products/product-3.avif' },
 ];
 
 const SERVICE_FEATURES = [
@@ -309,7 +307,7 @@ export default function HomePage() {
                 }}
               >
                 <Image
-                  src="/products/product-1.avif"
+                  src="/products/product-5.avif"
                   alt="Professional Nitrile Gloves"
                   fill
                   style={{ objectFit: 'cover' }}
@@ -345,7 +343,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-charcoal)' }}>Best Seller</div>
-                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>5 mil Nitrile — from $18.99</div>
+                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>5 mil Nitrile — from $10.00/box</div>
                 </div>
               </div>
 

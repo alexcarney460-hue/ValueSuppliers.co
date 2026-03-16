@@ -23,15 +23,8 @@ export const SHIPPING_TIERS: ShippingTier[] = [
 // Default product weights (lbs per unit/case/box)
 // Used as fallback when DB doesn't have weight_lbs
 export const DEFAULT_WEIGHTS: Record<string, number> = {
-  'nitrile-4mil':             6.5,
-  'nitrile-6mil':             7.5,
-  'latex-exam-gloves':        5.5,
-  'vinyl-gloves':             5.0,
-  'black-nitrile-4mil':       6.5,
-  'nitrile-xl-box':           7.0,
-  'curved-trimming-scissors':  0.4,
-  'bonsai-precision-snips':    0.3,
-  'trimming-tray-large':       2.5,
+  'nitrile-5mil-box':          6.5,
+  'nitrile-5mil-case':        65.0,
 };
 
 export type ShippingEstimate = {
