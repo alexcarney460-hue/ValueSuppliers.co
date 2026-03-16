@@ -10,6 +10,7 @@ import SearchModal from '@/components/SearchModal';
 
 const NAV_LINKS = [
   { label: 'Catalog', href: '/catalog' },
+  { label: 'Services', href: '/services' },
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'Distribution', href: '/distribution' },
   { label: 'Affiliate', href: '/affiliate' },

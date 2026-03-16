@@ -15,10 +15,7 @@ const navItems = [
   { label: 'Settings', href: '/admin/settings' },
 ];
 
-const ADMIN_EMAILS = [
-  'gardenablaze@gmail.com',
-  'bee@valuesuppliersdirect.com',
-];
+const ADMIN_EMAIL = 'gardenablaze@gmail.com';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -29,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const supabase = getSupabase();
       const { data } = await supabase.auth.getUser();
       const email = data.user?.email ?? '';
-      setAuthorized(ADMIN_EMAILS.includes(email.toLowerCase()));
+      setAuthorized(email.toLowerCase() === ADMIN_EMAIL);
     })();
   }, []);
 

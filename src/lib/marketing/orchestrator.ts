@@ -61,7 +61,7 @@ Analyze this brief and output a JSON plan with:
 Build an audience segment for this campaign:
 "${audienceDesc}"
 
-Our CRM has these lists: Commercial Accounts (list_id=1), Distribution Partners (list_id=2).
+Our CRM has these lists: Cannabis Grows (list_id=1), Grow Distributors (list_id=2).
 Contacts have: email, phone, lead_status, lifecycle_stage, city, state, source.
 Companies have: name, domain, city, state.
 
