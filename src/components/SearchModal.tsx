@@ -76,7 +76,7 @@ export default function SearchModal({ onClose }: Props) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search gloves, scissors, accessories..."
+            placeholder="Search gloves by type, size, material..."
             style={{
               flex: 1,
               border: 'none',

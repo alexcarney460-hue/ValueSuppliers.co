@@ -40,9 +40,10 @@ export default function WholesaleForm() {
             <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Business Type</label>
             <select required value={values.business_type} onChange={(e) => onChange('business_type', e.target.value)} style={inputStyle}>
               <option value="">Select your business type</option>
-              <option>Hydro Store / Garden Center</option>
-              <option>Licensed Cannabis Grow</option>
-              <option>Dispensary</option>
+              <option>Restaurant / Food Service</option>
+              <option>Medical / Dental Office</option>
+              <option>Janitorial / Facilities</option>
+              <option>Automotive / Trades</option>
               <option>Reseller / Distributor</option>
               <option>Other</option>
             </select>

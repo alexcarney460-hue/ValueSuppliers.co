@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 Build an audience segment for:
 "${body.description}"
 
-Our CRM lists: Cannabis Grows (list_id=1), Grow Distributors (list_id=2).
+Our CRM lists: Commercial Accounts (list_id=1), Distribution Partners (list_id=2).
 Contact fields: email, phone, first_name, last_name, lead_status, lifecycle_stage, city, state, source.
 
 Output JSON:

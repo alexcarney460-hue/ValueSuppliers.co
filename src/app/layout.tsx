@@ -19,24 +19,24 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
-    default: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies',
+    default: 'ValueSuppliers.co — Commercial & Industrial Disposable Gloves',
     template: '%s | ValueSuppliers.co',
   },
   description:
-    'Professional-grade disposable gloves and cannabis trimming equipment. Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Serving cannabis, food service, medical, and industrial operations nationwide.',
+    'Professional-grade disposable gloves for commercial and industrial operations. Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Serving food service, medical, janitorial, automotive, and industrial industries nationwide.',
   keywords: [
     'disposable gloves wholesale',
     'nitrile gloves bulk',
-    'cannabis trimming gloves',
+    'industrial gloves supplier',
     'latex gloves case',
     'vinyl gloves bulk',
-    'trimming scissors cannabis',
     'black nitrile gloves',
     'wholesale gloves supplier',
-    'dispensary supplies',
-    'grow operation supplies',
+    'commercial gloves',
+    'exam grade gloves',
     'gloves by the case',
-    'cannabis trimming supplies',
+    'food service gloves',
+    'medical gloves bulk',
     'ValueSuppliers',
   ],
   authors: [{ name: 'ValueSuppliers.co', url: BASE }],
@@ -61,17 +61,17 @@ export const metadata: Metadata = {
     siteName: 'ValueSuppliers.co',
     type: 'website',
     locale: 'en_US',
-    title: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies',
+    title: 'ValueSuppliers.co — Commercial & Industrial Disposable Gloves',
     description:
-      'Professional-grade disposable gloves and trimming supplies. Case pricing for retail, wholesale, and distribution. Serving cannabis, food service, medical, and industrial industries.',
+      'Professional-grade disposable gloves for every industry. Case pricing for retail, wholesale, and distribution. Serving food service, medical, janitorial, automotive, and industrial operations.',
     url: BASE,
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'ValueSuppliers.co — Commercial & Industrial Disposable Gloves' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ValueSuppliers.co — Professional Gloves & Cannabis Supplies',
+    title: 'ValueSuppliers.co — Commercial Disposable Gloves',
     description:
-      'Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Cannabis trimming scissors and accessories.',
+      'Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. ASTM certified for industrial and exam-grade use.',
     creator: '@valuesuppliers',
     images: ['/og-image.jpg'],
   },
@@ -92,7 +92,7 @@ const orgSchema = {
   url: BASE,
   logo: `${BASE}/logo.jpg`,
   description:
-    'Professional-grade disposable gloves and cannabis trimming equipment supplier. Wholesale and distribution pricing for cannabis operations, food service, medical, and industrial industries.',
+    'Professional-grade disposable glove supplier. Wholesale and distribution pricing for food service, medical, janitorial, automotive, and industrial operations.',
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
@@ -103,9 +103,10 @@ const orgSchema = {
   knowsAbout: [
     'disposable gloves',
     'nitrile gloves',
-    'cannabis trimming equipment',
+    'latex exam gloves',
+    'vinyl gloves',
     'wholesale gloves',
-    'trimming scissors',
+    'industrial safety gloves',
   ],
 };
 
@@ -114,7 +115,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'ValueSuppliers.co',
   url: BASE,
-  description: 'Professional-grade disposable gloves and cannabis trimming supplies.',
+  description: 'Professional-grade disposable gloves for commercial and industrial use.',
   potentialAction: {
     '@type': 'SearchAction',
     target: { '@type': 'EntryPoint', urlTemplate: `${BASE}/catalog?q={search_term_string}` },

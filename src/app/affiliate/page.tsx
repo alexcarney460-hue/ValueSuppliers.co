@@ -7,8 +7,8 @@ import AffiliateForm from '@/components/forms/AffiliateForm';
 export const metadata: Metadata = {
   title: 'Affiliate Program — Earn Up to 20% Commission',
   description:
-    'Join the ValueSuppliers.co affiliate program and earn up to 20% commission on every referred sale. Cannabis creators, grow communities, hydro store owners. NET-7 payouts for top partners. Apply now.',
-  keywords: ['cannabis affiliate program', 'glove affiliate', 'grow supply affiliate', 'cannabis influencer commission', 'hydro store affiliate'],
+    'Join the ValueSuppliers.co affiliate program and earn up to 20% commission on every referred sale. Industry professionals, business communities, and commercial operators. NET-7 payouts for top partners. Apply now.',
+  keywords: ['glove affiliate program', 'glove affiliate', 'industrial supply affiliate', 'business referral commission', 'commercial glove affiliate'],
   openGraph: {
     title: 'Affiliate Program — Earn Up to 20% | ValueSuppliers.co',
     description: 'Earn up to 20% commission on every referred sale. Real-time dashboard, custom promo codes, and fast payouts.',
@@ -65,9 +65,9 @@ const ARSENAL = [
 ];
 
 const WHO = [
-  'Cannabis Content Creators',
-  'Grow & Hydroponics Communities',
-  'Dispensary & Retail Operators',
+  'Industry Content Creators',
+  'Business & Professional Communities',
+  'Commercial & Retail Operators',
   'Industry Professionals & Consultants',
 ];
 
@@ -90,7 +90,7 @@ export default function AffiliatePage() {
             Become a Partner
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.1rem', maxWidth: 580, margin: '0 auto 40px', lineHeight: 1.8 }}>
-            Join a community of creators and industry professionals building real authority in the grow supply space.
+            Join a community of creators and industry professionals building real authority in the commercial supply space.
             Earn up to 20% commission and become part of something bigger than affiliate links.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -135,7 +135,7 @@ export default function AffiliatePage() {
           </AnimateIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 28 }}>
             {[
-              { title: 'Join a Community, Not a Program', desc: 'Partner with creators who take the grow space seriously. Build alongside people dedicated to quality, reliability, and real results.' },
+              { title: 'Join a Community, Not a Program', desc: 'Partner with professionals who take commercial supply seriously. Build alongside people dedicated to quality, reliability, and real results.' },
               { title: 'Earn Like an Owner', desc: 'Up to 20% commission at the Apex tier. Get paid like you built it — because with us, your referrals matter long-term.' },
               { title: 'Fast Payouts', desc: 'Monthly standard payouts. NET-7 for Elite & Apex partners. Get paid when you need it, not 90 days later.' },
               { title: 'Real Support, Real People', desc: 'You get strategy, creative assets, and genuine help from our team. Not a chatbot. Not abandoned in a dashboard.' },
@@ -317,7 +317,7 @@ export default function AffiliatePage() {
               },
               {
                 q: 'Is there a minimum audience size?',
-                a: "We prioritize engaged, niche communities. Micro-creators under 5k followers are welcome — quality beats quantity in the grow space.",
+                a: "We prioritize engaged, niche communities. Micro-creators under 5k followers are welcome — quality beats quantity in the commercial supply space.",
               },
               {
                 q: 'Can I order products at a discount?',
@@ -357,7 +357,7 @@ export default function AffiliatePage() {
               Platform Compliance
             </span>
             <p style={{ fontSize: '0.875rem', color: 'var(--color-charcoal)', lineHeight: 1.7, margin: 0 }}>
-              All promotional creatives and copy are pre-reviewed for cannabis platform guidelines. We provide ready-to-use compliant assets so your content stays approved on every channel.
+              All promotional creatives and copy are pre-reviewed for platform guidelines. We provide ready-to-use compliant assets so your content stays approved on every channel.
             </p>
           </div>
         </div>

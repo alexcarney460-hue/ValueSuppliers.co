@@ -6,32 +6,26 @@ import PRODUCTS from '@/lib/products';
 import { formatPrice } from '@/lib/pricing';
 
 export const metadata: Metadata = {
-  title: 'Product Catalog — Gloves, Trimmers & Cannabis Supplies',
+  title: 'Product Catalog — Disposable Gloves for Every Industry',
   description:
-    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Plus cannabis trimming scissors, precision snips, and harvest accessories. Retail, wholesale (20% off), and distribution (30% off) pricing available.',
-  keywords: ['buy nitrile gloves bulk', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'glove catalog', 'wholesale gloves online'],
+    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Retail, wholesale (20% off), and distribution (30% off) pricing available. ASTM certified, fast shipping.',
+  keywords: ['buy nitrile gloves bulk', 'disposable gloves case', 'glove catalog', 'wholesale gloves online', 'industrial gloves', 'exam grade gloves'],
   openGraph: {
     title: 'Product Catalog | ValueSuppliers.co',
-    description: 'Nitrile, latex, vinyl gloves and cannabis trimming tools by the case. Wholesale and distribution pricing available.',
+    description: 'Nitrile, latex, and vinyl gloves by the case. Wholesale and distribution pricing available.',
     url: 'https://valuesuppliers.co/catalog',
   },
   alternates: { canonical: 'https://valuesuppliers.co/catalog' },
 };
 
-const CATEGORIES = ['All', 'Gloves', 'Trimmers', 'Accessories'] as const;
-
 export default function CatalogPage() {
-  const grouped = {
-    Gloves: PRODUCTS.filter((p) => p.category === 'Gloves'),
-    Trimmers: PRODUCTS.filter((p) => p.category === 'Trimmers'),
-    Accessories: PRODUCTS.filter((p) => p.category === 'Accessories'),
-  };
+  const gloves = PRODUCTS.filter((p) => p.category === 'Gloves');
 
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'ValueSuppliers.co Product Catalog',
-    description: 'Professional-grade disposable gloves and cannabis trimming supplies.',
+    description: 'Professional-grade disposable gloves for commercial and industrial use.',
     url: 'https://valuesuppliers.co/catalog',
     numberOfItems: PRODUCTS.length,
     itemListElement: PRODUCTS.map((p, i) => ({
@@ -70,28 +64,25 @@ export default function CatalogPage() {
       {/* Category filter bar */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '16px 24px', position: 'sticky', top: 'var(--nav-height)', zIndex: 10 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {CATEGORIES.map((cat) => (
-            <a
-              key={cat}
-              href={`#${cat.toLowerCase()}`}
-              style={{
-                padding: '8px 20px',
-                borderRadius: 9999,
-                border: '1px solid var(--color-border)',
-                backgroundColor: 'transparent',
-                color: 'var(--color-charcoal)',
-                fontFamily: "'Barlow', Arial, sans-serif",
-                fontWeight: 600,
-                fontSize: '0.8rem',
-                letterSpacing: '0.06em',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                transition: 'background-color 150ms ease, color 150ms ease',
-              }}
-            >
-              {cat}
-            </a>
-          ))}
+          <a
+            href="#gloves"
+            style={{
+              padding: '8px 20px',
+              borderRadius: 9999,
+              border: '1px solid var(--color-border)',
+              backgroundColor: 'transparent',
+              color: 'var(--color-charcoal)',
+              fontFamily: "'Barlow', Arial, sans-serif",
+              fontWeight: 600,
+              fontSize: '0.8rem',
+              letterSpacing: '0.06em',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              transition: 'background-color 150ms ease, color 150ms ease',
+            }}
+          >
+            All Gloves
+          </a>
           <div style={{ flex: 1 }} />
           <Link
             href="/wholesale"
@@ -126,37 +117,7 @@ export default function CatalogPage() {
             </h2>
           </div>
           <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Gloves.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* Trimmers */}
-        <section id="trimmers" style={{ marginBottom: 64 }}>
-          <div style={{ marginBottom: 28 }}>
-            <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem' }}>Trimming Tools</span>
-            <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 6, color: 'var(--color-charcoal)' }}>
-              Trimmers & Scissors
-            </h2>
-          </div>
-          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Trimmers.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* Accessories */}
-        <section id="accessories" style={{ marginBottom: 48 }}>
-          <div style={{ marginBottom: 28 }}>
-            <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem' }}>Harvest Accessories</span>
-            <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 6, color: 'var(--color-charcoal)' }}>
-              Accessories
-            </h2>
-          </div>
-          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Accessories.map((product) => (
+            {gloves.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
           </div>
@@ -311,7 +272,7 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[number] }) {
           </div>
           <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--color-border)' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--color-muted-green)', fontWeight: 600 }}>
-              Wholesale pricing available →
+              Wholesale pricing available &rarr;
             </span>
           </div>
         </div>

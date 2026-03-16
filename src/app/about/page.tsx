@@ -4,12 +4,12 @@ import { ArrowRight, Package, Truck, BadgeCheck, Users } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
 
 export const metadata: Metadata = {
-  title: 'About ValueSuppliers.co — Gloves & Cannabis Supplies',
+  title: 'About ValueSuppliers.co — Commercial & Industrial Gloves',
   description:
-    'ValueSuppliers.co supplies professional-grade disposable gloves and cannabis trimming equipment to operations across the United States. Learn about our commitment to quality, fast restock, and industry-grade products.',
+    'ValueSuppliers.co supplies professional-grade disposable gloves to commercial and industrial operations across the United States. Learn about our commitment to quality, fast restock, and industry-grade products.',
   openGraph: {
     title: 'About ValueSuppliers.co',
-    description: 'Professional-grade gloves and cannabis trimming supplies. Built for the operations that need reliability.',
+    description: 'Professional-grade gloves for every industry. Built for the operations that need reliability.',
     url: 'https://valuesuppliers.co/about',
   },
   alternates: { canonical: 'https://valuesuppliers.co/about' },
@@ -29,12 +29,12 @@ const VALUES = [
   {
     icon: Truck,
     title: 'Reliable Restock',
-    desc: 'Running out of gloves mid-harvest is not an option. We keep deep inventory and fulfill fast so your operation never stops for supplies.',
+    desc: 'Running out of gloves mid-shift is not an option. We keep deep inventory and fulfill fast so your operation never stops for supplies.',
   },
   {
     icon: Users,
     title: 'Built for Every Scale',
-    desc: "Whether you're a home grower ordering your first case or a licensed commercial operation running through 10,000 pairs a month — you get the same quality and service.",
+    desc: "Whether you're a small office ordering your first case or a large commercial operation running through 10,000 pairs a month — you get the same quality and service.",
   },
 ];
 
@@ -60,11 +60,11 @@ export default function AboutPage() {
             <span style={{ width: 24, height: 1.5, backgroundColor: 'var(--color-amber)', display: 'inline-block', borderRadius: 99 }} />
           </span>
           <h1 className="font-display" style={{ fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', lineHeight: 1.0, color: 'var(--color-charcoal)', marginBottom: 24 }}>
-            The Supply Chain for Serious Growers.
+            The Supply Chain for Serious Operations.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.05rem', maxWidth: 560, margin: '0 auto', lineHeight: 1.8 }}>
-            ValueSuppliers.co started with a simple observation: the grow industry was underserved on supplies.
-            Quality gloves and trimming equipment existed — but not at prices that made sense for operations of every size.
+            ValueSuppliers.co started with a simple observation: commercial operations were underserved on glove supply.
+            Quality gloves existed — but not at prices that made sense for operations of every size.
           </p>
         </div>
       </section>
@@ -81,10 +81,10 @@ export default function AboutPage() {
               One Supplier.<br />Every Scale.
             </h2>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 16, fontSize: '0.95rem' }}>
-              We supply disposable gloves and cannabis trimming equipment to retail customers, hydro stores, dispensaries, licensed grows, and commercial distributors across the country.
+              We supply disposable gloves to businesses, facilities, medical offices, restaurants, and commercial distributors across the country.
             </p>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 36, fontSize: '0.95rem' }}>
-              Our pricing is tiered by volume — the more you buy, the better your rate. And we make it easy to move up tiers as your operation grows.
+              Our pricing is tiered by volume — the more you buy, the better your rate. And we make it easy to move up tiers as your operation scales.
             </p>
             <Link
               href="/catalog"

@@ -323,8 +323,6 @@ export default function SettingsPage() {
                         <span style={labelStyle}>Category</span>
                         <select value={editForm.category ?? ''} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} style={{ ...inputStyle, width: '100%' }}>
                           <option value="Gloves">Gloves</option>
-                          <option value="Trimmers">Trimmers</option>
-                          <option value="Accessories">Accessories</option>
                         </select>
                       </label>
                     </div>

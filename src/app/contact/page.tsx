@@ -7,7 +7,7 @@ import ContactForm from '@/components/forms/ContactForm';
 export const metadata: Metadata = {
   title: 'Contact Us — Orders, Quotes & Wholesale Inquiries',
   description:
-    'Get in touch with ValueSuppliers.co. Order support, wholesale account setup, custom volume quotes, and onsite trimming service scheduling. We respond within 1 business day.',
+    'Get in touch with ValueSuppliers.co. Order support, wholesale account setup, and custom volume quotes. We respond within 1 business day.',
   openGraph: {
     title: 'Contact ValueSuppliers.co',
     description: 'Order support, wholesale inquiries, and custom quotes. We respond within 1 business day.',

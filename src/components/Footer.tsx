@@ -3,8 +3,7 @@ import Image from 'next/image';
 
 const FOOTER_LINKS = {
   Products: [
-    { label: 'Disposable Gloves', href: '/catalog/gloves' },
-    { label: 'Trimming Equipment', href: '/catalog/trimmers' },
+    { label: 'Disposable Gloves', href: '/catalog' },
     { label: 'All Products', href: '/catalog' },
   ],
   Business: [
@@ -57,10 +56,10 @@ export default function Footer() {
               />
             </div>
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem', lineHeight: 1.6, maxWidth: 200 }}>
-              Professional-grade supplies for every stage of the grow.
+              Professional-grade disposable gloves for every industry.
             </p>
             <p style={{ color: 'var(--color-amber)', fontSize: '0.875rem', fontStyle: 'italic', marginTop: 12 }}>
-              "Supplied for the Grow."
+              "Supplied for Your Business."
             </p>
           </div>
 

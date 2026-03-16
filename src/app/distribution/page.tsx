@@ -7,8 +7,8 @@ import DistributionForm from '@/components/forms/DistributionForm';
 export const metadata: Metadata = {
   title: 'Distribution Program — 30% Off + NET 30 Terms',
   description:
-    'Distribution partners save 30% off retail on all gloves and cannabis trimming supplies. NET 30 billing, priority inventory allocation, dedicated account rep, and custom volume pricing for commercial resellers and large operations.',
-  keywords: ['glove distributor', 'wholesale glove distributor', 'disposable gloves distributor', 'cannabis supplies distributor', 'net 30 gloves'],
+    'Distribution partners save 30% off retail on all gloves. NET 30 billing, priority inventory allocation, dedicated account rep, and custom volume pricing for commercial resellers and large operations.',
+  keywords: ['glove distributor', 'wholesale glove distributor', 'disposable gloves distributor', 'industrial gloves distributor', 'net 30 gloves'],
   openGraph: {
     title: 'Distribution Program — 30% Off + NET 30 | ValueSuppliers.co',
     description: 'Distribution accounts get 30% off retail, NET 30 billing, and a dedicated rep. Apply online for priority allocation.',
@@ -55,7 +55,7 @@ export default function DistributionPage() {
             Built for Commercial Volume.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.05rem', maxWidth: 540, margin: '0 auto 36px', lineHeight: 1.8 }}>
-            Licensed grows, commercial operations, and resellers — apply for distribution access and get 30% off retail on every order.
+            Large-volume operations and resellers — apply for distribution access and get 30% off retail on every order.
           </p>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: 'rgba(200,146,42,0.08)', border: '1px solid rgba(200,146,42,0.25)', borderRadius: 16, padding: '18px 32px' }}>
             <span className="font-display" style={{ fontSize: '2.25rem', color: 'var(--color-amber)', lineHeight: 1 }}>30%</span>

@@ -7,8 +7,8 @@ import WholesaleForm from '@/components/forms/WholesaleForm';
 export const metadata: Metadata = {
   title: 'Wholesale Pricing — 20% Off Every Order',
   description:
-    'Wholesale accounts at ValueSuppliers.co save 20% on every order. Nitrile, latex, and vinyl gloves by the case. Priority fulfillment, dedicated support, and NET 30 available. Cannabis dispensaries, hydro stores, and grow operations welcome.',
-  keywords: ['wholesale gloves', 'bulk nitrile gloves', 'wholesale disposable gloves', 'cannabis dispensary supplies', 'hydro store gloves', 'wholesale glove supplier'],
+    'Wholesale accounts at ValueSuppliers.co save 20% on every order. Nitrile, latex, and vinyl gloves by the case. Priority fulfillment, dedicated support, and NET 30 available. All commercial and industrial operations welcome.',
+  keywords: ['wholesale gloves', 'bulk nitrile gloves', 'wholesale disposable gloves', 'commercial glove supplier', 'industrial gloves wholesale', 'wholesale glove supplier'],
   openGraph: {
     title: 'Wholesale Glove Pricing — 20% Off | ValueSuppliers.co',
     description: 'Wholesale accounts save 20% on all products. Priority fulfillment and dedicated support. Apply online — approval within 1 business day.',
@@ -43,7 +43,7 @@ export default function WholesalePage() {
             Case Pricing for the Trade.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.05rem', maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.8 }}>
-            Hydro stores, dispensaries, and commercial grows — apply once and get 20% off every product, every order.
+            Restaurants, medical offices, and commercial operations — apply once and get 20% off every product, every order.
           </p>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: 'rgba(200,146,42,0.08)', border: '1px solid rgba(200,146,42,0.25)', borderRadius: 16, padding: '18px 32px' }}>
             <span className="font-display" style={{ fontSize: '2.25rem', color: 'var(--color-amber)', lineHeight: 1 }}>20%</span>

@@ -44,11 +44,11 @@ export default function DistributionForm() {
             <label className="label-caps" style={{ display: 'block', marginBottom: 8, fontSize: '0.68rem', color: 'var(--color-charcoal)' }}>Operation Type</label>
             <select required value={values.operation_type} onChange={(e) => onChange('operation_type', e.target.value)} style={inputStyle}>
               <option value="">Select your operation type</option>
-              <option>Licensed Cannabis Grow</option>
-              <option>Commercial Greenhouse</option>
+              <option>Restaurant Group / Food Service</option>
+              <option>Medical / Dental Network</option>
+              <option>Janitorial / Facilities Management</option>
               <option>Product Reseller / Distributor</option>
-              <option>Hydro Store Chain (3+ locations)</option>
-              <option>Dispensary Group</option>
+              <option>Industrial / Manufacturing</option>
               <option>Other Commercial Operation</option>
             </select>
           </div>

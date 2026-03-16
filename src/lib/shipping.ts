@@ -29,9 +29,6 @@ export const DEFAULT_WEIGHTS: Record<string, number> = {
   'vinyl-gloves':             5.0,
   'black-nitrile-4mil':       6.5,
   'nitrile-xl-box':           7.0,
-  'curved-trimming-scissors':  0.4,
-  'bonsai-precision-snips':    0.3,
-  'trimming-tray-large':       2.5,
 };
 
 export type ShippingEstimate = {
