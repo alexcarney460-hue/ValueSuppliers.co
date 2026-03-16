@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Mail, Phone, Clock, MessageSquare, ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact Us — Orders, Quotes & Wholesale Inquiries',
@@ -21,21 +22,6 @@ const CONTACT_OPTIONS = [
   { icon: Clock, label: 'Business Hours', value: 'Mon–Fri 9am–5pm EST', sub: 'Orders placed after hours ship next day', href: null },
 ];
 
-const INQUIRY_TYPES = [
-  'General Question', 'Order Support', 'Wholesale Inquiry', 'Distribution Inquiry', 'Returns & Exchanges', 'Product Availability', 'Other',
-];
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '11px 14px',
-  borderRadius: 10,
-  border: '1px solid var(--color-border)',
-  fontSize: '0.9rem',
-  outline: 'none',
-  fontFamily: "'Inter', system-ui, sans-serif",
-  backgroundColor: '#fff',
-  boxSizing: 'border-box',
-};
 
 export default function ContactPage() {
   return (
@@ -147,68 +133,7 @@ export default function ContactPage() {
                 We&apos;ll get back to you within 1 business day.
               </p>
 
-              <form style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                <div className="vs-name-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  {['First Name', 'Last Name'].map((label) => (
-                    <div key={label}>
-                      <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>{label}</label>
-                      <input type="text" placeholder={label} style={inputStyle} />
-                    </div>
-                  ))}
-                </div>
-
-                {[
-                  { label: 'Email Address', type: 'email', placeholder: 'you@example.com' },
-                  { label: 'Phone Number (optional)', type: 'tel', placeholder: '(555) 000-0000' },
-                ].map(({ label, type, placeholder }) => (
-                  <div key={label}>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>{label}</label>
-                    <input type={type} placeholder={placeholder} style={inputStyle} />
-                  </div>
-                ))}
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Inquiry Type</label>
-                  <select style={inputStyle}>
-                    <option value="">Select a topic</option>
-                    {INQUIRY_TYPES.map((t) => <option key={t}>{t}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Message</label>
-                  <textarea
-                    rows={5}
-                    placeholder="How can we help?"
-                    style={{ ...inputStyle, resize: 'vertical' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: 'var(--color-forest)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 9999,
-                    padding: '14px 28px',
-                    fontFamily: "'Barlow', Arial, sans-serif",
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    boxShadow: 'var(--shadow-forest)',
-                  }}
-                >
-                  Send Message <ArrowRight size={14} />
-                </button>
-              </form>
+              <ContactForm />
             </div>
           </AnimateIn>
 

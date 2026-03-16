@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { Package, Truck, Printer, ExternalLink, RefreshCw, CheckCircle } from 'lucide-react';
 
 interface Order {
@@ -20,7 +21,11 @@ interface Order {
   label_url: string | null;
   shipping_carrier: string | null;
   shipping_service: string | null;
+  shipping_cost: number | null;
+  shipping_status: string | null;
   shipped_at: string | null;
+  printed_at: string | null;
+  label_created_at: string | null;
   created_at: string;
 }
 
@@ -57,6 +62,7 @@ export default function ShippingPage() {
   const [items, setItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'ready' | 'shipped'>('ready');
+  const [unprintedCount, setUnprintedCount] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -81,6 +87,15 @@ export default function ShippingPage() {
       }
       setItems(orderItems);
     }
+
+    // Fetch unprinted label count for the badge
+    try {
+      const queueRes = await apiFetch('/api/admin/shipping/print-queue?limit=1');
+      if (queueRes.ok) {
+        setUnprintedCount(queueRes.total ?? 0);
+      }
+    } catch { /* skip */ }
+
     setLoading(false);
   }, [tab]);
 
@@ -109,16 +124,46 @@ export default function ShippingPage() {
             Labels auto-purchased via Shippo. Print and pack.
           </p>
         </div>
-        <button
-          onClick={load}
-          style={{
-            padding: '8px 16px', borderRadius: 8, border: '1px solid var(--color-border)',
-            fontSize: '0.82rem', cursor: 'pointer', backgroundColor: '#fff',
-            display: 'flex', alignItems: 'center', gap: 5, fontWeight: 600,
-          }}
-        >
-          <RefreshCw size={13} /> Refresh
-        </button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Link
+            href="/admin/shipping/print-batch"
+            style={{
+              position: 'relative',
+              padding: '8px 16px', borderRadius: 8,
+              border: unprintedCount > 0 ? '1px solid #1b3a2d' : '1px solid var(--color-border)',
+              fontSize: '0.82rem', cursor: 'pointer',
+              backgroundColor: unprintedCount > 0 ? '#1b3a2d' : '#fff',
+              color: unprintedCount > 0 ? '#fff' : 'var(--color-charcoal)',
+              display: 'flex', alignItems: 'center', gap: 5, fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
+            <Printer size={13} /> Print Queue
+            {unprintedCount > 0 && (
+              <span style={{
+                position: 'absolute', top: -6, right: -6,
+                background: '#dc2626', color: '#fff',
+                fontSize: '0.68rem', fontWeight: 800,
+                minWidth: 18, height: 18, borderRadius: 9,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 4px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              }}>
+                {unprintedCount}
+              </span>
+            )}
+          </Link>
+          <button
+            onClick={load}
+            style={{
+              padding: '8px 16px', borderRadius: 8, border: '1px solid var(--color-border)',
+              fontSize: '0.82rem', cursor: 'pointer', backgroundColor: '#fff',
+              display: 'flex', alignItems: 'center', gap: 5, fontWeight: 600,
+            }}
+          >
+            <RefreshCw size={13} /> Refresh
+          </button>
+        </div>
       </div>
 
       {/* Pending label warning */}
@@ -162,7 +207,7 @@ export default function ShippingPage() {
                   <div style={{ display: 'flex', gap: 8 }}>
                     {order.label_url && (
                       <a
-                        href={order.label_url}
+                        href={`/admin/shipping/print/${order.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -221,6 +266,16 @@ export default function ShippingPage() {
                         <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: '#6d28d9', marginTop: 2 }}>
                           {order.tracking_number}
                         </div>
+                        {order.shipping_cost != null && (
+                          <div style={{ fontSize: '0.8rem', color: 'var(--color-warm-gray)', marginTop: 4 }}>
+                            Label cost: ${order.shipping_cost.toFixed(2)}
+                          </div>
+                        )}
+                        {order.label_created_at && (
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginTop: 2 }}>
+                            Label created {fmtDate(order.label_created_at)}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

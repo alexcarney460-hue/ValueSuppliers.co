@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BadgeCheck, Truck, DollarSign, User, ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import WholesaleForm from '@/components/forms/WholesaleForm';
 
 export const metadata: Metadata = {
   title: 'Wholesale Pricing — 20% Off Every Order',
@@ -23,17 +24,6 @@ const BENEFITS = [
   { icon: User, title: 'Net 30 Available', desc: 'Qualify for NET terms after your first three orders.' },
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 16px',
-  borderRadius: 10,
-  border: '1px solid var(--color-border)',
-  fontSize: '0.95rem',
-  outline: 'none',
-  fontFamily: "'Inter', system-ui, sans-serif",
-  backgroundColor: '#fff',
-  boxSizing: 'border-box',
-};
 
 export default function WholesalePage() {
   return (
@@ -116,73 +106,7 @@ export default function WholesalePage() {
 
           <AnimateIn>
             <div style={{ backgroundColor: '#fff', border: '1px solid var(--color-border)', borderRadius: 24, padding: '44px 40px', boxShadow: 'var(--shadow-sm)' }}>
-              <form style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {[
-                  { label: 'Business Name', type: 'text', placeholder: 'Your business name' },
-                  { label: 'Business Email', type: 'email', placeholder: 'orders@yourbusiness.com' },
-                  { label: 'Phone Number', type: 'tel', placeholder: '(555) 000-0000' },
-                ].map(({ label, type, placeholder }) => (
-                  <div key={label}>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>
-                      {label}
-                    </label>
-                    <input type={type} placeholder={placeholder} style={inputStyle} />
-                  </div>
-                ))}
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>
-                    Business Type
-                  </label>
-                  <select style={inputStyle}>
-                    <option value="">Select your business type</option>
-                    <option>Hydro Store / Garden Center</option>
-                    <option>Licensed Cannabis Grow</option>
-                    <option>Dispensary</option>
-                    <option>Reseller / Distributor</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>
-                    Estimated Monthly Volume
-                  </label>
-                  <select style={inputStyle}>
-                    <option value="">Select volume range</option>
-                    <option>1–5 cases / month</option>
-                    <option>6–25 cases / month</option>
-                    <option>26–100 cases / month</option>
-                    <option>100+ cases / month</option>
-                  </select>
-                </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: 'var(--color-forest)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 9999,
-                    padding: '15px 28px',
-                    fontFamily: "'Barlow', Arial, sans-serif",
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    marginTop: 8,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    width: '100%',
-                    boxShadow: 'var(--shadow-forest)',
-                  }}
-                >
-                  Submit Application <ArrowRight size={14} />
-                </button>
-              </form>
+              <WholesaleForm />
             </div>
           </AnimateIn>
         </div>

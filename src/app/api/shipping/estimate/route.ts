@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       })),
     });
   } catch (err) {
-    console.error('[Shipping] estimate error:', err);
+    console.error('[Shipping] estimate error:', err instanceof Error ? err.message : 'unknown error');
     return NextResponse.json({ error: 'Failed to get shipping rates' }, { status: 500 });
   }
 }

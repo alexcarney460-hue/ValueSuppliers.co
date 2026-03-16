@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import '@/app/globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -8,6 +8,13 @@ import ChatWidget from '@/components/ChatWidget';
 import PageTracker from '@/components/PageTracker';
 
 const BASE = 'https://valuesuppliers.co';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#1B3A2D',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
@@ -36,6 +43,15 @@ export const metadata: Metadata = {
   creator: 'ValueSuppliers.co',
   publisher: 'ValueSuppliers.co',
   formatDetection: { email: false, address: false, telephone: false },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+  },
+  manifest: '/manifest.json',
   robots: {
     index: true,
     follow: true,
@@ -49,6 +65,7 @@ export const metadata: Metadata = {
     description:
       'Professional-grade disposable gloves and trimming supplies. Case pricing for retail, wholesale, and distribution. Serving cannabis, food service, medical, and industrial industries.',
     url: BASE,
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -56,9 +73,15 @@ export const metadata: Metadata = {
     description:
       'Nitrile, latex, and vinyl gloves by the case. Wholesale 20% off · Distribution 30% off. Cannabis trimming scissors and accessories.',
     creator: '@valuesuppliers',
+    images: ['/og-image.jpg'],
   },
   alternates: {
     canonical: BASE,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ValueSuppliers',
   },
 };
 

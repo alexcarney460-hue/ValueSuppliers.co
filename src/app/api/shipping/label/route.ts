@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { purchaseLabel } from '@/lib/shippo';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import {
+  sendOrderShippedEmail,
+  type OrderData,
+  type OrderItem,
+} from '@/lib/email';
 
 /**
  * POST /api/shipping/label
@@ -40,6 +45,41 @@ export async function POST(req: NextRequest) {
         shipping_service: servicelevel || null,
         shipped_at: new Date().toISOString(),
       }).eq('id', orderId);
+
+      // Send shipping notification email to customer
+      try {
+        const { data: orderRecord } = await supabase
+          .from('orders')
+          .select('*, order_items(*)')
+          .eq('id', orderId)
+          .single();
+
+        if (orderRecord?.email) {
+          const emailOrderData: OrderData = {
+            id: orderRecord.id,
+            email: orderRecord.email,
+            total: orderRecord.total,
+            currency: orderRecord.currency || 'USD',
+            items: (orderRecord.order_items || []) as OrderItem[],
+            shipping_name: orderRecord.shipping_name,
+            shipping_address_line1: orderRecord.shipping_address_line1,
+            shipping_address_line2: orderRecord.shipping_address_line2,
+            shipping_city: orderRecord.shipping_city,
+            shipping_state: orderRecord.shipping_state,
+            shipping_zip: orderRecord.shipping_zip,
+            shipping_country: orderRecord.shipping_country,
+          };
+
+          await sendOrderShippedEmail(orderRecord.email, emailOrderData, {
+            tracking_number: label.trackingNumber,
+            shipping_carrier: carrier || 'Unknown',
+            tracking_url: label.trackingUrl,
+            shipping_service: servicelevel || null,
+          });
+        }
+      } catch (emailErr) {
+        console.error('[Email] Shipped notification failed for order', orderId, emailErr instanceof Error ? emailErr.message : 'unknown');
+      }
     }
 
     return NextResponse.json({
@@ -50,8 +90,8 @@ export async function POST(req: NextRequest) {
       eta: label.eta,
     });
   } catch (err) {
-    console.error('[Shipping] label purchase error:', err);
     const message = err instanceof Error ? err.message : 'Failed to purchase label';
+    console.error('[Shipping] label purchase error:', message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

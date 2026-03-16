@@ -88,10 +88,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: paymentLink.url, id: paymentLink.id });
   } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : String(err);
-    const errBody = (err as Record<string, unknown>)?.body ?? '';
-    const errStatus = (err as Record<string, unknown>)?.statusCode ?? '';
-    console.error('[Square] checkout error:', errMsg, errBody, errStatus);
+    const errMsg = err instanceof Error ? err.message : 'unknown error';
+    console.error('[Square] checkout error:', errMsg);
     return NextResponse.json({ error: 'Unable to start checkout.' }, { status: 500 });
   }
 }

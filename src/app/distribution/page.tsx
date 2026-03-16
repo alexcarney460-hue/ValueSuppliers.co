@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BadgeCheck, Truck, DollarSign, User, FileText, Phone, ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import DistributionForm from '@/components/forms/DistributionForm';
 
 export const metadata: Metadata = {
   title: 'Distribution Program — 30% Off + NET 30 Terms',
@@ -35,17 +36,6 @@ const COMPARISON = [
   { label: 'Custom Pricing Available', retail: 'No',        wholesale: 'No',        distribution: 'Yes (100+ cases)' },
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 16px',
-  borderRadius: 10,
-  border: '1px solid var(--color-border)',
-  fontSize: '0.95rem',
-  outline: 'none',
-  fontFamily: "'Inter', system-ui, sans-serif",
-  backgroundColor: '#fff',
-  boxSizing: 'border-box',
-};
 
 export default function DistributionPage() {
   return (
@@ -178,82 +168,7 @@ export default function DistributionPage() {
 
           <AnimateIn>
             <div style={{ backgroundColor: '#fff', border: '1px solid var(--color-border)', borderRadius: 24, padding: '44px 40px', boxShadow: 'var(--shadow-sm)' }}>
-              <form style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {[
-                  { label: 'Business Name', type: 'text', placeholder: 'Legal business name' },
-                  { label: 'Business Email', type: 'email', placeholder: 'orders@yourbusiness.com' },
-                  { label: 'Phone Number', type: 'tel', placeholder: '(555) 000-0000' },
-                  { label: 'Website (optional)', type: 'url', placeholder: 'https://yourbusiness.com' },
-                ].map(({ label, type, placeholder }) => (
-                  <div key={label}>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, fontSize: '0.68rem', color: 'var(--color-charcoal)' }}>{label}</label>
-                    <input type={type} placeholder={placeholder} style={inputStyle} />
-                  </div>
-                ))}
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, fontSize: '0.68rem', color: 'var(--color-charcoal)' }}>Operation Type</label>
-                  <select style={inputStyle}>
-                    <option value="">Select your operation type</option>
-                    <option>Licensed Cannabis Grow</option>
-                    <option>Commercial Greenhouse</option>
-                    <option>Product Reseller / Distributor</option>
-                    <option>Hydro Store Chain (3+ locations)</option>
-                    <option>Dispensary Group</option>
-                    <option>Other Commercial Operation</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, fontSize: '0.68rem', color: 'var(--color-charcoal)' }}>Estimated Monthly Volume</label>
-                  <select style={inputStyle}>
-                    <option value="">Select volume range</option>
-                    <option>25–50 cases / month</option>
-                    <option>51–100 cases / month</option>
-                    <option>101–250 cases / month</option>
-                    <option>250+ cases / month</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, fontSize: '0.68rem', color: 'var(--color-charcoal)' }}>Tell Us About Your Operation</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Brief description of your operation and how you'd use our products..."
-                    style={{ ...inputStyle, resize: 'vertical' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: 'var(--color-amber)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 9999,
-                    padding: '15px 28px',
-                    fontFamily: "'Barlow', Arial, sans-serif",
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    boxShadow: 'var(--shadow-amber)',
-                  }}
-                >
-                  Submit Distribution Application <ArrowRight size={14} />
-                </button>
-                <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--color-warm-gray)' }}>
-                  By submitting you agree to our{' '}
-                  <a href="/terms" style={{ color: 'var(--color-forest)' }}>Terms of Service</a>.
-                  We review all applications within 1 business day.
-                </p>
-              </form>
+              <DistributionForm />
             </div>
           </AnimateIn>
         </div>

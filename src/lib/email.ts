@@ -1,0 +1,507 @@
+import { Resend } from 'resend';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export interface OrderItem {
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
+export interface OrderData {
+  id: number;
+  email: string;
+  total: number;
+  currency?: string;
+  items: OrderItem[];
+  shipping_name?: string | null;
+  shipping_address_line1?: string | null;
+  shipping_address_line2?: string | null;
+  shipping_city?: string | null;
+  shipping_state?: string | null;
+  shipping_zip?: string | null;
+  shipping_country?: string | null;
+  notes?: string | null;
+  created_at?: string | null;
+}
+
+export interface TrackingData {
+  tracking_number: string;
+  shipping_carrier: string;
+  tracking_url: string;
+  shipping_service?: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Resend client (lazy init)
+// ---------------------------------------------------------------------------
+
+const FROM_ADDRESS = 'Value Suppliers <orders@valuesuppliers.co>';
+
+function getResend(): Resend | null {
+  const key = process.env.RESEND_API_KEY?.trim();
+  if (!key) return null;
+  return new Resend(key);
+}
+
+// ---------------------------------------------------------------------------
+// Brand constants
+// ---------------------------------------------------------------------------
+
+const BRAND = {
+  primary: '#1a56db',       // deep blue
+  primaryLight: '#e8effc',
+  accent: '#f59e0b',        // amber
+  dark: '#111827',
+  muted: '#6b7280',
+  light: '#f9fafb',
+  white: '#ffffff',
+  border: '#e5e7eb',
+  success: '#10b981',
+} as const;
+
+// ---------------------------------------------------------------------------
+// Shared email layout
+// ---------------------------------------------------------------------------
+
+function emailLayout(title: string, preheader: string, body: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+</head>
+<body style="margin:0;padding:0;background-color:${BRAND.light};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    ${preheader}
+  </div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.light};">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:${BRAND.white};border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:${BRAND.primary};padding:32px 40px;text-align:center;">
+              <h1 style="margin:0;color:${BRAND.white};font-size:24px;font-weight:700;letter-spacing:-0.5px;">
+                Value Suppliers
+              </h1>
+              <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">
+                Wholesale Gloves &amp; Supplies
+              </p>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px;">
+              ${body}
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:${BRAND.light};padding:24px 40px;border-top:1px solid ${BRAND.border};">
+              <p style="margin:0;color:${BRAND.muted};font-size:12px;text-align:center;line-height:1.6;">
+                Value Suppliers &bull; 1401 N Clovis Ave STE #103, Clovis, CA 93727<br>
+                <a href="https://valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">valuesuppliers.co</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+// ---------------------------------------------------------------------------
+// Format helpers
+// ---------------------------------------------------------------------------
+
+function formatCurrency(amount: number, currency = 'USD'): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+}
+
+function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function formatAddress(order: OrderData): string {
+  const parts = [
+    order.shipping_name,
+    order.shipping_address_line1,
+    order.shipping_address_line2,
+    [order.shipping_city, order.shipping_state, order.shipping_zip].filter(Boolean).join(', '),
+    order.shipping_country && order.shipping_country !== 'US' ? order.shipping_country : null,
+  ].filter(Boolean);
+  return parts.join('<br>');
+}
+
+// ---------------------------------------------------------------------------
+// Email: Order Confirmation
+// ---------------------------------------------------------------------------
+
+function buildOrderConfirmationHtml(order: OrderData): string {
+  const itemRows = order.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
+            ${item.product_name}
+          </td>
+          <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
+            ${item.quantity}
+          </td>
+          <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;text-align:right;">
+            ${formatCurrency(item.total_price, order.currency)}
+          </td>
+        </tr>`
+    )
+    .join('');
+
+  const addressHtml = formatAddress(order);
+
+  const body = `
+    <h2 style="margin:0 0 8px;color:${BRAND.dark};font-size:22px;font-weight:700;">
+      Order Confirmed
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      Thank you for your order! We're preparing it for shipment.
+    </p>
+
+    <!-- Order number badge -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td style="background-color:${BRAND.primaryLight};padding:16px 20px;border-radius:8px;">
+          <span style="color:${BRAND.primary};font-size:13px;font-weight:600;">ORDER #${order.id}</span>
+          <span style="color:${BRAND.muted};font-size:13px;float:right;">${formatDate(order.created_at)}</span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Items table -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Item</td>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Qty</td>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;text-align:right;">Price</td>
+      </tr>
+      ${itemRows}
+      <tr>
+        <td colspan="2" style="padding:16px 0 0;color:${BRAND.dark};font-size:16px;font-weight:700;">Total</td>
+        <td style="padding:16px 0 0;color:${BRAND.primary};font-size:16px;font-weight:700;text-align:right;">${formatCurrency(order.total, order.currency)}</td>
+      </tr>
+    </table>
+
+    ${
+      addressHtml
+        ? `
+    <!-- Shipping address -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+      <tr>
+        <td style="background-color:${BRAND.light};padding:20px;border-radius:8px;border:1px solid ${BRAND.border};">
+          <p style="margin:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Ship To</p>
+          <p style="margin:0;color:${BRAND.dark};font-size:14px;line-height:1.6;">${addressHtml}</p>
+        </td>
+      </tr>
+    </table>`
+        : ''
+    }
+
+    <!-- Footer note -->
+    <p style="margin:28px 0 0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      You'll receive another email with tracking information once your order ships. If you have any questions, reply to this email or contact us at
+      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+    </p>
+  `;
+
+  return emailLayout(
+    'Order Confirmed - Value Suppliers',
+    `Your order #${order.id} has been confirmed. Total: ${formatCurrency(order.total, order.currency)}`,
+    body,
+  );
+}
+
+export async function sendOrderConfirmationEmail(
+  to: string,
+  orderData: OrderData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildOrderConfirmationHtml(orderData);
+  const subject = `Order Confirmed - #${orderData.id}`;
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Order confirmation for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Order #${orderData.id}, Total: ${formatCurrency(orderData.total)}, Items: ${orderData.items.length}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (order confirmation):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Order confirmation sent to ${to} for order #${orderData.id}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send order confirmation:', message);
+    return { success: false, error: message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Email: Shipping Notification
+// ---------------------------------------------------------------------------
+
+function buildShippingNotificationHtml(trackingData: TrackingData): string {
+  const body = `
+    <h2 style="margin:0 0 8px;color:${BRAND.dark};font-size:22px;font-weight:700;">
+      Your Order Has Shipped!
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      Great news — your order is on its way.
+    </p>
+
+    <!-- Tracking card -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td style="background-color:${BRAND.light};padding:24px;border-radius:8px;border:1px solid ${BRAND.border};">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Carrier</p>
+                <p style="margin:0 0 16px;color:${BRAND.dark};font-size:15px;font-weight:600;">${trackingData.shipping_carrier}${trackingData.shipping_service ? ` — ${trackingData.shipping_service}` : ''}</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tracking Number</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:15px;font-weight:600;font-family:monospace;">${trackingData.tracking_number}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Track button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td align="center">
+          <a href="${trackingData.tracking_url}" target="_blank" style="display:inline-block;background-color:${BRAND.primary};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+            Track Your Package
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      Tracking information may take a few hours to update after shipment. If you have any questions, reply to this email or contact
+      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+    </p>
+  `;
+
+  return emailLayout(
+    'Your Order Has Shipped - Value Suppliers',
+    `Your order has shipped via ${trackingData.shipping_carrier}. Tracking: ${trackingData.tracking_number}`,
+    body,
+  );
+}
+
+export async function sendShippingNotificationEmail(
+  to: string,
+  trackingData: TrackingData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildShippingNotificationHtml(trackingData);
+  const subject = `Your Order Has Shipped — Tracking #${trackingData.tracking_number}`;
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Shipping notification for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Carrier: ${trackingData.shipping_carrier}, Tracking: ${trackingData.tracking_number}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (shipping notification):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Shipping notification sent to ${to}, tracking: ${trackingData.tracking_number}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send shipping notification:', message);
+    return { success: false, error: message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Email: Order Shipped (combined order + tracking)
+// ---------------------------------------------------------------------------
+
+function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string {
+  const itemRows = order.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
+            ${item.product_name}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
+            ${item.quantity}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;text-align:right;">
+            ${formatCurrency(item.total_price, order.currency)}
+          </td>
+        </tr>`
+    )
+    .join('');
+
+  const addressHtml = formatAddress(order);
+
+  const body = `
+    <h2 style="margin:0 0 8px;color:${BRAND.dark};font-size:22px;font-weight:700;">
+      Your Order Has Shipped!
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      Great news — order #${order.id} is on its way to you.
+    </p>
+
+    <!-- Tracking card -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${BRAND.primaryLight};padding:20px;border-radius:8px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="width:50%;">
+                <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Carrier</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;">${tracking.shipping_carrier}${tracking.shipping_service ? ` — ${tracking.shipping_service}` : ''}</p>
+              </td>
+              <td style="width:50%;">
+                <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tracking</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;font-family:monospace;">${tracking.tracking_number}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Track button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td align="center">
+          <a href="${tracking.tracking_url}" target="_blank" style="display:inline-block;background-color:${BRAND.success};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+            Track Your Package
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Order summary -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td>
+          <p style="margin:0 0 12px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Order Summary</p>
+        </td>
+      </tr>
+      ${itemRows}
+      <tr>
+        <td colspan="2" style="padding:14px 0 0;color:${BRAND.dark};font-size:15px;font-weight:700;">Total</td>
+        <td style="padding:14px 0 0;color:${BRAND.primary};font-size:15px;font-weight:700;text-align:right;">${formatCurrency(order.total, order.currency)}</td>
+      </tr>
+    </table>
+
+    ${
+      addressHtml
+        ? `
+    <!-- Shipping address -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${BRAND.light};padding:16px 20px;border-radius:8px;border:1px solid ${BRAND.border};">
+          <p style="margin:0 0 6px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Ship To</p>
+          <p style="margin:0;color:${BRAND.dark};font-size:14px;line-height:1.6;">${addressHtml}</p>
+        </td>
+      </tr>
+    </table>`
+        : ''
+    }
+
+    <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      Tracking may take a few hours to update. Questions? Contact
+      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+    </p>
+  `;
+
+  return emailLayout(
+    'Your Order Has Shipped - Value Suppliers',
+    `Order #${order.id} shipped via ${tracking.shipping_carrier}. Tracking: ${tracking.tracking_number}`,
+    body,
+  );
+}
+
+export async function sendOrderShippedEmail(
+  to: string,
+  orderData: OrderData,
+  trackingInfo: TrackingData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildOrderShippedHtml(orderData, trackingInfo);
+  const subject = `Order #${orderData.id} Has Shipped — Tracking #${trackingInfo.tracking_number}`;
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Order shipped for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Order #${orderData.id}, Carrier: ${trackingInfo.shipping_carrier}, Tracking: ${trackingInfo.tracking_number}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (order shipped):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Order shipped email sent to ${to} for order #${orderData.id}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send order shipped email:', message);
+    return { success: false, error: message };
+  }
+}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import AffiliateForm from '@/components/forms/AffiliateForm';
 
 export const metadata: Metadata = {
   title: 'Affiliate Program — Earn Up to 20% Commission',
@@ -70,17 +71,6 @@ const WHO = [
   'Industry Professionals & Consultants',
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 16px',
-  borderRadius: 10,
-  border: '1px solid var(--color-border)',
-  fontSize: '0.95rem',
-  outline: 'none',
-  fontFamily: "'Inter', system-ui, sans-serif",
-  backgroundColor: '#fff',
-  boxSizing: 'border-box',
-};
 
 export default function AffiliatePage() {
   return (
@@ -297,58 +287,7 @@ export default function AffiliatePage() {
                 Submit your info below. We&apos;ll review within 24 hours and get you set up with your dashboard, discount codes, and marketing kit.
               </p>
 
-              <form style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="vs-name-row">
-                  <div>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Full Name</label>
-                    <input type="text" required placeholder="Your name" style={inputStyle} />
-                  </div>
-                  <div>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Email</label>
-                    <input type="email" required placeholder="you@example.com" style={inputStyle} />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Primary Handle / URL</label>
-                  <input type="text" placeholder="@username or https://yourchannel.com" style={inputStyle} />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="vs-name-row">
-                  <div>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Audience Size</label>
-                    <input type="text" placeholder="e.g. 12k followers" style={inputStyle} />
-                  </div>
-                  <div>
-                    <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Primary Channels</label>
-                    <input type="text" placeholder="YouTube, TikTok, Email, etc." style={inputStyle} />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="label-caps" style={{ display: 'block', marginBottom: 8, color: 'var(--color-charcoal)', fontSize: '0.68rem' }}>Notes / Pitch</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Tell us about your audience and content style."
-                    style={{ ...inputStyle, resize: 'vertical' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: 'var(--color-amber)', color: '#fff', border: 'none',
-                    borderRadius: 9999, padding: '15px 28px',
-                    fontFamily: "'Barlow', Arial, sans-serif", fontWeight: 700,
-                    fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase',
-                    cursor: 'pointer', width: '100%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    boxShadow: 'var(--shadow-amber)',
-                  }}
-                >
-                  Apply Now <ArrowRight size={14} />
-                </button>
-              </form>
+              <AffiliateForm />
             </div>
           </AnimateIn>
         </div>

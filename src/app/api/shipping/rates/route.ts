@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       rates: result.rates,
     });
   } catch (err) {
-    console.error('[Shipping] rates error:', err);
+    console.error('[Shipping] rates error:', err instanceof Error ? err.message : 'unknown error');
     return NextResponse.json({ error: 'Failed to get rates' }, { status: 500 });
   }
 }

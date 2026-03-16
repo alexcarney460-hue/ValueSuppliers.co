@@ -20,7 +20,18 @@ export async function GET(req: Request) {
 
     let query = supabase
       .from('orders')
-      .select('id, contact_id, email, status, total, items, shipping_address, created_at, updated_at', { count: 'exact' });
+      .select(
+        [
+          'id', 'contact_id', 'email', 'status', 'total',
+          'shipping_name', 'shipping_address_line1', 'shipping_address_line2',
+          'shipping_city', 'shipping_state', 'shipping_zip', 'shipping_country',
+          'label_url', 'tracking_number', 'tracking_url',
+          'shipping_carrier', 'shipping_service', 'shipping_cost',
+          'shipping_status', 'shipped_at', 'printed_at', 'label_created_at',
+          'created_at', 'updated_at',
+        ].join(', '),
+        { count: 'exact' },
+      );
 
     if (email) {
       query = query.ilike('email', `%${email}%`);

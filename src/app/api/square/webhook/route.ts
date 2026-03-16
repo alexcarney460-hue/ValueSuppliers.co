@@ -3,6 +3,12 @@ import { createHmac } from 'crypto';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { autoShipOrder } from '@/lib/shippo';
 import { DEFAULT_WEIGHTS } from '@/lib/shipping';
+import {
+  sendOrderConfirmationEmail,
+  sendOrderShippedEmail,
+  type OrderData,
+  type OrderItem,
+} from '@/lib/email';
 
 function verifySquareSignature(
   body: string,
@@ -56,10 +62,8 @@ export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const signature = req.headers.get('x-square-hmacsha256-signature');
 
-  console.log('[Square Webhook] Received event, signature present:', !!signature, 'key present:', !!signatureKey);
-
   if (signatureKey && !verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
-    console.error('[Square Webhook] Signature verification failed. URL used:', notificationUrl);
+    console.error('[Square Webhook] Signature verification failed');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
@@ -82,7 +86,6 @@ export async function POST(req: NextRequest) {
       // Only process completed payments
       const paymentStatus = (payment.status as string) || '';
       if (paymentStatus !== 'COMPLETED') {
-        console.log('[Square] payment event with status:', paymentStatus, '— skipping');
         break;
       }
 
@@ -103,7 +106,6 @@ export async function POST(req: NextRequest) {
           .limit(1)
           .single();
         if (existingOrder) {
-          console.log('[Square] Payment already processed:', paymentId);
           break;
         }
       }
@@ -165,11 +167,38 @@ export async function POST(req: NextRequest) {
             }
           }
         } catch (err) {
-          console.error('[Square] Failed to fetch order line items:', err);
+          console.error('[Square] Failed to fetch order line items:', err instanceof Error ? err.message : 'unknown error');
         }
       }
 
-      console.log('[Square] payment.completed — order saved:', order?.id, 'contact:', contactId);
+      // Send order confirmation email (non-blocking — don't fail webhook on email error)
+      if (order && buyerEmail) {
+        try {
+          const { data: savedItems } = await supabase
+            .from('order_items')
+            .select('product_name, quantity, unit_price, total_price')
+            .eq('order_id', order.id);
+
+          const emailOrderData: OrderData = {
+            id: order.id,
+            email: buyerEmail,
+            total: totalCents / 100,
+            currency,
+            items: (savedItems || []) as OrderItem[],
+            shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
+            shipping_address_line1: shippingAddr?.address_line_1 || null,
+            shipping_address_line2: shippingAddr?.address_line_2 || null,
+            shipping_city: shippingAddr?.locality || null,
+            shipping_state: shippingAddr?.administrative_district_level_1 || null,
+            shipping_zip: shippingAddr?.postal_code || null,
+            shipping_country: shippingAddr?.country || 'US',
+          };
+
+          await sendOrderConfirmationEmail(buyerEmail, emailOrderData);
+        } catch (emailErr) {
+          console.error('[Email] Order confirmation failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
+        }
+      }
 
       // Auto-ship: create Shippo shipment, pick cheapest rate, buy label
       if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
@@ -221,13 +250,45 @@ export async function POST(req: NextRequest) {
               shipped_at: new Date().toISOString(),
             }).eq('id', order.id);
 
-            console.log('[Shippo] Auto-shipped order', order.id, '—', shipResult.carrier, shipResult.service, '$' + shipResult.rate, 'tracking:', shipResult.trackingNumber);
+            // Send order shipped email with tracking info
+            if (buyerEmail) {
+              try {
+                const { data: savedItems } = await supabase
+                  .from('order_items')
+                  .select('product_name, quantity, unit_price, total_price')
+                  .eq('order_id', order.id);
+
+                const shippedOrderData: OrderData = {
+                  id: order.id,
+                  email: buyerEmail,
+                  total: totalCents / 100,
+                  currency,
+                  items: (savedItems || []) as OrderItem[],
+                  shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
+                  shipping_address_line1: shippingAddr?.address_line_1 || null,
+                  shipping_address_line2: shippingAddr?.address_line_2 || null,
+                  shipping_city: shippingAddr?.locality || null,
+                  shipping_state: shippingAddr?.administrative_district_level_1 || null,
+                  shipping_zip: shippingAddr?.postal_code || null,
+                  shipping_country: shippingAddr?.country || 'US',
+                };
+
+                await sendOrderShippedEmail(buyerEmail, shippedOrderData, {
+                  tracking_number: shipResult.trackingNumber,
+                  shipping_carrier: shipResult.carrier,
+                  tracking_url: shipResult.trackingUrl,
+                  shipping_service: shipResult.service,
+                });
+              } catch (emailErr) {
+                console.error('[Email] Shipped notification failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
+              }
+            }
           } else {
-            console.error('[Shippo] Auto-ship failed for order', order.id, '— no rates or label error');
+            console.error('[Shippo] Auto-ship failed for order', order.id);
           }
         } catch (shipErr) {
           // Don't fail the webhook if shipping fails — order is still saved
-          console.error('[Shippo] Auto-ship error for order', order?.id, shipErr);
+          console.error('[Shippo] Auto-ship error for order', order?.id, shipErr instanceof Error ? shipErr.message : 'unknown error');
         }
       }
 
@@ -253,7 +314,7 @@ export async function POST(req: NextRequest) {
         const newStatus = statusMap[latestState || ''] || 'processing';
 
         await supabase.from('orders').update({ status: newStatus }).eq('square_order_id', sqOrderId);
-        console.log('[Square] order.fulfillment.updated:', sqOrderId, '->', newStatus);
+        // Fulfillment status updated
       }
       break;
     }
@@ -264,7 +325,6 @@ export async function POST(req: NextRequest) {
       const subscription = subObj?.subscription as Record<string, unknown> | undefined;
       if (supabase && subscription) {
         const subId = subscription.id as string;
-        const customerId = subscription.customer_id as string;
         const status = subscription.status as string;
 
         // Update any orders linked to this subscription
@@ -274,23 +334,23 @@ export async function POST(req: NextRequest) {
           }).eq('subscription_id', subId);
         }
 
-        console.log(`[Square] ${event.type}:`, subId, 'status:', status, 'customer:', customerId);
+        // Subscription event processed
       }
       break;
     }
 
     case 'invoice.payment_made': {
-      console.log('[Square] invoice.payment_made — subscription renewal processed');
+      // Subscription renewal processed
       break;
     }
 
     case 'invoice.payment_failed': {
-      console.error('[Square] invoice.payment_failed — payment dunning needed');
+      console.error('[Square] invoice.payment_failed — dunning needed');
       break;
     }
 
     default:
-      console.log(`[Square] unhandled event: ${event.type}`);
+      // Unhandled event type — no action required
   }
 
   return NextResponse.json({ received: true });
