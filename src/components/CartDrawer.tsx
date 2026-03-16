@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck, Loader2 } from 'lucide-react';
+import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck, Loader2, Package, Box } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { getTierName, casesToNextTier, getCasePriceForQuantity, getProductBySlug } from '@/lib/products';
+import { formatPrice } from '@/lib/pricing';
 
 type ShippingRate = {
   id: string;
@@ -16,7 +18,7 @@ type ShippingRate = {
 };
 
 export default function CartDrawer() {
-  const { items, removeItem, updateQty, total, count, isOpen, closeCart, clearCart } = useCart();
+  const { items, removeItem, updateQty, total, count, totalCaseCount, isOpen, closeCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -33,13 +35,31 @@ export default function CartDrawer() {
   const hasOneTime  = items.some((i) => i.plan === 'one-time');
   const mixedPlans  = hasAutoship && hasOneTime;
 
+  // Tier info for case items
+  const currentTier = totalCaseCount > 0 ? getTierName(totalCaseCount) : null;
+  const nextTier = totalCaseCount > 0 ? casesToNextTier(totalCaseCount) : null;
+
+  // Recalculate total with dynamic tier pricing for case items
+  const adjustedTotal = useMemo(() => {
+    return items.reduce((sum, item) => {
+      if (item.purchaseUnit === 'case') {
+        const product = getProductBySlug(item.id);
+        if (product) {
+          const tierPrice = getCasePriceForQuantity(product, totalCaseCount);
+          return sum + tierPrice * item.quantity;
+        }
+      }
+      return sum + item.price * item.quantity;
+    }, 0);
+  }, [items, totalCaseCount]);
+
   // Reset shipping when cart changes
   useEffect(() => {
     setShippingRates([]);
     setSelectedRate(null);
     setRatesFetched(false);
     setRatesError(null);
-  }, [items.length, total]);
+  }, [items.length, adjustedTotal]);
 
   // Close on Escape
   useEffect(() => {
@@ -72,7 +92,6 @@ export default function CartDrawer() {
         setRatesError('No shipping options available for this zip code');
       } else {
         setShippingRates(data.rates);
-        // Auto-select cheapest
         setSelectedRate(data.rates[0]);
       }
       setRatesFetched(true);
@@ -88,11 +107,23 @@ export default function CartDrawer() {
     setLoading(true);
     setError(null);
     try {
+      // Build items with tier-adjusted prices for checkout
+      const checkoutItems = items.map((item) => {
+        if (item.purchaseUnit === 'case') {
+          const product = getProductBySlug(item.id);
+          if (product) {
+            const tierPrice = getCasePriceForQuantity(product, totalCaseCount);
+            return { ...item, price: tierPrice };
+          }
+        }
+        return item;
+      });
+
       const res = await fetch('/api/checkout/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items,
+          items: checkoutItems,
           shipping: {
             carrier: selectedRate.carrier,
             service: selectedRate.service,
@@ -110,7 +141,7 @@ export default function CartDrawer() {
     }
   }
 
-  const orderTotal = selectedRate ? total + selectedRate.price : total;
+  const orderTotal = selectedRate ? adjustedTotal + selectedRate.price : adjustedTotal;
 
   return (
     <>
@@ -237,109 +268,148 @@ export default function CartDrawer() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {items.map((item) => (
-                <div
-                  key={`${item.id}-${item.plan}`}
-                  style={{
-                    display: 'flex',
-                    gap: 14,
-                    padding: '16px 24px',
-                    borderBottom: '1px solid var(--color-border)',
-                    alignItems: 'flex-start',
-                  }}
-                >
-                  {/* Image */}
+              {items.map((item) => {
+                // Calculate tier-adjusted price for case items
+                const effectivePrice = (() => {
+                  if (item.purchaseUnit === 'case') {
+                    const product = getProductBySlug(item.id);
+                    if (product) return getCasePriceForQuantity(product, totalCaseCount);
+                  }
+                  return item.price;
+                })();
+
+                return (
                   <div
+                    key={`${item.id}-${item.plan}-${item.purchaseUnit ?? 'default'}`}
                     style={{
-                      width: 68,
-                      height: 68,
-                      borderRadius: 10,
-                      overflow: 'hidden',
-                      backgroundColor: 'var(--color-sage-light)',
-                      flexShrink: 0,
-                      position: 'relative',
+                      display: 'flex',
+                      gap: 14,
+                      padding: '16px 24px',
+                      borderBottom: '1px solid var(--color-border)',
+                      alignItems: 'flex-start',
                     }}
                   >
-                    <Image src={item.img} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="68px" />
-                  </div>
-
-                  {/* Details */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-charcoal)', marginBottom: 4, lineHeight: 1.3 }}>
-                      {item.name}
+                    {/* Image */}
+                    <div
+                      style={{
+                        width: 68,
+                        height: 68,
+                        borderRadius: 10,
+                        overflow: 'hidden',
+                        backgroundColor: 'var(--color-sage-light)',
+                        flexShrink: 0,
+                        position: 'relative',
+                      }}
+                    >
+                      <Image src={item.img} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="68px" />
                     </div>
 
-                    {/* Plan badge */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                      {item.plan === 'autoship' ? (
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 4,
-                            backgroundColor: '#EDF7F0',
-                            color: 'var(--color-muted-green)',
-                            fontSize: '0.65rem',
-                            fontWeight: 700,
-                            padding: '3px 8px',
-                            borderRadius: 4,
-                            letterSpacing: '0.05em',
-                          }}
-                        >
-                          <RefreshCw size={9} /> Subscribe & Save
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            backgroundColor: 'var(--color-sage-light)',
-                            color: 'var(--color-warm-gray)',
-                            fontSize: '0.65rem',
-                            fontWeight: 600,
-                            padding: '3px 8px',
-                            borderRadius: 4,
-                            letterSpacing: '0.05em',
-                          }}
-                        >
-                          One-Time
-                        </span>
+                    {/* Details */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-charcoal)', marginBottom: 4, lineHeight: 1.3 }}>
+                        {item.name}
+                      </div>
+
+                      {/* Badges row: plan + purchase unit */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+                        {item.plan === 'autoship' ? (
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              backgroundColor: '#EDF7F0',
+                              color: 'var(--color-muted-green)',
+                              fontSize: '0.65rem',
+                              fontWeight: 700,
+                              padding: '3px 8px',
+                              borderRadius: 4,
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            <RefreshCw size={9} /> Subscribe & Save
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              backgroundColor: 'var(--color-sage-light)',
+                              color: 'var(--color-warm-gray)',
+                              fontSize: '0.65rem',
+                              fontWeight: 600,
+                              padding: '3px 8px',
+                              borderRadius: 4,
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            One-Time
+                          </span>
+                        )}
+
+                        {/* Purchase unit badge */}
+                        {item.purchaseUnit && (
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              backgroundColor: item.purchaseUnit === 'case' ? '#F0F4FF' : 'var(--color-sage-light)',
+                              color: item.purchaseUnit === 'case' ? '#4A6FA5' : 'var(--color-warm-gray)',
+                              fontSize: '0.65rem',
+                              fontWeight: 600,
+                              padding: '3px 8px',
+                              borderRadius: 4,
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            {item.purchaseUnit === 'case' ? <Package size={9} /> : <Box size={9} />}
+                            {item.purchaseUnit === 'case' ? 'Case (10 boxes)' : 'Box (100 gloves)'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Unit price display */}
+                      {item.purchaseUnit === 'case' && effectivePrice !== item.price && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--color-muted-green)', fontWeight: 600, marginBottom: 6 }}>
+                          {formatPrice(effectivePrice)}/case ({currentTier} tier)
+                        </div>
                       )}
-                    </div>
 
-                    {/* Qty + price row */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid var(--color-border)', borderRadius: 7, overflow: 'hidden' }}>
-                        <button
-                          onClick={() => updateQty(item.id, item.plan, item.quantity - 1)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
-                        >
-                          <Minus size={12} />
-                        </button>
-                        <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-charcoal)', minWidth: 24, textAlign: 'center' }}>
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQty(item.id, item.plan, item.quantity + 1)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
-                        >
-                          <Plus size={12} />
-                        </button>
-                      </div>
+                      {/* Qty + price row */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid var(--color-border)', borderRadius: 7, overflow: 'hidden' }}>
+                          <button
+                            onClick={() => updateQty(item.id, item.plan, item.quantity - 1, item.purchaseUnit)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-charcoal)', minWidth: 24, textAlign: 'center' }}>
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQty(item.id, item.plan, item.quantity + 1, item.purchaseUnit)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                        <button
-                          onClick={() => removeItem(item.id, item.plan)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-warm-gray)', display: 'flex', padding: 4 }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                            ${(effectivePrice * item.quantity).toFixed(2)}
+                          </span>
+                          <button
+                            onClick={() => removeItem(item.id, item.plan, item.purchaseUnit)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-warm-gray)', display: 'flex', padding: 4 }}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -397,13 +467,69 @@ export default function CartDrawer() {
               </div>
             )}
 
+            {/* Tier banner for case buyers */}
+            {totalCaseCount > 0 && currentTier && (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backgroundColor: currentTier === 'Distributor' ? '#F5F0FF' : currentTier === 'Wholesale' ? '#F0F8FF' : 'var(--color-sage-light)',
+                  borderRadius: 8,
+                  padding: '9px 12px',
+                  marginBottom: 14,
+                  border: `1px solid ${currentTier === 'Distributor' ? 'rgba(106,90,205,0.2)' : currentTier === 'Wholesale' ? 'rgba(70,130,180,0.2)' : 'transparent'}`,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Package size={13} color={currentTier === 'Distributor' ? '#6A5ACD' : currentTier === 'Wholesale' ? '#4682B4' : 'var(--color-forest)'} />
+                  <span style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: currentTier === 'Distributor' ? '#6A5ACD' : currentTier === 'Wholesale' ? '#4682B4' : 'var(--color-forest)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}>
+                    {currentTier} Pricing
+                  </span>
+                </div>
+                <span style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)' }}>
+                  {totalCaseCount} case{totalCaseCount !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
+
+            {/* Next tier nudge */}
+            {nextTier && totalCaseCount > 0 && (
+              <div
+                style={{
+                  backgroundColor: '#FFFBEB',
+                  border: '1px solid rgba(200,146,42,0.2)',
+                  borderRadius: 8,
+                  padding: '9px 12px',
+                  marginBottom: 14,
+                  fontSize: '0.75rem',
+                  color: 'var(--color-charcoal)',
+                  fontWeight: 600,
+                  textAlign: 'center',
+                }}
+              >
+                Add {nextTier.needed} more case{nextTier.needed !== 1 ? 's' : ''} to unlock{' '}
+                <span style={{ color: nextTier.tierName === 'Distributor' ? '#6A5ACD' : '#4682B4', fontWeight: 700 }}>
+                  {nextTier.tierName}
+                </span>{' '}
+                pricing!
+              </div>
+            )}
+
             {/* Subtotal */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
                 {hasAutoship ? 'Monthly subtotal' : 'Subtotal'}
               </span>
               <span className="font-mono" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
-                ${total.toFixed(2)}
+                ${adjustedTotal.toFixed(2)}
               </span>
             </div>
 

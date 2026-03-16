@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { RefreshCw, ShoppingCart, ArrowRight, CheckCircle } from 'lucide-react';
-import { useCart, type PurchasePlan } from '@/context/CartContext';
+import { RefreshCw, ShoppingCart, ArrowRight, CheckCircle, Package, Box } from 'lucide-react';
+import { useCart, type PurchasePlan, type PurchaseUnit } from '@/context/CartContext';
 import { AUTOSHIP_DISCOUNT } from '@/lib/square';
 import { formatPrice, roundMoney } from '@/lib/pricing';
+import type { Product } from '@/lib/products';
+import { hasCasePricing, getCasePriceForQuantity, getTierName, casesToNextTier } from '@/lib/products';
 
 type Props = {
   id: string;
@@ -13,26 +15,217 @@ type Props = {
   price: number;       // retail price
   img: string;
   unit: string;
+  product?: Product;   // full product for case pricing info
 };
 
-export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
+export default function AddToCartPanel({ id, name, price, img, unit, product }: Props) {
   const { addItem } = useCart();
   const [plan, setPlan] = useState<PurchasePlan>('one-time');
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const autoshipPrice = roundMoney(price * (1 - AUTOSHIP_DISCOUNT));
-  const displayPrice = plan === 'autoship' ? autoshipPrice : price;
-  const savings = plan === 'autoship' ? roundMoney(price * qty - autoshipPrice * qty) : 0;
+  const isGlove = product != null && hasCasePricing(product);
+  const [purchaseUnit, setPurchaseUnit] = useState<PurchaseUnit>(isGlove ? 'case' : 'box');
+
+  // Derive the correct unit price
+  const baseUnitPrice = (() => {
+    if (!isGlove || !product) return price;
+    if (purchaseUnit === 'box') return product.boxPrice ?? price;
+    // Case pricing: use tier-based price from quantity
+    return getCasePriceForQuantity(product, qty);
+  })();
+
+  const autoshipPrice = roundMoney(baseUnitPrice * (1 - AUTOSHIP_DISCOUNT));
+  const displayPrice = plan === 'autoship' ? autoshipPrice : baseUnitPrice;
+  const savings = plan === 'autoship' ? roundMoney(baseUnitPrice * qty - autoshipPrice * qty) : 0;
+
+  // Tier info for case purchases
+  const currentTier = purchaseUnit === 'case' ? getTierName(qty) : null;
+  const nextTierInfo = purchaseUnit === 'case' ? casesToNextTier(qty) : null;
 
   function handleAdd() {
-    addItem({ id, name, price: displayPrice, plan, img, unit });
+    addItem(
+      {
+        id,
+        name,
+        price: displayPrice,
+        plan,
+        img,
+        unit: purchaseUnit === 'case' ? '/ case' : unit,
+        purchaseUnit: isGlove ? purchaseUnit : undefined,
+      },
+      qty,
+    );
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
 
   return (
     <div>
+      {/* Box / Case toggle for glove products */}
+      {isGlove && product && (
+        <div style={{ marginBottom: 16 }}>
+          <div
+            style={{
+              display: 'flex',
+              border: '1.5px solid var(--color-border)',
+              borderRadius: 10,
+              overflow: 'hidden',
+            }}
+          >
+            <button
+              onClick={() => { setPurchaseUnit('box'); setQty(1); }}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: '12px 16px',
+                background: purchaseUnit === 'box' ? 'var(--color-bg)' : '#fff',
+                border: 'none',
+                borderRight: '1px solid var(--color-border)',
+                cursor: 'pointer',
+                fontFamily: "'Barlow', Arial, sans-serif",
+                fontWeight: purchaseUnit === 'box' ? 700 : 500,
+                fontSize: '0.82rem',
+                color: purchaseUnit === 'box' ? 'var(--color-forest)' : 'var(--color-warm-gray)',
+                transition: 'all 150ms ease',
+              }}
+            >
+              <Box size={14} />
+              Buy by Box
+            </button>
+            <button
+              onClick={() => { setPurchaseUnit('case'); setQty(1); }}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: '12px 16px',
+                background: purchaseUnit === 'case' ? '#EDF7F0' : '#fff',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: "'Barlow', Arial, sans-serif",
+                fontWeight: purchaseUnit === 'case' ? 700 : 500,
+                fontSize: '0.82rem',
+                color: purchaseUnit === 'case' ? 'var(--color-muted-green)' : 'var(--color-warm-gray)',
+                transition: 'all 150ms ease',
+              }}
+            >
+              <Package size={14} />
+              Buy by Case
+            </button>
+          </div>
+
+          {/* Unit info */}
+          <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginTop: 6, textAlign: 'center' }}>
+            {purchaseUnit === 'box'
+              ? `1 box = ${100} gloves`
+              : `1 case = ${product.caseBoxCount ?? 10} boxes (${product.caseGloveCount ?? 1000} gloves)`
+            }
+          </div>
+
+          {/* Case savings callout */}
+          {purchaseUnit === 'box' && product.boxPrice != null && product.casePrice != null && (
+            <div
+              style={{
+                marginTop: 8,
+                padding: '8px 12px',
+                backgroundColor: '#EDF7F0',
+                borderRadius: 8,
+                fontSize: '0.75rem',
+                color: 'var(--color-muted-green)',
+                fontWeight: 600,
+                textAlign: 'center',
+              }}
+            >
+              Save ${roundMoney(product.boxPrice * (product.caseBoxCount ?? 10) - product.casePrice).toFixed(2)}/case when buying by the case
+            </div>
+          )}
+
+          {/* Tier pricing breakdown for cases */}
+          {purchaseUnit === 'case' && (
+            <div
+              style={{
+                marginTop: 10,
+                padding: '10px 14px',
+                backgroundColor: 'var(--color-sage-light)',
+                borderRadius: 8,
+                display: 'flex',
+                gap: 0,
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-charcoal)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Volume Pricing
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {[
+                  { label: '1-20 cases', price: product.casePrice!, tier: 'Retail' },
+                  { label: '21-120 cases', price: product.wholesalePrice!, tier: 'Wholesale' },
+                  { label: '121+ cases', price: product.distributorPrice!, tier: 'Distributor' },
+                ].map(({ label, price: tierPrice, tier }) => (
+                  <div
+                    key={tier}
+                    style={{
+                      flex: 1,
+                      padding: '8px 6px',
+                      backgroundColor: currentTier === tier ? '#fff' : 'transparent',
+                      border: currentTier === tier ? '1.5px solid var(--color-forest)' : '1px solid transparent',
+                      borderRadius: 6,
+                      textAlign: 'center',
+                      transition: 'all 150ms ease',
+                    }}
+                  >
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: '0.88rem',
+                        fontWeight: 700,
+                        color: currentTier === tier ? 'var(--color-forest)' : 'var(--color-charcoal)',
+                      }}
+                    >
+                      {formatPrice(tierPrice)}
+                    </div>
+                    <div style={{ fontSize: '0.62rem', color: 'var(--color-warm-gray)', marginTop: 2 }}>
+                      {label}
+                    </div>
+                    {currentTier === tier && (
+                      <div style={{
+                        fontSize: '0.58rem',
+                        fontWeight: 700,
+                        color: 'var(--color-muted-green)',
+                        marginTop: 3,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>
+                        Your Tier
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Next tier nudge */}
+              {nextTierInfo && (
+                <div style={{
+                  marginTop: 8,
+                  fontSize: '0.72rem',
+                  color: 'var(--color-forest)',
+                  fontWeight: 600,
+                  textAlign: 'center',
+                }}>
+                  Add {nextTierInfo.needed} more case{nextTierInfo.needed !== 1 ? 's' : ''} to unlock {nextTierInfo.tierName} pricing
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Plan selector */}
       <div style={{ marginBottom: 20 }}>
         <div
@@ -85,7 +278,7 @@ export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
               </div>
             </div>
             <span className="font-mono" style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-charcoal)' }}>
-              {formatPrice(price)}
+              {formatPrice(baseUnitPrice)}
             </span>
           </button>
 
@@ -154,7 +347,7 @@ export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
 
         {plan === 'autoship' && (
           <p style={{ fontSize: '0.75rem', color: 'var(--color-muted-green)', marginTop: 8, fontWeight: 600 }}>
-            ✓ You save {formatPrice(roundMoney(price - autoshipPrice))} per case vs. one-time pricing
+            You save {formatPrice(roundMoney(baseUnitPrice - autoshipPrice))} per {purchaseUnit} vs. one-time pricing
           </p>
         )}
       </div>
@@ -176,7 +369,7 @@ export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
               alignItems: 'center',
             }}
           >
-            −
+            -
           </button>
           <span
             className="font-mono"
@@ -214,7 +407,7 @@ export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
           </div>
           {qty > 1 && (
             <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginTop: 3 }}>
-              {formatPrice(displayPrice)} × {qty} cases
+              {formatPrice(displayPrice)} x {qty} {purchaseUnit === 'case' ? 'cases' : isGlove ? 'boxes' : 'units'}
             </div>
           )}
           {savings > 0 && (
@@ -253,7 +446,7 @@ export default function AddToCartPanel({ id, name, price, img, unit }: Props) {
           {added ? (
             <><CheckCircle size={15} /> Added!</>
           ) : (
-            <><ShoppingCart size={15} /> Add to Cart</>
+            <><ShoppingCart size={15} /> Add {qty} {purchaseUnit === 'case' ? (qty === 1 ? 'Case' : 'Cases') : (qty === 1 ? (isGlove ? 'Box' : 'Unit') : (isGlove ? 'Boxes' : 'Units'))}</>
           )}
         </button>
         <Link

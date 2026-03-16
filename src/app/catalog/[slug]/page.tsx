@@ -347,6 +347,7 @@ export default async function ProductPage({
                 price={product.price}
                 img={product.img}
                 unit={product.unit}
+                product={product}
               />
             </div>
 

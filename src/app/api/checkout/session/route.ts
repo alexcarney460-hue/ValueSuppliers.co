@@ -36,15 +36,30 @@ export async function POST(req: NextRequest) {
     const origin = req.headers.get('origin') ?? 'https://valuesuppliers.co';
 
     // Build Square order line items
-    const lineItems = items.map((item) => ({
-      name: item.plan === 'autoship' ? `${item.name} (Subscribe & Save)` : item.name,
-      quantity: String(item.quantity),
-      basePriceMoney: {
-        amount: BigInt(Math.round(item.price * 100)),
-        currency: 'USD' as const,
-      },
-      note: item.plan === 'autoship' ? 'Monthly autoship — 10% off' : undefined,
-    }));
+    const lineItems = items.map((item) => {
+      // Build descriptive name with unit and plan info
+      const unitLabel = item.purchaseUnit === 'case'
+        ? ' (Case of 10)'
+        : item.purchaseUnit === 'box'
+          ? ' (Box)'
+          : '';
+      const planLabel = item.plan === 'autoship' ? ' — Subscribe & Save' : '';
+      const itemName = `${item.name}${unitLabel}${planLabel}`;
+
+      const notes: string[] = [];
+      if (item.plan === 'autoship') notes.push('Monthly autoship — 10% off');
+      if (item.purchaseUnit === 'case') notes.push('1 case = 10 boxes (1000 gloves)');
+
+      return {
+        name: itemName,
+        quantity: String(item.quantity),
+        basePriceMoney: {
+          amount: BigInt(Math.round(item.price * 100)),
+          currency: 'USD' as const,
+        },
+        note: notes.length > 0 ? notes.join(' | ') : undefined,
+      };
+    });
 
     // Add customer-selected shipping rate as a line item
     const shippingLabel = `Shipping — ${shipping.carrier} ${shipping.service}`;

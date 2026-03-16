@@ -5,7 +5,7 @@ export type Product = {
   name: string;
   shortName: string;
   tagline: string;
-  price: number;         // retail price per case/unit
+  price: number;         // retail price per case/unit (display default)
   unit: string;          // e.g. "/ case" or "/ box"
   badge: string | null;
   img: string;
@@ -16,6 +16,14 @@ export type Product = {
   useCases: string[];
   inStock: boolean;
   relatedSlugs: string[];
+
+  // Case/box pricing (gloves only)
+  boxPrice?: number;          // price per individual box (100 gloves)
+  casePrice?: number;         // price per case at retail tier (1-20 cases)
+  caseBoxCount?: number;      // boxes per case (default 10)
+  caseGloveCount?: number;    // gloves per case (default 1000)
+  wholesalePrice?: number;    // price per case at wholesale tier (21-120 cases)
+  distributorPrice?: number;  // price per case at distributor tier (121+ cases)
 };
 
 const PRODUCTS: Product[] = [
@@ -60,6 +68,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-6mil', 'black-nitrile-4mil', 'vinyl-gloves'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 2,
@@ -102,6 +116,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-4mil', 'black-nitrile-4mil', 'nitrile-xl-box'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 3,
@@ -144,6 +164,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-4mil', 'vinyl-gloves', 'nitrile-6mil'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 4,
@@ -186,6 +212,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-4mil', 'latex-exam-gloves', 'nitrile-6mil'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 5,
@@ -228,6 +260,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-4mil', 'nitrile-6mil', 'nitrile-xl-box'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 6,
@@ -269,6 +307,12 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-4mil', 'black-nitrile-4mil', 'nitrile-6mil'],
+    boxPrice: 10.00,
+    casePrice: 80.00,
+    caseBoxCount: 10,
+    caseGloveCount: 1000,
+    wholesalePrice: 70.00,
+    distributorPrice: 60.00,
   },
   {
     id: 7,
@@ -405,4 +449,30 @@ export function getRelatedProducts(slugs: string[]): Product[] {
 
 export function getProductsByCategory(category: Product['category']): Product[] {
   return PRODUCTS.filter((p) => p.category === category);
+}
+
+/** Returns true if a product supports case/box purchasing (gloves only). */
+export function hasCasePricing(product: Product): boolean {
+  return product.casePrice != null && product.boxPrice != null;
+}
+
+/** Get the per-case price based on total case quantity in the order. */
+export function getCasePriceForQuantity(product: Product, caseQty: number): number {
+  if (caseQty >= 121) return product.distributorPrice ?? product.casePrice ?? product.price;
+  if (caseQty >= 21) return product.wholesalePrice ?? product.casePrice ?? product.price;
+  return product.casePrice ?? product.price;
+}
+
+/** Get the tier name based on total case quantity. */
+export function getTierName(caseQty: number): 'Retail' | 'Wholesale' | 'Distributor' {
+  if (caseQty >= 121) return 'Distributor';
+  if (caseQty >= 21) return 'Wholesale';
+  return 'Retail';
+}
+
+/** Get how many more cases needed to reach the next tier, or null if at highest. */
+export function casesToNextTier(caseQty: number): { needed: number; tierName: string; tierPrice?: number } | null {
+  if (caseQty >= 121) return null; // already at highest tier
+  if (caseQty >= 21) return { needed: 121 - caseQty, tierName: 'Distributor' };
+  return { needed: 21 - caseQty, tierName: 'Wholesale' };
 }
