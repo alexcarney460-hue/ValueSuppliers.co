@@ -183,7 +183,7 @@ export async function purchaseLabel(rateId: string): Promise<{
 
   const transaction = await shippoClient.transactions.create({
     rate: rateId,
-    labelFileType: 'PDF',
+    labelFileType: 'PDF_4x6',
     async: false,
   });
 

@@ -103,22 +103,30 @@ export default function PrintLabelPage({ params }: { params: Promise<{ orderId: 
     <>
       {/* Print-specific styles */}
       <style>{`
+        @page {
+          size: landscape;
+          margin: 0;
+        }
         @media print {
-          /* Hide everything except the print content */
+          /* Hide everything except the label */
           nav, header, footer, .no-print { display: none !important; }
           body { margin: 0; padding: 0; background: #fff !important; }
           .print-container { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
           .print-actions { display: none !important; }
+          .order-summary { display: none !important; }
+          .label-wrapper {
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
           .label-frame {
             width: 100% !important;
-            height: auto !important;
-            min-height: 6in !important;
+            height: 100% !important;
             border: none !important;
-            page-break-after: always;
-          }
-          .order-summary {
-            page-break-before: always;
-            padding: 0.5in !important;
           }
         }
         @media screen {
@@ -183,7 +191,7 @@ export default function PrintLabelPage({ params }: { params: Promise<{ orderId: 
 
         {/* Shipping Label (PDF iframe) */}
         {order.label_url && (
-          <div style={{ marginBottom: 24 }}>
+          <div className="label-wrapper" style={{ marginBottom: 24 }}>
             <iframe
               className="label-frame"
               src={order.label_url}
