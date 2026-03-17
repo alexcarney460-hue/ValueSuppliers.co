@@ -4,6 +4,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { autoShipOrder } from '@/lib/shippo';
 import { DEFAULT_WEIGHTS } from '@/lib/shipping';
+import { squareClient } from '@/lib/square';
 import {
   sendOrderConfirmationEmail,
   sendOrderShippedEmail,
@@ -306,16 +307,49 @@ export async function processSquareEvent(
               const subscriptionId = metadata.subscription_id;
               const isRenewal = metadata.renewal === 'true';
 
+              // Extract Square customer ID and card-on-file from the payment
+              const squareCustomerId = payment.customer_id as string | undefined;
+              let squareCardId: string | null = null;
+              let cardLast4: string | null = null;
+
+              if (squareCustomerId && squareClient) {
+                try {
+                  const cardsPage = await squareClient.cards.list({
+                    customerId: squareCustomerId,
+                  });
+                  // Page.data contains the array of Card objects
+                  const allCards = cardsPage.data ?? [];
+                  const enabledCards = allCards.filter(
+                    (c) => c.enabled !== false,
+                  );
+                  if (enabledCards.length > 0) {
+                    const latestCard = enabledCards[enabledCards.length - 1];
+                    squareCardId = latestCard.id ?? null;
+                    cardLast4 = latestCard.last4 ?? null;
+                  }
+                  console.log(`[Webhook] Found ${enabledCards.length} card(s) for customer ${squareCustomerId}`);
+                } catch (cardErr) {
+                  console.error('[Webhook] Failed to list cards for customer:', cardErr instanceof Error ? cardErr.message : 'unknown');
+                }
+              }
+
               if (isAutoship && subscriptionId && isRenewal) {
                 // This is a renewal payment — update the existing subscription
+                const renewalUpdate: Record<string, unknown> = {
+                  last_renewed_at: new Date().toISOString(),
+                  square_order_id: orderId,
+                  payment_failed_at: null, // Clear any previous failure
+                };
+                // Update card on file if we found one (e.g. customer used update-card flow)
+                if (squareCustomerId) renewalUpdate.square_customer_id = squareCustomerId;
+                if (squareCardId) renewalUpdate.square_card_id = squareCardId;
+                if (cardLast4) renewalUpdate.card_last4 = cardLast4;
+
                 await supabase
                   .from('subscriptions')
-                  .update({
-                    last_renewed_at: new Date().toISOString(),
-                    square_order_id: orderId,
-                  })
+                  .update(renewalUpdate)
                   .eq('id', subscriptionId);
-                console.log(`[Webhook] Updated subscription ${subscriptionId} last_renewed_at`);
+                console.log(`[Webhook] Updated subscription ${subscriptionId} last_renewed_at, card: ****${cardLast4 ?? 'none'}`);
               } else if (isAutoship && !isRenewal && buyerEmail) {
                 // This is a first-time autoship purchase — create a subscription
                 const { computeNextRenewal } = await import('@/lib/subscriptions');
@@ -351,8 +385,11 @@ export async function processSquareEvent(
                     discount_pct: 10,
                     next_renewal_at: nextRenewal.toISOString(),
                     square_order_id: orderId,
+                    square_customer_id: squareCustomerId ?? null,
+                    square_card_id: squareCardId,
+                    card_last4: cardLast4,
                   });
-                  console.log(`[Webhook] Created subscription for ${buyerEmail} from order ${orderId}`);
+                  console.log(`[Webhook] Created subscription for ${buyerEmail} from order ${orderId}, card: ****${cardLast4 ?? 'none'}`);
                 }
               }
             }

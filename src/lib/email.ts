@@ -553,6 +553,22 @@ export interface RenewalEmailData {
   readonly checkoutUrl: string;
 }
 
+export interface AutoshipReceiptData {
+  readonly subscriptionId: string;
+  readonly items: ReadonlyArray<{ name: string; quantity: number; purchaseUnit: string }>;
+  readonly totalCents: number;
+  readonly discountPct: number;
+  readonly nextRenewalDate: string;
+  readonly cardLast4?: string;
+}
+
+export interface PaymentFailedData {
+  readonly subscriptionId: string;
+  readonly items: ReadonlyArray<{ name: string; quantity: number; purchaseUnit: string }>;
+  readonly accountUrl: string;
+  readonly cardLast4?: string;
+}
+
 function buildRenewalReminderHtml(data: RenewalEmailData): string {
   const itemRows = data.items
     .map(
@@ -645,6 +661,247 @@ export async function sendRenewalReminderEmail(
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown email error';
     console.error('[Email] Failed to send renewal reminder:', message);
+    return { success: false, error: message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Email: Autoship Receipt (sent after successful auto-charge)
+// ---------------------------------------------------------------------------
+
+function buildAutoshipReceiptHtml(data: AutoshipReceiptData): string {
+  const totalDollars = data.totalCents / 100;
+  const nextDate = new Date(data.nextRenewalDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const itemRows = data.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
+            ${escapeHtml(item.name)}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
+            ${item.quantity} ${escapeHtml(item.purchaseUnit)}${item.quantity !== 1 ? 's' : ''}
+          </td>
+        </tr>`,
+    )
+    .join('');
+
+  const cardNote = data.cardLast4
+    ? `Card ending in <strong>${escapeHtml(data.cardLast4)}</strong>`
+    : 'Your card on file';
+
+  const body = `
+    <h2 style="margin:0 0 8px;color:${BRAND.dark};font-size:22px;font-weight:700;">
+      Autoship Payment Confirmed
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      Your Subscribe &amp; Save order has been automatically charged. No action is needed &mdash; your order is being prepared.
+    </p>
+
+    <!-- Payment badge -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${BRAND.primaryLight};padding:16px 20px;border-radius:8px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <span style="color:${BRAND.primary};font-size:13px;font-weight:600;">SUBSCRIPTION ${escapeHtml(data.subscriptionId.slice(0, 8).toUpperCase())}</span>
+              </td>
+              <td style="text-align:right;">
+                <span style="color:${BRAND.success};font-size:14px;font-weight:700;">${formatCurrency(totalDollars)}</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Items -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Item</td>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Qty</td>
+      </tr>
+      ${itemRows}
+    </table>
+
+    <!-- Payment & next renewal info -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${BRAND.light};padding:20px;border-radius:8px;border:1px solid ${BRAND.border};">
+          <p style="margin:0 0 8px;color:${BRAND.muted};font-size:13px;">
+            ${cardNote} was charged <strong style="color:${BRAND.dark};">${formatCurrency(totalDollars)}</strong> (${Math.round(data.discountPct)}% Subscribe &amp; Save discount applied).
+          </p>
+          <p style="margin:0;color:${BRAND.muted};font-size:13px;">
+            Next renewal: <strong style="color:${BRAND.dark};">${nextDate}</strong>
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      To manage your subscription, visit your
+      <a href="https://valuesuppliers.co/account" style="color:${BRAND.primary};text-decoration:none;">account page</a>
+      or reply to this email.
+    </p>
+  `;
+
+  return emailLayout(
+    'Autoship Payment Confirmed - Value Suppliers',
+    `Your Subscribe & Save order was charged ${formatCurrency(totalDollars)}. Next renewal: ${nextDate}.`,
+    body,
+  );
+}
+
+export async function sendAutoshipReceiptEmail(
+  to: string,
+  data: AutoshipReceiptData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildAutoshipReceiptHtml(data);
+  const subject = `Autoship Payment Confirmed — ${formatCurrency(data.totalCents / 100)}`;
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Autoship receipt for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Subscription: ${data.subscriptionId}, Total: ${formatCurrency(data.totalCents / 100)}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (autoship receipt):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Autoship receipt sent to ${to} for subscription ${data.subscriptionId}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send autoship receipt:', message);
+    return { success: false, error: message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Email: Payment Failed (card declined — subscription paused)
+// ---------------------------------------------------------------------------
+
+function buildPaymentFailedHtml(data: PaymentFailedData): string {
+  const itemRows = data.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
+            ${escapeHtml(item.name)}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
+            ${item.quantity} ${escapeHtml(item.purchaseUnit)}${item.quantity !== 1 ? 's' : ''}
+          </td>
+        </tr>`,
+    )
+    .join('');
+
+  const cardNote = data.cardLast4
+    ? `Your card ending in <strong>${escapeHtml(data.cardLast4)}</strong> was declined.`
+    : 'Your payment method was declined.';
+
+  const body = `
+    <h2 style="margin:0 0 8px;color:#dc2626;font-size:22px;font-weight:700;">
+      Payment Failed
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      We were unable to process your Subscribe &amp; Save renewal. Your subscription has been paused until payment is resolved.
+    </p>
+
+    <!-- Alert card -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:#FEF2F2;padding:16px 20px;border-radius:8px;border:1px solid #fecaca;">
+          <p style="margin:0;color:#dc2626;font-size:14px;font-weight:600;">
+            ${cardNote}
+          </p>
+          <p style="margin:8px 0 0;color:${BRAND.muted};font-size:13px;">
+            Please update your payment method to resume your subscription and keep your discount.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Items that were not renewed -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Items Not Renewed</td>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Qty</td>
+      </tr>
+      ${itemRows}
+    </table>
+
+    <!-- CTA button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td align="center">
+          <a href="${sanitizeUrl(data.accountUrl)}" target="_blank" style="display:inline-block;background-color:${BRAND.primary};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+            Update Payment Method
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      If you need help, reply to this email or contact
+      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
+    </p>
+  `;
+
+  return emailLayout(
+    'Payment Failed - Value Suppliers',
+    'We could not process your Subscribe & Save renewal. Please update your payment method.',
+    body,
+  );
+}
+
+export async function sendPaymentFailedEmail(
+  to: string,
+  data: PaymentFailedData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildPaymentFailedHtml(data);
+  const subject = 'Action Required: Subscribe & Save Payment Failed';
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Payment failed for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Subscription: ${data.subscriptionId}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (payment failed):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Payment failed email sent to ${to} for subscription ${data.subscriptionId}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send payment failed email:', message);
     return { success: false, error: message };
   }
 }

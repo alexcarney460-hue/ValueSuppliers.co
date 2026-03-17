@@ -24,6 +24,10 @@ export interface Subscription {
   readonly next_renewal_at: string;
   readonly last_renewed_at: string | null;
   readonly square_order_id: string | null;
+  readonly square_customer_id: string | null;
+  readonly square_card_id: string | null;
+  readonly card_last4: string | null;
+  readonly payment_failed_at: string | null;
   readonly created_at: string;
   readonly updated_at: string;
 }

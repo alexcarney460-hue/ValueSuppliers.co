@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Pause, Play, XCircle, Package, Box, Calendar, Loader2 } from 'lucide-react';
+import { RefreshCw, Pause, Play, XCircle, Package, Box, Calendar, Loader2, CreditCard, AlertTriangle } from 'lucide-react';
 import { frequencyLabel, type Subscription, type SubscriptionFrequency } from '@/lib/subscriptions';
 
 type Props = {
@@ -66,6 +66,28 @@ export default function SubscriptionManager({ email }: Props) {
       await fetchSubscriptions();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Update failed');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleUpdateCard(subId: string) {
+    setActionLoading(subId);
+    setError(null);
+    try {
+      const res = await fetch(`/api/subscriptions/${subId}/update-card`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to create checkout link');
+      // Redirect to Square checkout to capture new card
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update payment method');
     } finally {
       setActionLoading(null);
     }
@@ -224,6 +246,69 @@ export default function SubscriptionManager({ email }: Props) {
                     </span>
                   </div>
                 ))}
+              </div>
+
+              {/* Payment failed warning */}
+              {sub.payment_failed_at && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: '0.75rem',
+                    color: '#dc2626',
+                    backgroundColor: '#FEF2F2',
+                    border: '1px solid #fecaca',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    marginBottom: 12,
+                  }}
+                >
+                  <AlertTriangle size={14} />
+                  <span>Payment failed. Please update your payment method to resume.</span>
+                </div>
+              )}
+
+              {/* Card on file */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 12,
+                  fontSize: '0.75rem',
+                  flexWrap: 'wrap',
+                  gap: 6,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CreditCard size={13} color="var(--color-warm-gray)" />
+                  <span style={{ color: 'var(--color-warm-gray)' }}>
+                    {sub.card_last4
+                      ? <>Card on file: <strong style={{ color: 'var(--color-charcoal)', fontFamily: 'monospace' }}>**** {sub.card_last4}</strong></>
+                      : 'No card on file'}
+                  </span>
+                </div>
+                {sub.status !== 'cancelled' && (
+                  <button
+                    onClick={() => handleUpdateCard(sub.id)}
+                    disabled={isLoading}
+                    style={{
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      color: 'var(--color-primary, #1a56db)',
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 5,
+                      padding: '3px 9px',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      fontFamily: "'Barlow', Arial, sans-serif",
+                      opacity: isLoading ? 0.6 : 1,
+                    }}
+                  >
+                    {isLoading ? 'Loading...' : sub.card_last4 ? 'Update Card' : 'Add Card'}
+                  </button>
+                )}
               </div>
 
               {/* Next renewal + discount */}
