@@ -80,7 +80,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/products/:slug',
+        source: '/products/:slug((?!.*\\.).*)',
         destination: '/catalog/:slug',
         permanent: true,
       },
