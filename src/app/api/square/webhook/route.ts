@@ -443,59 +443,65 @@ export async function processSquareEvent(
         }
       }
 
-      // Auto-ship: fire FIRST (before email) so it doesn't get killed by timeout.
-      // Runs in a separate serverless function invocation.
+      // Auto-ship: dispatch to a separate endpoint (runs Shippo in its own invocation).
+      // We AWAIT the fetch to guarantee the request is sent before the function exits.
+      // The fetch itself is fast (<1s) — the heavy Shippo work runs in the other function.
       if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
         const internalSecret = process.env.INTERNAL_API_SECRET || process.env.CRON_SECRET || process.env.ADMIN_ANALYTICS_TOKEN;
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://valuesuppliers.co';
 
-        fetch(`${siteUrl}/api/shipping/auto-ship`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-internal-secret': internalSecret || '',
-          },
-          body: JSON.stringify({
-            orderId: order.id,
-            email: buyerEmail,
-            shippingAddr,
-            totalCents,
-            currency,
-          }),
-        }).catch((err) => {
-          console.error('[Webhook] Failed to trigger auto-ship:', err instanceof Error ? err.message : 'unknown');
-        });
-
-        console.log(`[Webhook] Auto-ship triggered for order ${order.id} (async)`);
+        try {
+          const autoShipRes = await fetch(`${siteUrl}/api/shipping/auto-ship`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-internal-secret': internalSecret || '',
+            },
+            body: JSON.stringify({
+              orderId: order.id,
+              email: buyerEmail,
+              shippingAddr,
+              totalCents,
+              currency,
+            }),
+          });
+          console.log(`[Webhook] Auto-ship dispatched for order ${order.id}: ${autoShipRes.status}`);
+        } catch (err) {
+          console.error('[Webhook] Failed to dispatch auto-ship:', err instanceof Error ? err.message : 'unknown');
+        }
       }
 
-      // Send order confirmation email (non-blocking — don't fail webhook on email error)
+      // Send order confirmation email — don't await, let it run in background.
+      // If the function exits before it completes, the customer still gets the
+      // shipped email from the auto-ship endpoint.
       if (order && buyerEmail) {
-        try {
-          const { data: savedItems } = await supabase
-            .from('order_items')
-            .select('product_name, quantity, unit_price, total_price')
-            .eq('order_id', order.id);
+        (async () => {
+          try {
+            const { data: savedItems } = await supabase
+              .from('order_items')
+              .select('product_name, quantity, unit_price, total_price')
+              .eq('order_id', order.id);
 
-          const emailOrderData: OrderData = {
-            id: order.id,
-            email: buyerEmail,
-            total: totalCents / 100,
-            currency,
-            items: (savedItems || []) as OrderItem[],
-            shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
-            shipping_address_line1: shippingAddr?.address_line_1 || null,
-            shipping_address_line2: shippingAddr?.address_line_2 || null,
-            shipping_city: shippingAddr?.locality || null,
-            shipping_state: shippingAddr?.administrative_district_level_1 || null,
-            shipping_zip: shippingAddr?.postal_code || null,
-            shipping_country: shippingAddr?.country || 'US',
-          };
+            const emailOrderData: OrderData = {
+              id: order.id,
+              email: buyerEmail,
+              total: totalCents / 100,
+              currency,
+              items: (savedItems || []) as OrderItem[],
+              shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
+              shipping_address_line1: shippingAddr?.address_line_1 || null,
+              shipping_address_line2: shippingAddr?.address_line_2 || null,
+              shipping_city: shippingAddr?.locality || null,
+              shipping_state: shippingAddr?.administrative_district_level_1 || null,
+              shipping_zip: shippingAddr?.postal_code || null,
+              shipping_country: shippingAddr?.country || 'US',
+            };
 
-          await sendOrderConfirmationEmail(buyerEmail, emailOrderData);
-        } catch (emailErr) {
-          console.error('[Email] Order confirmation failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
-        }
+            await sendOrderConfirmationEmail(buyerEmail, emailOrderData);
+          } catch (emailErr) {
+            console.error('[Email] Order confirmation failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
+          }
+        })();
       }
 
       break;
