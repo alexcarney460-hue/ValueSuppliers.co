@@ -443,6 +443,32 @@ export async function processSquareEvent(
         }
       }
 
+      // Auto-ship: fire FIRST (before email) so it doesn't get killed by timeout.
+      // Runs in a separate serverless function invocation.
+      if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
+        const internalSecret = process.env.INTERNAL_API_SECRET || process.env.CRON_SECRET || process.env.ADMIN_ANALYTICS_TOKEN;
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://valuesuppliers.co';
+
+        fetch(`${siteUrl}/api/shipping/auto-ship`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-secret': internalSecret || '',
+          },
+          body: JSON.stringify({
+            orderId: order.id,
+            email: buyerEmail,
+            shippingAddr,
+            totalCents,
+            currency,
+          }),
+        }).catch((err) => {
+          console.error('[Webhook] Failed to trigger auto-ship:', err instanceof Error ? err.message : 'unknown');
+        });
+
+        console.log(`[Webhook] Auto-ship triggered for order ${order.id} (async)`);
+      }
+
       // Send order confirmation email (non-blocking — don't fail webhook on email error)
       if (order && buyerEmail) {
         try {
@@ -470,35 +496,6 @@ export async function processSquareEvent(
         } catch (emailErr) {
           console.error('[Email] Order confirmation failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
         }
-      }
-
-      // Auto-ship: fire off to a separate endpoint so it runs in its own function
-      // invocation and doesn't get killed by the webhook's 10-second timeout.
-      if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
-        const internalSecret = process.env.INTERNAL_API_SECRET || process.env.CRON_SECRET || process.env.ADMIN_ANALYTICS_TOKEN;
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'https://valuesuppliers.co';
-
-        // Fire and forget — don't await, let it run in its own invocation
-        fetch(`${siteUrl}/api/shipping/auto-ship`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-internal-secret': internalSecret || '',
-          },
-          body: JSON.stringify({
-            orderId: order.id,
-            email: buyerEmail,
-            shippingAddr,
-            totalCents,
-            currency,
-          }),
-        }).catch((err) => {
-          console.error('[Webhook] Failed to trigger auto-ship:', err instanceof Error ? err.message : 'unknown');
-        });
-
-        console.log(`[Webhook] Auto-ship triggered for order ${order.id} (async)`);
       }
 
       break;
