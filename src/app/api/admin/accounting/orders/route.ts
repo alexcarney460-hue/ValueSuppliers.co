@@ -29,6 +29,7 @@ export async function GET(req: Request) {
           'shipping_carrier', 'shipping_service',
           'shipped_at',
           'created_at', 'updated_at',
+          'order_items(product_name, quantity)',
         ].join(', '),
         { count: 'exact' },
       );

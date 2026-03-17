@@ -2,12 +2,19 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
+interface OrderItem {
+  product_name: string;
+  quantity: number;
+}
+
 interface Order {
   id: string;
   email: string;
+  shipping_name: string | null;
   status: string;
   total: number;
   created_at: string;
+  order_items: OrderItem[];
 }
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
@@ -114,7 +121,7 @@ export default function OrdersPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Order ID', 'Email', 'Total', 'Status', 'Date'].map((h) => (
+                {['Order ID', 'Customer', 'Items', 'Total', 'Status', 'Date'].map((h) => (
                   <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-warm-gray)', borderBottom: '1px solid var(--color-border)' }}>{h}</th>
                 ))}
               </tr>
@@ -122,10 +129,22 @@ export default function OrdersPage() {
             <tbody>
               {orders.map((o) => {
                 const sc = STATUS_COLORS[o.status] ?? STATUS_COLORS.pending;
+                const items = o.order_items ?? [];
+                const itemCount = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+                const itemSummary = items.length > 0
+                  ? items.map((i) => `${i.product_name}${i.quantity > 1 ? ` ×${i.quantity}` : ''}`).join(', ')
+                  : '—';
                 return (
                   <tr key={String(o.id)} style={{ borderBottom: '1px solid var(--color-border, #e4e1db)' }}>
                     <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>#{String(o.id).slice(-8)}</td>
-                    <td style={{ padding: '12px', fontSize: '0.85rem', color: 'var(--color-charcoal)' }}>{o.email}</td>
+                    <td style={{ padding: '12px' }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>{o.shipping_name || '—'}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', marginTop: 2 }}>{o.email}</div>
+                    </td>
+                    <td style={{ padding: '12px' }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>{itemCount} item{itemCount !== 1 ? 's' : ''}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginTop: 2, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{itemSummary}</div>
+                    </td>
                     <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-forest, #1b3a2d)' }}>{fmtCurrency(o.total ?? 0)}</td>
                     <td style={{ padding: '12px' }}>
                       <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: 9999, background: sc.bg, color: sc.color }}>{o.status}</span>
