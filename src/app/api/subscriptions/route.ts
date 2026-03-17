@@ -113,10 +113,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Email parameter is required.' }, { status: 400 });
   }
 
-  // Verify the caller owns this email via Supabase session cookie or the server-side token
-  const sbTokenMatch = req.headers.get('cookie')?.match(/sb-[^=]+-auth-token=([^;]+)/);
-  if (!sbTokenMatch && !authHeader) {
+  // Verify the caller owns this email via Supabase session
+  // Extract the Supabase access token from cookie or authorization header
+  const sbCookieMatch = req.headers.get('cookie')?.match(/sb-[^=]+-auth-token=([^;]+)/);
+  const token = sbCookieMatch?.[1] || authHeader?.replace('Bearer ', '') || null;
+  if (!token) {
     return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+  }
+
+  // Verify the token and check email matches the requested email
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user?.email) {
+    return NextResponse.json({ error: 'Invalid or expired session.' }, { status: 401 });
+  }
+  if (user.email.toLowerCase() !== email) {
+    return NextResponse.json({ error: 'You can only view your own subscriptions.' }, { status: 403 });
   }
 
   const { data: subscriptions, error: queryError } = await supabase

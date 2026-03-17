@@ -271,20 +271,17 @@ export async function GET(req: NextRequest) {
         checkoutUrl: paymentLink.url,
       });
 
-      // Advance next_renewal_at based on frequency
-      const nextRenewal = computeNextRenewal(sub.frequency as SubscriptionFrequency);
-
+      // Do NOT advance next_renewal_at yet — wait for the webhook to confirm payment.
+      // Store the pending order ID so the webhook can match it back to this subscription.
       await supabase
         .from('subscriptions')
         .update({
-          next_renewal_at: nextRenewal.toISOString(),
-          last_renewed_at: now,
           square_order_id: paymentLink.orderId ?? null,
         })
         .eq('id', sub.id);
 
       linkedFallback++;
-      console.log(`[Cron] Sent payment link for subscription ${sub.id} (no card on file) to ${sub.email}`);
+      console.log(`[Cron] Sent payment link for subscription ${sub.id} (no card on file) to ${sub.email}. Renewal date will advance after payment.`);
     } catch (err) {
       errors++;
       const msg = err instanceof Error ? err.message : 'Unknown error';
