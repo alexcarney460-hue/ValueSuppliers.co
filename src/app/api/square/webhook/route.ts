@@ -181,8 +181,72 @@ export async function processSquareEvent(
         }
       }
 
-      // Shipping address from payment
-      const shippingAddr = payment.shipping_address as Record<string, string> | undefined;
+      // Shipping address — Square puts it on the ORDER (fulfillments), NOT the payment.
+      // We'll extract it from the Square order API below. Initialize as null.
+      let shippingAddr: Record<string, string> | null = null;
+
+      // Fetch the full Square order once — we need it for line items, shipping
+      // address (from fulfillments), and subscription metadata.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let squareOrderData: any = null;
+      const squareToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
+      if (orderId && squareToken) {
+        try {
+          const orderRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
+            headers: { 'Authorization': `Bearer ${squareToken}`, 'Content-Type': 'application/json' },
+          });
+          if (orderRes.ok) {
+            squareOrderData = await orderRes.json();
+          } else {
+            console.error('[Square] Failed to fetch order:', orderRes.status, await orderRes.text().catch(() => ''));
+          }
+        } catch (err) {
+          console.error('[Square] Failed to fetch order:', err instanceof Error ? err.message : 'unknown');
+        }
+      }
+
+      // Extract shipping address from Square order fulfillments.
+      // Square stores it at: order.fulfillments[].shipment_details.recipient
+      if (squareOrderData?.order?.fulfillments) {
+        const fulfillments = squareOrderData.order.fulfillments as Array<Record<string, unknown>>;
+        for (const f of fulfillments) {
+          const shipDetails = f.shipment_details as Record<string, unknown> | undefined;
+          const recipient = shipDetails?.recipient as Record<string, unknown> | undefined;
+          const addr = recipient?.address as Record<string, string> | undefined;
+          if (addr?.address_line_1) {
+            shippingAddr = {
+              address_line_1: addr.address_line_1 || '',
+              address_line_2: addr.address_line_2 || '',
+              locality: addr.locality || '',
+              administrative_district_level_1: addr.administrative_district_level_1 || '',
+              postal_code: addr.postal_code || '',
+              country: addr.country || 'US',
+              // Recipient name fields
+              first_name: (recipient?.display_name as string) || '',
+              last_name: '',
+            };
+            // If display_name isn't set, fall back to email_address
+            if (!shippingAddr.first_name && recipient?.email_address) {
+              shippingAddr.first_name = recipient.email_address as string;
+            }
+            break; // Use first fulfillment with an address
+          }
+        }
+      }
+
+      // Fallback: also check payment.shipping_address (some Square integrations put it here)
+      if (!shippingAddr) {
+        const paymentShipAddr = payment.shipping_address as Record<string, string> | undefined;
+        if (paymentShipAddr?.address_line_1) {
+          shippingAddr = paymentShipAddr;
+        }
+      }
+
+      if (shippingAddr) {
+        console.log(`[Webhook] Shipping address found: ${shippingAddr.locality}, ${shippingAddr.administrative_district_level_1} ${shippingAddr.postal_code}`);
+      } else {
+        console.warn(`[Webhook] No shipping address found for order ${orderId}. Auto-ship will be skipped.`);
+      }
 
       // Find or create CRM contact
       const contactId = await findOrCreateContact(supabase, buyerEmail);
@@ -204,7 +268,7 @@ export async function processSquareEvent(
         total: totalCents / 100,
         currency,
         email: buyerEmail,
-        shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
+        shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() || null : null,
         shipping_address_line1: shippingAddr?.address_line_1 || null,
         shipping_address_line2: shippingAddr?.address_line_2 || null,
         shipping_city: shippingAddr?.locality || null,
@@ -214,35 +278,26 @@ export async function processSquareEvent(
         notes: receiptUrl ? `Receipt: ${receiptUrl}` : null,
       }).select('id').single();
 
-      // Try to get line items from the order via Square API
-      if (orderId && order) {
+      // Insert line items from the Square order
+      if (squareOrderData?.order?.line_items && order) {
         try {
-          const squareToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
-          if (squareToken) {
-            const orderRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
-              headers: { 'Authorization': `Bearer ${squareToken}`, 'Content-Type': 'application/json' },
-            });
-            if (orderRes.ok) {
-              const orderData = await orderRes.json();
-              const lineItems = orderData.order?.line_items || [];
-              for (const item of lineItems) {
-                // Skip shipping line item — it's not a product
-                if ((item.name || '').toLowerCase().startsWith('shipping')) continue;
+          const lineItems = squareOrderData.order.line_items as Array<Record<string, unknown>>;
+          for (const item of lineItems) {
+            // Skip shipping line item — it's not a product
+            if (((item.name as string) || '').toLowerCase().startsWith('shipping')) continue;
 
-                const parsedQty = parseInt(item.quantity || '1', 10);
-                await supabase.from('order_items').insert({
-                  order_id: order.id,
-                  product_name: item.name || 'Unknown',
-                  sku: item.catalog_object_id || null,
-                  quantity: Number.isNaN(parsedQty) || parsedQty < 1 ? 1 : parsedQty,
-                  unit_price: (item.base_price_money?.amount || 0) / 100,
-                  total_price: (item.total_money?.amount || 0) / 100,
-                });
-              }
-            }
+            const parsedQty = parseInt((item.quantity as string) || '1', 10);
+            await supabase.from('order_items').insert({
+              order_id: order.id,
+              product_name: (item.name as string) || 'Unknown',
+              sku: (item.catalog_object_id as string) || null,
+              quantity: Number.isNaN(parsedQty) || parsedQty < 1 ? 1 : parsedQty,
+              unit_price: ((item.base_price_money as Record<string, number>)?.amount || 0) / 100,
+              total_price: ((item.total_money as Record<string, number>)?.amount || 0) / 100,
+            });
           }
         } catch (err) {
-          console.error('[Square] Failed to fetch order line items:', err instanceof Error ? err.message : 'unknown error');
+          console.error('[Square] Failed to insert order line items:', err instanceof Error ? err.message : 'unknown error');
         }
       }
 
@@ -293,105 +348,93 @@ export async function processSquareEvent(
       }
 
       // Handle autoship subscriptions: create new or update existing
-      if (order && orderId) {
+      if (order && orderId && squareOrderData?.order) {
         try {
-          const squareToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
-          if (squareToken) {
-            const metaRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
-              headers: { 'Authorization': `Bearer ${squareToken}`, 'Content-Type': 'application/json' },
-            });
-            if (metaRes.ok) {
-              const metaData = await metaRes.json();
-              const metadata = metaData.order?.metadata ?? {};
-              const isAutoship = metadata.autoship === 'true';
-              const subscriptionId = metadata.subscription_id;
-              const isRenewal = metadata.renewal === 'true';
+          const metadata = squareOrderData.order?.metadata ?? {};
+          const isAutoship = metadata.autoship === 'true';
+          const subscriptionId = metadata.subscription_id;
+          const isRenewal = metadata.renewal === 'true';
 
-              // Extract Square customer ID and card-on-file from the payment
-              const squareCustomerId = payment.customer_id as string | undefined;
-              let squareCardId: string | null = null;
-              let cardLast4: string | null = null;
+          // Extract Square customer ID and card-on-file from the payment
+          const squareCustomerId = payment.customer_id as string | undefined;
+          let squareCardId: string | null = null;
+          let cardLast4: string | null = null;
 
-              if (squareCustomerId && squareClient) {
-                try {
-                  const cardsPage = await squareClient.cards.list({
-                    customerId: squareCustomerId,
-                  });
-                  // Page.data contains the array of Card objects
-                  const allCards = cardsPage.data ?? [];
-                  const enabledCards = allCards.filter(
-                    (c) => c.enabled !== false,
-                  );
-                  if (enabledCards.length > 0) {
-                    const latestCard = enabledCards[enabledCards.length - 1];
-                    squareCardId = latestCard.id ?? null;
-                    cardLast4 = latestCard.last4 ?? null;
-                  }
-                  console.log(`[Webhook] Found ${enabledCards.length} card(s) for customer ${squareCustomerId}`);
-                } catch (cardErr) {
-                  console.error('[Webhook] Failed to list cards for customer:', cardErr instanceof Error ? cardErr.message : 'unknown');
-                }
+          if (squareCustomerId && squareClient) {
+            try {
+              const cardsPage = await squareClient.cards.list({
+                customerId: squareCustomerId,
+              });
+              const allCards = cardsPage.data ?? [];
+              const enabledCards = allCards.filter(
+                (c) => c.enabled !== false,
+              );
+              if (enabledCards.length > 0) {
+                const latestCard = enabledCards[enabledCards.length - 1];
+                squareCardId = latestCard.id ?? null;
+                cardLast4 = latestCard.last4 ?? null;
               }
+              console.log(`[Webhook] Found ${enabledCards.length} card(s) for customer ${squareCustomerId}`);
+            } catch (cardErr) {
+              console.error('[Webhook] Failed to list cards for customer:', cardErr instanceof Error ? cardErr.message : 'unknown');
+            }
+          }
 
-              if (isAutoship && subscriptionId && isRenewal) {
-                // This is a renewal payment — update the existing subscription
-                const renewalUpdate: Record<string, unknown> = {
-                  last_renewed_at: new Date().toISOString(),
-                  square_order_id: orderId,
-                  payment_failed_at: null, // Clear any previous failure
+          if (isAutoship && subscriptionId && isRenewal) {
+            // This is a renewal payment — update the existing subscription
+            const renewalUpdate: Record<string, unknown> = {
+              last_renewed_at: new Date().toISOString(),
+              square_order_id: orderId,
+              payment_failed_at: null, // Clear any previous failure
+            };
+            if (squareCustomerId) renewalUpdate.square_customer_id = squareCustomerId;
+            if (squareCardId) renewalUpdate.square_card_id = squareCardId;
+            if (cardLast4) renewalUpdate.card_last4 = cardLast4;
+
+            await supabase
+              .from('subscriptions')
+              .update(renewalUpdate)
+              .eq('id', subscriptionId);
+            console.log(`[Webhook] Updated subscription ${subscriptionId} last_renewed_at, card: ****${cardLast4 ?? 'none'}`);
+          } else if (isAutoship && !isRenewal && buyerEmail) {
+            // This is a first-time autoship purchase — create a subscription
+            const { computeNextRenewal } = await import('@/lib/subscriptions');
+            const nextRenewal = computeNextRenewal('monthly');
+
+            // Build items from order line items (reuse already-fetched data)
+            const orderLineItems = squareOrderData.order?.line_items || [];
+            const subItems = orderLineItems
+              .filter((li: Record<string, unknown>) => {
+                const name = (li.name as string) || '';
+                return !name.toLowerCase().startsWith('shipping') && name.includes('Subscribe & Save');
+              })
+              .map((li: Record<string, unknown>) => {
+                const name = (li.name as string) || 'Unknown';
+                const qty = parseInt(li.quantity as string || '1', 10);
+                const isCase = name.toLowerCase().includes('case');
+                const baseName = name.replace(/\s*\((?:Case of 10|Box)\).*$/, '').trim();
+                return {
+                  slug: baseName.toLowerCase().replace(/\s+/g, '-'),
+                  name: baseName,
+                  quantity: Number.isNaN(qty) || qty < 1 ? 1 : qty,
+                  purchaseUnit: isCase ? 'case' : 'box',
                 };
-                // Update card on file if we found one (e.g. customer used update-card flow)
-                if (squareCustomerId) renewalUpdate.square_customer_id = squareCustomerId;
-                if (squareCardId) renewalUpdate.square_card_id = squareCardId;
-                if (cardLast4) renewalUpdate.card_last4 = cardLast4;
+              });
 
-                await supabase
-                  .from('subscriptions')
-                  .update(renewalUpdate)
-                  .eq('id', subscriptionId);
-                console.log(`[Webhook] Updated subscription ${subscriptionId} last_renewed_at, card: ****${cardLast4 ?? 'none'}`);
-              } else if (isAutoship && !isRenewal && buyerEmail) {
-                // This is a first-time autoship purchase — create a subscription
-                const { computeNextRenewal } = await import('@/lib/subscriptions');
-                const nextRenewal = computeNextRenewal('monthly');
-
-                // Build items from order line items
-                const orderLineItems = metaData.order?.line_items || [];
-                const subItems = orderLineItems
-                  .filter((li: Record<string, unknown>) => {
-                    const name = (li.name as string) || '';
-                    return !name.toLowerCase().startsWith('shipping') && name.includes('Subscribe & Save');
-                  })
-                  .map((li: Record<string, unknown>) => {
-                    const name = (li.name as string) || 'Unknown';
-                    const qty = parseInt(li.quantity as string || '1', 10);
-                    const isCase = name.toLowerCase().includes('case');
-                    // Extract the base product name (before unit label)
-                    const baseName = name.replace(/\s*\((?:Case of 10|Box)\).*$/, '').trim();
-                    return {
-                      slug: baseName.toLowerCase().replace(/\s+/g, '-'),
-                      name: baseName,
-                      quantity: Number.isNaN(qty) || qty < 1 ? 1 : qty,
-                      purchaseUnit: isCase ? 'case' : 'box',
-                    };
-                  });
-
-                if (subItems.length > 0) {
-                  await supabase.from('subscriptions').insert({
-                    email: buyerEmail.toLowerCase(),
-                    contact_id: contactId,
-                    items: subItems,
-                    frequency: 'monthly',
-                    discount_pct: 10,
-                    next_renewal_at: nextRenewal.toISOString(),
-                    square_order_id: orderId,
-                    square_customer_id: squareCustomerId ?? null,
-                    square_card_id: squareCardId,
-                    card_last4: cardLast4,
-                  });
-                  console.log(`[Webhook] Created subscription for ${buyerEmail} from order ${orderId}, card: ****${cardLast4 ?? 'none'}`);
-                }
-              }
+            if (subItems.length > 0) {
+              await supabase.from('subscriptions').insert({
+                email: buyerEmail.toLowerCase(),
+                contact_id: contactId,
+                items: subItems,
+                frequency: 'monthly',
+                discount_pct: 10,
+                next_renewal_at: nextRenewal.toISOString(),
+                square_order_id: orderId,
+                square_customer_id: squareCustomerId ?? null,
+                square_card_id: squareCardId,
+                card_last4: cardLast4,
+              });
+              console.log(`[Webhook] Created subscription for ${buyerEmail} from order ${orderId}, card: ****${cardLast4 ?? 'none'}`);
             }
           }
         } catch (subErr) {
@@ -431,6 +474,7 @@ export async function processSquareEvent(
 
       // Auto-ship: create Shippo shipment, pick cheapest rate, buy label
       if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
+        console.log(`[Shippo] Auto-ship starting for order ${order.id} to ${shippingAddr.locality}, ${shippingAddr.administrative_district_level_1} ${shippingAddr.postal_code}`);
         try {
           const shipToName = `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim();
 

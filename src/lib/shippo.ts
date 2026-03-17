@@ -17,6 +17,7 @@ export const WAREHOUSE_ADDRESS = {
   zip: '93727',
   country: 'US',
   email: 'orders@valuesuppliers.co',
+  phone: '5592974700',
 } as const;
 
 export type ShippoAddress = {
@@ -241,7 +242,13 @@ export async function autoShipOrder(
   }
 
   if (candidates.length === 0) {
-    console.error('[Shippo] No rates from any strategy for', weightLbs, 'lbs');
+    // Log the failures for debugging
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.error('[Shippo] Strategy failed:', result.reason instanceof Error ? result.reason.message : result.reason);
+      }
+    }
+    console.error('[Shippo] No rates from any strategy for', weightLbs, 'lbs to', addressTo.zip);
     return null;
   }
 
