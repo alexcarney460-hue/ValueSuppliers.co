@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { getSupabase } from '@/lib/supabase';
 import { getTierName, casesToNextTier, getCasePriceForQuantity, getProductBySlug } from '@/lib/products';
 import { formatPrice } from '@/lib/pricing';
+import { trackEvent, fbTrackInitiateCheckout } from '@/lib/analytics';
 
 type ShippingRate = {
   id: string;
@@ -132,6 +133,11 @@ export default function CartDrawer() {
 
   async function handleCheckout() {
     if (mixedPlans || !selectedRate || emailBlocked) return;
+
+    // Analytics: begin_checkout (GA4) + InitiateCheckout (Meta Pixel)
+    trackEvent('begin_checkout', { currency: 'USD', value: adjustedTotal });
+    fbTrackInitiateCheckout(adjustedTotal, count);
+
     setLoading(true);
     setError(null);
     try {

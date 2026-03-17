@@ -8,6 +8,7 @@ import { AUTOSHIP_DISCOUNT } from '@/lib/square';
 import { formatPrice, roundMoney } from '@/lib/pricing';
 import type { Product } from '@/lib/products';
 import { hasCasePricing, getCasePriceForQuantity, getTierName, casesToNextTier } from '@/lib/products';
+import { trackAddToCart, fbTrackAddToCart } from '@/lib/analytics';
 
 type Props = {
   id: string;
@@ -59,6 +60,13 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
       },
       qty,
     );
+
+    // Analytics: add_to_cart (GA4 + Meta Pixel)
+    const itemData = { id, name, price: displayPrice, category: product?.category };
+    const totalValue = roundMoney(displayPrice * qty);
+    trackAddToCart(itemData, qty, totalValue);
+    fbTrackAddToCart(itemData, qty, totalValue);
+
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

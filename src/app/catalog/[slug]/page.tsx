@@ -6,6 +6,7 @@ import { ArrowRight, ChevronRight, CheckCircle, Package, Truck, ShieldCheck, Tag
 import PRODUCTS, { getProductBySlug, getRelatedProducts } from '@/lib/products';
 import AddToCartPanel from '@/components/AddToCartPanel';
 import InventoryBadge from '@/components/InventoryBadge';
+import TrackViewItem from '@/components/TrackViewItem';
 import { priceForAccount, formatPrice } from '@/lib/pricing';
 
 export function generateStaticParams() {
@@ -182,6 +183,7 @@ export default async function ProductPage({
 
   return (
     <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
+      <TrackViewItem id={product.slug} name={product.name} price={product.price} category={product.category} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([productSchema, breadcrumbSchema]) }} />
 
       {/* Breadcrumb */}

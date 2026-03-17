@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { Barlow, Barlow_Condensed, Inter, JetBrains_Mono } from 'next/font/google';
 import '@/app/globals.css';
 import Nav from '@/components/Nav';
@@ -7,6 +8,22 @@ import { CartProvider } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer';
 import ChatWidget from '@/components/ChatWidget';
 import PageTracker from '@/components/PageTracker';
+
+/*
+ * ── Analytics IDs ──────────────────────────────────────────────────────
+ * Set these environment variables to enable tracking:
+ *
+ * NEXT_PUBLIC_GA_MEASUREMENT_ID   — Google Analytics 4 measurement ID (e.g. G-XXXXXXXXXX)
+ *   Get it from: https://analytics.google.com → Admin → Data Streams → Measurement ID
+ *
+ * NEXT_PUBLIC_META_PIXEL_ID       — Meta (Facebook) Pixel ID (e.g. 123456789012345)
+ *   Get it from: https://business.facebook.com → Events Manager → Data Sources → Pixel ID
+ *
+ * Scripts only load when the corresponding env var is set (no empty tracking).
+ * ───────────────────────────────────────────────────────────────────────
+ */
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '';
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? '';
 
 const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-barlow', display: 'swap' });
 const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-barlow-condensed', display: 'swap' });
@@ -123,23 +140,55 @@ export const metadata: Metadata = {
 
 const orgSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  '@type': ['Organization', 'Store'],
   name: 'ValueSuppliers.co',
   url: BASE,
   logo: `${BASE}/logo.jpg`,
+  image: `${BASE}/og-image.jpg`,
   description:
     'Professional-grade disposable gloves and cannabis trimming equipment supplier. Wholesale and distribution pricing for cannabis operations, food service, medical, and industrial industries.',
+  /* TODO: Replace with real phone number */
+  telephone: '+1-559-000-0000',
+  email: 'orders@valuesuppliers.co',
+  address: {
+    '@type': 'PostalAddress',
+    /* TODO: Replace with real street address once GBP is verified */
+    addressLocality: 'Fresno',
+    addressRegion: 'CA',
+    postalCode: '93710',
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 36.7378,
+    longitude: -119.7871,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '08:00',
+      closes: '17:00',
+    },
+  ],
+  priceRange: '$$',
+  paymentAccepted: 'Credit Card, Debit Card',
+  currenciesAccepted: 'USD',
   contactPoint: [
     {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       email: 'orders@valuesuppliers.co',
+      /* TODO: Replace with real phone number */
+      telephone: '+1-559-000-0000',
       availableLanguage: 'English',
     },
     {
       '@type': 'ContactPoint',
       contactType: 'sales',
       email: 'orders@valuesuppliers.co',
+      /* TODO: Replace with real phone number */
+      telephone: '+1-559-000-0000',
       availableLanguage: 'English',
     },
   ],
@@ -148,6 +197,7 @@ const orgSchema = {
     name: 'United States',
     sameAs: 'https://en.wikipedia.org/wiki/United_States',
   },
+  /* TODO: Add social profile URLs as they are created */
   sameAs: [],
   knowsAbout: [
     'disposable gloves',
@@ -196,6 +246,45 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify([orgSchema, websiteSchema]) }}
         />
+
+        {/* ── Google Analytics 4 ──────────────────────────────────── */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
+
+        {/* ── Meta Pixel ──────────────────────────────────────────── */}
+        {META_PIXEL_ID && (
+          <Script id="meta-pixel-init" strategy="afterInteractive">
+            {`
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '${META_PIXEL_ID}');
+              fbq('track', 'PageView');
+            `}
+          </Script>
+        )}
+
         <CartProvider>
           <Nav />
           <CartDrawer />

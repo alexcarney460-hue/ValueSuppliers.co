@@ -29,9 +29,79 @@ const CONTACT_OPTIONS = [
 ];
 
 
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'ValueSuppliers.co',
+  url: 'https://valuesuppliers.co',
+  logo: 'https://valuesuppliers.co/logo.jpg',
+  image: 'https://valuesuppliers.co/og-image.jpg',
+  description:
+    'Professional-grade disposable gloves and cannabis trimming supplies. Wholesale and distribution pricing for cannabis, food service, medical, and industrial operations.',
+  /* TODO: Replace with real phone number */
+  telephone: '+1-559-000-0000',
+  email: 'orders@valuesuppliers.co',
+  address: {
+    '@type': 'PostalAddress',
+    /* TODO: Replace with real street address once GBP is verified */
+    addressLocality: 'Fresno',
+    addressRegion: 'CA',
+    postalCode: '93710',
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 36.7378,
+    longitude: -119.7871,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '08:00',
+      closes: '17:00',
+    },
+  ],
+  priceRange: '$$',
+  paymentAccepted: 'Credit Card, Debit Card',
+  currenciesAccepted: 'USD',
+  /* TODO: Add social profile URLs as they are created */
+  sameAs: [],
+  areaServed: {
+    '@type': 'Country',
+    name: 'United States',
+  },
+  makesOffer: [
+    {
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Product', name: 'Disposable Nitrile Gloves', category: 'Disposable Gloves' },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Product', name: 'Disposable Latex Gloves', category: 'Disposable Gloves' },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Product', name: 'Disposable Vinyl Gloves', category: 'Disposable Gloves' },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Product', name: 'Cannabis Trimming Scissors', category: 'Trimming Tools' },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Product', name: 'Harvest & Trimming Accessories', category: 'Harvest Accessories' },
+    },
+  ],
+};
+
 export default function ContactPage() {
   return (
     <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
 
       {/* Hero */}
       <section style={{ backgroundColor: '#fff', padding: '72px 24px 80px', position: 'relative', overflow: 'hidden', borderBottom: '1px solid var(--color-border)' }}>
