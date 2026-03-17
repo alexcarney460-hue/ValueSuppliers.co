@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { getSupabase } from '@/lib/supabase';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import {
   computeNextRenewal,
@@ -105,9 +106,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Database unavailable.' }, { status: 500 });
   }
 
+  // Require authenticated session — user can only see their own subscriptions
+  const authHeader = req.headers.get('authorization');
   const email = req.nextUrl.searchParams.get('email')?.trim().toLowerCase();
   if (!email) {
     return NextResponse.json({ error: 'Email parameter is required.' }, { status: 400 });
+  }
+
+  // Verify the caller owns this email via Supabase session cookie or the server-side token
+  const sbTokenMatch = req.headers.get('cookie')?.match(/sb-[^=]+-auth-token=([^;]+)/);
+  if (!sbTokenMatch && !authHeader) {
+    return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
   }
 
   const { data: subscriptions, error: queryError } = await supabase

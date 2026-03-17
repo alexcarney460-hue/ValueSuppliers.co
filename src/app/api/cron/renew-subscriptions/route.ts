@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.get('authorization');
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
   }
 
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
       // -----------------------------------------------------------------------
       if (hasCardOnFile) {
         try {
-          const idempotencyKey = `renewal-${sub.id}-${new Date().toISOString().slice(0, 10)}-${randomUUID().slice(0, 8)}`;
+          const idempotencyKey = `renewal-${sub.id}-${new Date().toISOString().slice(0, 10)}`;
 
           const paymentResponse = await squareClient.payments.create({
             sourceId: sub.square_card_id,
