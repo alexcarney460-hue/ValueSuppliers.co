@@ -266,13 +266,102 @@ CRM contacts. Created or updated on purchase. Key fields: `id`, `email`, `firstn
 
 3. **Customer email notifications** -- Transactional emails via Resend for order confirmation and shipping notification with tracking info. Requires `RESEND_API_KEY` env var. Being built -- will trigger from the webhook after auto-ship succeeds.
 
-4. **Marketing & lead nurture emails** -- Automated email sequences for leads and post-purchase follow-ups. Planned alongside the email notification system.
-
 ### Resolved Cleanup
 
-5. ~~**Webhook logging**~~ **CLEANED UP** -- Debug `console.log` statements removed from webhook handler and all API routes. Error logging (`console.error`) retained but sanitized to avoid logging full error objects or sensitive data.
+4. ~~**Webhook logging**~~ **CLEANED UP** -- Debug `console.log` statements removed from webhook handler and all API routes. Error logging (`console.error`) retained but sanitized to avoid logging full error objects or sensitive data.
 
-6. **Free shipping removed** -- Free shipping was intentionally removed per user request. Do not re-add.
+5. **Free shipping removed** -- Free shipping was intentionally removed per user request. Do not re-add.
+
+---
+
+## Marketing Campaign — Triple OG Gloves
+
+### Overview
+
+The product brand for social media marketing is **Triple OG Gloves** — cannabis-specific branding for the 5 mil nitrile gloves sold through ValueSuppliers.co. The site stays as ValueSuppliers.co; Triple OG is the product brand used in social content.
+
+### Landing Page
+
+- **URL**: `/triple-og` -- dark, edgy landing page for social media traffic
+- Sections: hero, social proof stats, product benefits, specs, use cases, pricing tiers, CTA
+- Links back to `/catalog` for purchases and `/wholesale` for applications
+
+### Social Content Calendar
+
+- **File**: `scripts/seed-marketing-content.mjs`
+- 14 Instagram posts over 2 weeks (Reels, Carousels, Static, Stories)
+- Each post has full reel scripts, carousel slide breakdowns, image prompts, captions, and hashtag sets
+- Preview: `node scripts/seed-marketing-content.mjs --preview`
+- Seed to admin queue: `node scripts/seed-marketing-content.mjs`
+- All content avoids Tier 1 shadowban-risk hashtags, focuses on education and lifestyle
+
+### Product Video Reels (Runway Gen-4)
+
+- **File**: `scripts/generate-product-reels.py`
+- 8 shot definitions matched to content calendar posts (glove snap, stretch test, case hero, trim room, etc.)
+- Uses Runway Gen-4 Turbo API (image-to-video) with AVIF-to-JPEG conversion via ffmpeg
+- API key: `C:/Users/Claud/Desktop/keys/runwayapi.txt`
+- **Needs Runway credits** to generate — pipeline tested and working
+- Usage: `python scripts/generate-product-reels.py --list` or `--all` or `--shot glove-snap`
+
+---
+
+## Lead Generation & CRM Pipeline
+
+### Cannabis/Hemp License Scraper
+
+- **Master CSV**: `cannabis-hemp-grows-2026-03-17.csv` — ~7,300 licensed facilities across 34 states
+- **CA DCC API scraper**: `scripts/scrape-ca-dcc-api.py` — intercepts Azure API, gets full data (name, address, email, phone, owner) for ~6,754 CA licenses. Paginated, 500/page.
+- **Multi-state Brave Search scraper**: `scripts/scrape-cannabis-licenses.mjs` — Socrata APIs (NY) + Brave Search (30 states) for cultivators, labs, bakeries, distributors
+- **OR OLCC**: Tableau CSV export via `curl -sk` (SSL cert issue on their end)
+- **WA LCB**: Excel download from lcb.wa.gov/records/frequently-requested-lists (retailers + labs only; producers are in Socrata which has DNS issues from some networks)
+- **Playwright scraper**: `scripts/scrape-state-licenses-playwright.py` — browser automation for CA DCC with screenshot verification
+
+### Data Quality
+
+| Metric | Count |
+|--------|-------|
+| Total facilities | ~7,300 |
+| With email | ~81% |
+| With phone | ~81% |
+| With owner name | ~77% (CA data) |
+| States covered | 34 |
+
+### Email Enrichment
+
+- **File**: `scripts/enrich-cannabis-leads.mjs`
+- For records missing email: Brave Search → find website → scrape /contact page → extract email/phone
+- ~48% hit rate on website scraping
+- Saves progress every 50 records, updates master CSV in-place
+- Usage: `node scripts/enrich-cannabis-leads.mjs --limit 500 --state OR`
+
+### Outreach Email System
+
+- **API**: `POST /api/admin/marketing/outreach` — preview, send-batch, stats
+- **CLI**: `scripts/send-outreach-batch.mjs` — batch sender reading from master CSV
+- **Unsubscribe**: `GET /api/unsubscribe?email=xxx` — CAN-SPAM compliant, marks lead as unsubscribed
+- **Templates**: 4 auto-selected by license type (intro/grow, lab, distributor, manufacturer)
+- **Personalization**: owner first name, company name, city, county from CSV data
+- **Plain text** emails (better deliverability for cold outreach)
+- **Dedup**: JSONL sent log at `tmp/outreach-sent.jsonl`
+- **Rate limiting**: 350ms between sends, backs off on 429s
+- **From address**: `grow@mail.valuesuppliers.co` (subdomain to protect main domain)
+- **BLOCKED**: Resend domain `mail.valuesuppliers.co` not yet verified. Need to add DNS records in Resend dashboard (resend.com/domains). The current API key is send-only (can't manage domains via API).
+
+Usage:
+```bash
+# Preview
+RESEND_API_KEY=xxx node scripts/send-outreach-batch.mjs --preview
+
+# Dry run
+RESEND_API_KEY=xxx node scripts/send-outreach-batch.mjs --dry-run --limit 50
+
+# Send batch
+RESEND_API_KEY=xxx node scripts/send-outreach-batch.mjs --limit 200
+
+# CA only
+RESEND_API_KEY=xxx node scripts/send-outreach-batch.mjs --state CA --limit 500
+```
 
 ---
 
@@ -291,3 +380,9 @@ CRM contacts. Created or updated on purchase. Key fields: `id`, `email`, `firstn
 6. **Square webhook signature verification** -- Uses HMAC-SHA256 with `notificationUrl + body` as the message. The `SQUARE_WEBHOOK_URL` env var must exactly match the URL Square sends to, including protocol and path.
 
 7. **Mixed cart restriction** -- One-time and autoship items cannot be in the same cart. The frontend blocks checkout and the backend returns a 400 error if both are present.
+
+8. **Resend API key is send-only** -- Cannot manage domains or view analytics via API. Domain verification must be done in the Resend web dashboard at resend.com/domains.
+
+9. **CA DCC API endpoint** -- `https://as-dcc-pub-cann-w-p-002.azurewebsites.net/licenses/filteredSearch` — discovered by intercepting network requests from search.cannabis.ca.gov. May change if CA updates their backend.
+
+10. **WA/OR Socrata DNS** -- `data.lcb.wa.gov` and `data.olcc.state.or.us` don't resolve from some networks. OR workaround: `curl -sk` (skip SSL). WA workaround: download Excel from lcb.wa.gov directly.
