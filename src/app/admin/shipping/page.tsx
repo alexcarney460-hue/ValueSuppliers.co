@@ -33,6 +33,7 @@ interface OrderItem {
 
 const token = process.env.NEXT_PUBLIC_ADMIN_ANALYTICS_TOKEN ?? '';
 const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+const internalSecret = token; // Same token used for internal API auth
 
 async function apiFetch(path: string) {
   const res = await fetch(path, { headers: authHeaders });
@@ -58,6 +59,7 @@ export default function ShippingPage() {
   const [items, setItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [unprintedCount, setUnprintedCount] = useState(0);
+  const [creatingLabel, setCreatingLabel] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -95,6 +97,46 @@ export default function ShippingPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  async function createLabel(order: Order) {
+    if (!order.shipping_address_line1 || !order.shipping_city) {
+      alert('Order is missing a shipping address. Cannot create label.');
+      return;
+    }
+    setCreatingLabel(order.id);
+    try {
+      const res = await fetch('/api/shipping/auto-ship', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-internal-secret': internalSecret },
+        body: JSON.stringify({
+          orderId: order.id,
+          email: order.email,
+          shippingAddr: {
+            address_line_1: order.shipping_address_line1,
+            address_line_2: order.shipping_address_line2 || '',
+            locality: order.shipping_city,
+            administrative_district_level_1: order.shipping_state || '',
+            postal_code: order.shipping_zip || '',
+            country: order.shipping_country || 'US',
+            first_name: order.shipping_name || 'Customer',
+            last_name: '',
+          },
+          totalCents: Math.round((order.total || 0) * 100),
+          currency: 'USD',
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        await load(); // Refresh to show new label
+      } else {
+        alert(`Label creation failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      alert(`Label creation failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setCreatingLabel(null);
+    }
+  }
 
   // Split: orders with labels (ready to pack) vs paid without labels (pending shippo)
   const readyToPack = orders.filter((o) => o.label_url);
@@ -207,7 +249,7 @@ export default function ShippingPage() {
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    {order.label_url && (
+                    {order.label_url ? (
                       <a
                         href={`/admin/shipping/print/${order.id}`}
                         target="_blank"
@@ -222,7 +264,21 @@ export default function ShippingPage() {
                       >
                         <Printer size={13} /> Print Label
                       </a>
-                    )}
+                    ) : order.shipping_address_line1 ? (
+                      <button
+                        onClick={() => createLabel(order)}
+                        disabled={creatingLabel === order.id}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5,
+                          padding: '7px 16px', borderRadius: 8, border: 'none',
+                          backgroundColor: creatingLabel === order.id ? '#9a9590' : '#f59e0b', color: '#fff',
+                          fontWeight: 700, fontSize: '0.78rem',
+                          cursor: creatingLabel === order.id ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        <Package size={13} /> {creatingLabel === order.id ? 'Creating...' : 'Create Label'}
+                      </button>
+                    ) : null}
                     {order.tracking_url && (
                       <a
                         href={order.tracking_url}
