@@ -252,29 +252,43 @@ export async function autoShipOrder(
     return null;
   }
 
-  // Sort all candidates by price and pick cheapest
+  // Sort all candidates by price (cheapest first)
   candidates.sort((a, b) => parseFloat(a.rate.amount) - parseFloat(b.rate.amount));
-  const best = candidates[0];
 
   console.log(
-    `[Shippo] Best rate: $${best.rate.amount} via ${best.rate.provider} ${best.rate.servicelevel}` +
-    ` (${candidates.length} rates compared across ${strategies.length} strategies)`,
+    `[Shippo] ${candidates.length} rates found across ${strategies.length} strategies. ` +
+    `Cheapest: $${candidates[0].rate.amount} via ${candidates[0].rate.provider} ${candidates[0].rate.servicelevel}`,
   );
 
-  const label = await purchaseLabel(best.rate.objectId);
-  if (!label) return null;
+  // Try each rate in order — if the cheapest fails (e.g., carrier not activated),
+  // fall back to the next cheapest until one succeeds.
+  for (const candidate of candidates) {
+    try {
+      console.log(`[Shippo] Trying: $${candidate.rate.amount} via ${candidate.rate.provider} ${candidate.rate.servicelevel}`);
+      const label = await purchaseLabel(candidate.rate.objectId);
+      if (!label) continue;
 
-  return {
-    shipmentId: best.shipmentId,
-    transactionId: label.transactionId,
-    trackingNumber: label.trackingNumber,
-    trackingUrl: label.trackingUrl,
-    labelUrl: label.labelUrl,
-    carrier: best.rate.provider,
-    service: best.rate.servicelevel,
-    rate: best.rate.amount,
-    eta: label.eta,
-  };
+      console.log(`[Shippo] Label purchased: ${candidate.rate.provider} ${candidate.rate.servicelevel} $${candidate.rate.amount} — tracking: ${label.trackingNumber}`);
+
+      return {
+        shipmentId: candidate.shipmentId,
+        transactionId: label.transactionId,
+        trackingNumber: label.trackingNumber,
+        trackingUrl: label.trackingUrl,
+        labelUrl: label.labelUrl,
+        carrier: candidate.rate.provider,
+        service: candidate.rate.servicelevel,
+        rate: candidate.rate.amount,
+        eta: label.eta,
+      };
+    } catch (err) {
+      console.warn(`[Shippo] Rate failed (${candidate.rate.provider} ${candidate.rate.servicelevel}): ${err instanceof Error ? err.message : 'unknown'}`);
+      // Continue to next rate
+    }
+  }
+
+  console.error('[Shippo] All rates failed for', weightLbs, 'lbs to', addressTo.zip);
+  return null;
 }
 
 /**
