@@ -472,99 +472,33 @@ export async function processSquareEvent(
         }
       }
 
-      // Auto-ship: create Shippo shipment, pick cheapest rate, buy label
+      // Auto-ship: fire off to a separate endpoint so it runs in its own function
+      // invocation and doesn't get killed by the webhook's 10-second timeout.
       if (order && shippingAddr?.address_line_1 && shippingAddr?.locality) {
-        console.log(`[Shippo] Auto-ship starting for order ${order.id} to ${shippingAddr.locality}, ${shippingAddr.administrative_district_level_1} ${shippingAddr.postal_code}`);
-        try {
-          const shipToName = `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim();
+        const internalSecret = process.env.INTERNAL_API_SECRET || process.env.CRON_SECRET || process.env.ADMIN_ANALYTICS_TOKEN;
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'https://valuesuppliers.co';
 
-          // Estimate weight from line items or fallback to order total
-          let weightLbs = 0;
-          if (orderId) {
-            const { data: items } = await supabase.from('order_items').select('product_name, quantity').eq('order_id', order.id);
-            if (items && items.length > 0) {
-              for (const item of items) {
-                // Match product name by keyword — Square names include extra text like "(Case of 10)"
-                const nameLower = (item.product_name || '').toLowerCase();
-                let w = 5; // default fallback
-                if (nameLower.includes('case')) w = DEFAULT_WEIGHTS['nitrile-5mil-case'] ?? 65;
-                else if (nameLower.includes('box')) w = DEFAULT_WEIGHTS['nitrile-5mil-box'] ?? 6.5;
-                weightLbs += w * (item.quantity || 1);
-              }
-            }
-          }
-          // Minimum 5 lbs, fallback estimate from total ($1 ~ 0.5 lbs for glove cases)
-          if (weightLbs <= 0) {
-            weightLbs = Math.max(5, Math.round((totalCents / 100) * 0.5));
-          }
+        // Fire and forget — don't await, let it run in its own invocation
+        fetch(`${siteUrl}/api/shipping/auto-ship`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-secret': internalSecret || '',
+          },
+          body: JSON.stringify({
+            orderId: order.id,
+            email: buyerEmail,
+            shippingAddr,
+            totalCents,
+            currency,
+          }),
+        }).catch((err) => {
+          console.error('[Webhook] Failed to trigger auto-ship:', err instanceof Error ? err.message : 'unknown');
+        });
 
-          const shipResult = await autoShipOrder(
-            {
-              name: shipToName || 'Customer',
-              street1: shippingAddr.address_line_1,
-              street2: shippingAddr.address_line_2 || '',
-              city: shippingAddr.locality,
-              state: shippingAddr.administrative_district_level_1 || '',
-              zip: shippingAddr.postal_code || '',
-              country: shippingAddr.country || 'US',
-              email: buyerEmail,
-            },
-            weightLbs,
-          );
-
-          if (shipResult) {
-            await supabase.from('orders').update({
-              status: 'shipped',
-              tracking_number: shipResult.trackingNumber,
-              tracking_url: shipResult.trackingUrl,
-              label_url: shipResult.labelUrl,
-              shippo_shipment_id: shipResult.shipmentId,
-              shippo_transaction_id: shipResult.transactionId,
-              shipping_carrier: shipResult.carrier,
-              shipping_service: shipResult.service,
-              shipped_at: new Date().toISOString(),
-            }).eq('id', order.id);
-
-            // Send order shipped email with tracking info
-            if (buyerEmail) {
-              try {
-                const { data: savedItems } = await supabase
-                  .from('order_items')
-                  .select('product_name, quantity, unit_price, total_price')
-                  .eq('order_id', order.id);
-
-                const shippedOrderData: OrderData = {
-                  id: order.id,
-                  email: buyerEmail,
-                  total: totalCents / 100,
-                  currency,
-                  items: (savedItems || []) as OrderItem[],
-                  shipping_name: shippingAddr ? `${shippingAddr.first_name || ''} ${shippingAddr.last_name || ''}`.trim() : null,
-                  shipping_address_line1: shippingAddr?.address_line_1 || null,
-                  shipping_address_line2: shippingAddr?.address_line_2 || null,
-                  shipping_city: shippingAddr?.locality || null,
-                  shipping_state: shippingAddr?.administrative_district_level_1 || null,
-                  shipping_zip: shippingAddr?.postal_code || null,
-                  shipping_country: shippingAddr?.country || 'US',
-                };
-
-                await sendOrderShippedEmail(buyerEmail, shippedOrderData, {
-                  tracking_number: shipResult.trackingNumber,
-                  shipping_carrier: shipResult.carrier,
-                  tracking_url: shipResult.trackingUrl,
-                  shipping_service: shipResult.service,
-                });
-              } catch (emailErr) {
-                console.error('[Email] Shipped notification failed for order', order.id, emailErr instanceof Error ? emailErr.message : 'unknown');
-              }
-            }
-          } else {
-            console.error('[Shippo] Auto-ship failed for order', order.id);
-          }
-        } catch (shipErr) {
-          // Don't fail the webhook if shipping fails — order is still saved
-          console.error('[Shippo] Auto-ship error for order', order?.id, shipErr instanceof Error ? shipErr.message : 'unknown error');
-        }
+        console.log(`[Webhook] Auto-ship triggered for order ${order.id} (async)`);
       }
 
       break;
