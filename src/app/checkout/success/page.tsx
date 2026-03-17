@@ -76,8 +76,6 @@ export default function CheckoutSuccessPage() {
               Orders placed before 3pm EST ship same day.
             </div>
           </div>
-          {/* TODO: Re-enable when recurring billing is implemented */}
-          {/* Subscribe & Save card hidden — no active subscription system */}
           <div
             style={{
               backgroundColor: '#EDF7F0',
@@ -85,7 +83,6 @@ export default function CheckoutSuccessPage() {
               borderRadius: 14,
               padding: '20px 18px',
               textAlign: 'left',
-              display: 'none',
             }}
           >
             <RefreshCw size={20} color="var(--color-muted-green)" style={{ marginBottom: 10 }} />
@@ -93,7 +90,7 @@ export default function CheckoutSuccessPage() {
               Subscribe & Save
             </div>
             <div style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', lineHeight: 1.5 }}>
-              Manage your subscription anytime in your account.
+              Save 10% on every order with automatic monthly delivery. Manage your subscription anytime in your account.
             </div>
           </div>
         </div>

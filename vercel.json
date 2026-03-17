@@ -3,5 +3,11 @@
   "outputDirectory": ".next",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/renew-subscriptions",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }

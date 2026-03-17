@@ -85,8 +85,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Can I set up recurring orders?',
-    // TODO: Re-enable autoship copy when recurring billing is implemented
-    a: 'We are working on a Subscribe & Save program for automatic monthly delivery. In the meantime, contact us at orders@valuesuppliers.co to arrange recurring orders for your facility.',
+    a: 'Yes! Our Subscribe & Save program gives you 10% off every order with automatic monthly, biweekly, or quarterly delivery. Select "Subscribe & Save" when adding items to your cart. You can pause, change frequency, or cancel anytime from your account page.',
   },
   {
     q: 'Do you offer NET terms for businesses?',

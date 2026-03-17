@@ -291,6 +291,78 @@ export async function processSquareEvent(
         }
       }
 
+      // Handle autoship subscriptions: create new or update existing
+      if (order && orderId) {
+        try {
+          const squareToken = process.env.SQUARE_ACCESS_TOKEN?.trim();
+          if (squareToken) {
+            const metaRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
+              headers: { 'Authorization': `Bearer ${squareToken}`, 'Content-Type': 'application/json' },
+            });
+            if (metaRes.ok) {
+              const metaData = await metaRes.json();
+              const metadata = metaData.order?.metadata ?? {};
+              const isAutoship = metadata.autoship === 'true';
+              const subscriptionId = metadata.subscription_id;
+              const isRenewal = metadata.renewal === 'true';
+
+              if (isAutoship && subscriptionId && isRenewal) {
+                // This is a renewal payment — update the existing subscription
+                await supabase
+                  .from('subscriptions')
+                  .update({
+                    last_renewed_at: new Date().toISOString(),
+                    square_order_id: orderId,
+                  })
+                  .eq('id', subscriptionId);
+                console.log(`[Webhook] Updated subscription ${subscriptionId} last_renewed_at`);
+              } else if (isAutoship && !isRenewal && buyerEmail) {
+                // This is a first-time autoship purchase — create a subscription
+                const { computeNextRenewal } = await import('@/lib/subscriptions');
+                const nextRenewal = computeNextRenewal('monthly');
+
+                // Build items from order line items
+                const orderLineItems = metaData.order?.line_items || [];
+                const subItems = orderLineItems
+                  .filter((li: Record<string, unknown>) => {
+                    const name = (li.name as string) || '';
+                    return !name.toLowerCase().startsWith('shipping') && name.includes('Subscribe & Save');
+                  })
+                  .map((li: Record<string, unknown>) => {
+                    const name = (li.name as string) || 'Unknown';
+                    const qty = parseInt(li.quantity as string || '1', 10);
+                    const isCase = name.toLowerCase().includes('case');
+                    // Extract the base product name (before unit label)
+                    const baseName = name.replace(/\s*\((?:Case of 10|Box)\).*$/, '').trim();
+                    return {
+                      slug: baseName.toLowerCase().replace(/\s+/g, '-'),
+                      name: baseName,
+                      quantity: Number.isNaN(qty) || qty < 1 ? 1 : qty,
+                      purchaseUnit: isCase ? 'case' : 'box',
+                    };
+                  });
+
+                if (subItems.length > 0) {
+                  await supabase.from('subscriptions').insert({
+                    email: buyerEmail.toLowerCase(),
+                    contact_id: contactId,
+                    items: subItems,
+                    frequency: 'monthly',
+                    discount_pct: 10,
+                    next_renewal_at: nextRenewal.toISOString(),
+                    square_order_id: orderId,
+                  });
+                  console.log(`[Webhook] Created subscription for ${buyerEmail} from order ${orderId}`);
+                }
+              }
+            }
+          }
+        } catch (subErr) {
+          // Non-blocking: don't fail webhook on subscription errors
+          console.error('[Webhook] Subscription handling failed:', subErr instanceof Error ? subErr.message : 'unknown');
+        }
+      }
+
       // Send order confirmation email (non-blocking — don't fail webhook on email error)
       if (order && buyerEmail) {
         try {

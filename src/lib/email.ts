@@ -540,3 +540,111 @@ export async function sendOrderShippedEmail(
     return { success: false, error: message };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Email: Subscription Renewal Reminder
+// ---------------------------------------------------------------------------
+
+export interface RenewalEmailData {
+  readonly subscriptionId: string;
+  readonly items: ReadonlyArray<{ name: string; quantity: number; purchaseUnit: string }>;
+  readonly frequency: string;
+  readonly discountPct: number;
+  readonly checkoutUrl: string;
+}
+
+function buildRenewalReminderHtml(data: RenewalEmailData): string {
+  const itemRows = data.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
+            ${escapeHtml(item.name)}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
+            ${item.quantity} ${escapeHtml(item.purchaseUnit)}${item.quantity !== 1 ? 's' : ''}
+          </td>
+        </tr>`,
+    )
+    .join('');
+
+  const body = `
+    <h2 style="margin:0 0 8px;color:${BRAND.dark};font-size:22px;font-weight:700;">
+      Time to Reorder!
+    </h2>
+    <p style="margin:0 0 24px;color:${BRAND.muted};font-size:14px;">
+      Your Subscribe &amp; Save order is ready for renewal. Click below to confirm and pay &mdash; your ${Math.round(data.discountPct)}% discount is already applied.
+    </p>
+
+    <!-- Items -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Item</td>
+        <td style="padding:0 0 8px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Qty</td>
+      </tr>
+      ${itemRows}
+    </table>
+
+    <!-- CTA button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td align="center">
+          <a href="${sanitizeUrl(data.checkoutUrl)}" target="_blank" style="display:inline-block;background-color:${BRAND.success};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+            Confirm &amp; Pay Now
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 16px;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      This link will take you to a secure Square checkout with your subscription discount already applied. No action is needed if you&rsquo;d like to skip this month &mdash; simply ignore this email.
+    </p>
+
+    <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
+      To pause or cancel your subscription, visit your
+      <a href="https://valuesuppliers.co/account" style="color:${BRAND.primary};text-decoration:none;">account page</a>
+      or reply to this email.
+    </p>
+  `;
+
+  return emailLayout(
+    'Your Subscribe & Save Order is Ready - Value Suppliers',
+    `Your recurring order is ready for renewal. Confirm and pay to keep your ${Math.round(data.discountPct)}% discount.`,
+    body,
+  );
+}
+
+export async function sendRenewalReminderEmail(
+  to: string,
+  data: RenewalEmailData,
+): Promise<{ success: boolean; error?: string }> {
+  const html = buildRenewalReminderHtml(data);
+  const subject = 'Your Subscribe & Save Order is Ready';
+
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] (console-only) Renewal reminder for ${to}:`);
+    console.log(`  Subject: ${subject}`);
+    console.log(`  Subscription: ${data.subscriptionId}, Items: ${data.items.length}`);
+    return { success: true };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject,
+      html,
+    });
+    if (error) {
+      console.error('[Email] Resend error (renewal reminder):', error);
+      return { success: false, error: error.message };
+    }
+    console.log(`[Email] Renewal reminder sent to ${to} for subscription ${data.subscriptionId}`);
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown email error';
+    console.error('[Email] Failed to send renewal reminder:', message);
+    return { success: false, error: message };
+  }
+}

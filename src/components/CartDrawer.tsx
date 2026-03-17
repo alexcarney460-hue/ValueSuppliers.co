@@ -58,8 +58,6 @@ export default function CartDrawer() {
   const [ratesError, setRatesError] = useState<string | null>(null);
   const [ratesFetched, setRatesFetched] = useState(false);
 
-  // TODO: Re-enable when recurring billing is implemented
-  // Autoship is disabled — these flags will always be false for new carts
   const hasAutoship = items.some((i) => i.plan === 'autoship');
   const hasOneTime  = items.some((i) => i.plan === 'one-time');
   const mixedPlans  = hasAutoship && hasOneTime;

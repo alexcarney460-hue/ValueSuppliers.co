@@ -6,6 +6,7 @@ import { getSupabase } from '@/lib/supabase';
 import { ADMIN_EMAILS } from '@/lib/admin/constants';
 import type { Profile } from '@/lib/account';
 import OrderHistory from './OrderHistory';
+import SubscriptionManager from './SubscriptionManager';
 
 type View = 'login' | 'signup' | 'dashboard';
 
@@ -433,6 +434,7 @@ export default function AccountPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
                   ...(ADMIN_EMAILS.includes(profile?.email?.toLowerCase() ?? '') ? [{ label: 'Admin Dashboard', href: '/admin' }] : []),
+                  { label: 'My Subscriptions', href: '#subscriptions' },
                   { label: 'Browse Catalog', href: '/catalog' },
                   { label: 'Wholesale Program', href: '/wholesale' },
                   { label: 'Distribution Program', href: '/distribution' },
@@ -459,6 +461,13 @@ export default function AccountPage() {
                 ))}
               </div>
             </div>
+
+            {/* Subscriptions */}
+            {profile?.email && (
+              <div id="subscriptions">
+                <SubscriptionManager email={profile.email} />
+              </div>
+            )}
 
             {/* Order History */}
             {profile?.email && <OrderHistory email={profile.email} />}

@@ -21,10 +21,8 @@ type Props = {
 
 export default function AddToCartPanel({ id, name, price, img, unit, product }: Props) {
   const { addItem } = useCart();
-  // TODO: Re-enable when recurring billing is implemented
-  // Autoship is disabled — force one-time for all purchases
   const [plan, setPlan] = useState<PurchasePlan>('one-time');
-  const AUTOSHIP_ENABLED = false;
+  const AUTOSHIP_ENABLED = true;
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
