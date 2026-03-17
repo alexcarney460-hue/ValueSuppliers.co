@@ -5,7 +5,7 @@ import { runAgent } from '@/lib/marketing/agent-runner';
 
 /** GET — list all marketing agents */
 export async function GET(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
 
 /** POST — run an agent directly with a prompt */
 export async function POST(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const body = await req.json();

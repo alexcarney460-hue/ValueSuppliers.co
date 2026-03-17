@@ -15,7 +15,7 @@ import {
  */
 export async function POST(req: NextRequest) {
   try {
-    const denied = requireAdmin(req);
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     const body = await req.json();

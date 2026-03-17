@@ -12,7 +12,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
  *   - include_printed: if "true", also return printed orders
  */
 export async function GET(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -76,7 +76,7 @@ export async function GET(req: Request) {
  * Body: { order_ids: number[], printed: boolean }
  */
 export async function PATCH(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

@@ -3,7 +3,7 @@ import { requireAdmin } from '@/lib/admin/requireAdmin';
 import { orchestrateCampaign } from '@/lib/marketing/orchestrator';
 
 export async function POST(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   try {

@@ -20,7 +20,10 @@ type Props = {
 
 export default function AddToCartPanel({ id, name, price, img, unit, product }: Props) {
   const { addItem } = useCart();
+  // TODO: Re-enable when recurring billing is implemented
+  // Autoship is disabled — force one-time for all purchases
   const [plan, setPlan] = useState<PurchasePlan>('one-time');
+  const AUTOSHIP_ENABLED = false;
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -226,7 +229,8 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
         </div>
       )}
 
-      {/* Plan selector */}
+      {/* Plan selector — autoship hidden until recurring billing is implemented */}
+      {AUTOSHIP_ENABLED && (
       <div style={{ marginBottom: 20 }}>
         <div
           style={{
@@ -351,6 +355,7 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
           </p>
         )}
       </div>
+      )}
 
       {/* Quantity + price row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>

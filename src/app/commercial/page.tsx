@@ -79,7 +79,8 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Can I set up recurring orders?',
-    a: 'Yes. Our Subscribe & Save program gives you an additional 10% off with automatic monthly delivery. Cancel or adjust anytime from your account. Great for facilities with steady glove consumption.',
+    // TODO: Re-enable autoship copy when recurring billing is implemented
+    a: 'We are working on a Subscribe & Save program for automatic monthly delivery. In the meantime, contact us at orders@valuesuppliers.co to arrange recurring orders for your facility.',
   },
   {
     q: 'Do you offer NET terms for businesses?',
@@ -668,7 +669,7 @@ export default function CommercialPage() {
               We supply the gloves your team burns through every week — at prices that make sense for operations buying by the case, not the box.
             </p>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 36, fontSize: '0.95rem' }}>
-              Subscribe & Save for automatic monthly delivery with an extra 10% off. No contracts, cancel anytime.
+              Volume pricing that rewards bigger orders — the more cases you buy, the more you save per case.
             </p>
             <Link
               href="/catalog"
@@ -697,7 +698,7 @@ export default function CommercialPage() {
             {[
               { label: 'Retail from 1 Case', sub: 'No application needed for 1–29 cases' },
               { label: 'Fast Processing', sub: '1–2 business day turnaround on all orders' },
-              { label: 'Subscribe & Save', sub: 'Auto-delivery with 10% off every month' },
+              { label: 'Volume Discounts', sub: 'Tiered pricing — bigger orders save more per case' },
               { label: 'Dedicated Support', sub: 'Real people, not chatbots, for account help' },
             ].map(({ label, sub }, i) => (
               <AnimateIn key={label} delay={i * 80}>

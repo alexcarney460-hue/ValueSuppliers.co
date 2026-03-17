@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Truck, BadgeCheck, ArrowRight, Package } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import InventoryBadge from '@/components/InventoryBadge';
 import FAQSection from './(home)/FAQSection';
 import CTASection from './(home)/CTASection';
 
@@ -55,8 +56,10 @@ const FEATURE_ITEMS = [
 ];
 
 const PRODUCT_TEASERS = [
-  { slug: 'nitrile-5mil-box', category: 'Gloves', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$10.00', badge: null, img: '/products/product-5.avif' },
   { slug: 'nitrile-5mil-case', category: 'Gloves', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$80.00', badge: 'Best Value', img: '/products/product-3.avif' },
+  { slug: 'nitrile-5mil-box', category: 'Gloves', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$10.00', badge: null, img: '/products/product-5.avif' },
+  { slug: 'spring-loaded-trimming-scissors', category: 'Trimmers', name: 'Spring-Loaded Trimming Scissors', detail: 'Curved tip · Ergonomic grip', price: '$14.00', badge: null, img: '/products/product-1.avif' },
+  { slug: 'trim-tray-150-micron', category: 'Accessories', name: 'Trim Tray — 150 Micron Screen', detail: 'Kief collection · BPA-free', price: '$28.00', badge: null, img: '/products/product-4.avif' },
 ];
 
 const SERVICE_FEATURES = [
@@ -68,8 +71,8 @@ const SERVICE_FEATURES = [
 
 const STATS = [
   { value: '500+', label: 'Operations Served' },
-  { value: '15+', label: 'Products In Stock' },
-  { value: '48',  label: 'States Served' },
+  { value: '6',    label: 'Products In Stock' },
+  { value: '48',   label: 'States Served' },
   { value: '1-2d', label: 'Processing Time' },
 ];
 
@@ -558,9 +561,12 @@ export default function HomePage() {
                       <h3 className="font-heading" style={{ fontSize: '1rem', marginTop: 6, marginBottom: 4, color: 'var(--color-charcoal)' }}>
                         {product.name}
                       </h3>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', marginBottom: 'auto', paddingBottom: 18 }}>
+                      <p style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', marginBottom: 8 }}>
                         {product.detail}
                       </p>
+                      <div style={{ marginBottom: 'auto', paddingBottom: 12 }}>
+                        <InventoryBadge slug={product.slug} compact />
+                      </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 14 }}>
                         <span className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
                           {product.price}

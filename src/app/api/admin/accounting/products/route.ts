@@ -11,7 +11,7 @@ interface OrderItemRow {
 }
 
 export async function GET(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

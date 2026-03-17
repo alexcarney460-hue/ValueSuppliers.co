@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { autoShipOrder } from '@/lib/shippo';
 import { DEFAULT_WEIGHTS } from '@/lib/shipping';
@@ -9,6 +10,8 @@ import {
   type OrderData,
   type OrderItem,
 } from '@/lib/email';
+
+type SquareEvent = { type: string; event_id?: string; data?: { object?: Record<string, unknown> } };
 
 function verifySquareSignature(
   body: string,
@@ -29,12 +32,12 @@ function verifySquareSignature(
 
 /** Find or create a contact by email, return contact_id */
 async function findOrCreateContact(
-  supabase: ReturnType<typeof getSupabaseServer>,
+  supabase: SupabaseClient,
   email: string,
   name?: string,
   phone?: string
 ): Promise<number | null> {
-  if (!supabase || !email) return null;
+  if (!email) return null;
 
   const { data: existing } = await supabase
     .from('contacts')
@@ -59,37 +62,96 @@ async function findOrCreateContact(
   return newContact?.id ?? null;
 }
 
-export async function POST(req: NextRequest) {
-  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim();
-  const notificationUrl = (process.env.SQUARE_WEBHOOK_URL?.trim()) ?? 'https://valuesuppliers.co/api/square/webhook';
+// ---------------------------------------------------------------------------
+// Store webhook event for resilience — returns 'already_processed' if
+// this event_id was already handled successfully (idempotent guard).
+// ---------------------------------------------------------------------------
+async function storeWebhookEvent(
+  supabase: SupabaseClient,
+  eventId: string,
+  eventType: string,
+  payload: unknown,
+): Promise<'stored' | 'already_processed' | 'store_failed'> {
+  // Check if already processed (idempotent)
+  const { data: existing } = await supabase
+    .from('webhook_events')
+    .select('id, status')
+    .eq('event_id', eventId)
+    .limit(1)
+    .single();
 
-  const rawBody = await req.text();
-  const signature = req.headers.get('x-square-hmacsha256-signature');
-
-  if (!signatureKey) {
-    console.error('[Square Webhook] SQUARE_WEBHOOK_SIGNATURE_KEY not configured');
-    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  if (existing) {
+    if (existing.status === 'processed') {
+      return 'already_processed';
+    }
+    // Event exists but failed/pending — update attempts and re-process
+    await supabase
+      .from('webhook_events')
+      .update({ status: 'pending', attempts: (existing as { attempts?: number }).attempts ?? 0 })
+      .eq('id', existing.id);
+    return 'stored';
   }
-  if (!verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
-    console.error('[Square Webhook] Signature verification failed');
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+
+  // Insert new event
+  const { error } = await supabase.from('webhook_events').insert({
+    event_id: eventId,
+    event_type: eventType,
+    payload,
+    status: 'pending',
+    attempts: 0,
+  });
+
+  if (error) {
+    console.error('[Webhook Events] Failed to store event:', error.message);
+    return 'store_failed';
   }
+  return 'stored';
+}
 
-  let event: { type: string; data?: { object?: Record<string, unknown> } };
-  try {
-    event = JSON.parse(rawBody);
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
+async function markEventProcessed(supabase: SupabaseClient, eventId: string): Promise<void> {
+  await supabase
+    .from('webhook_events')
+    .update({ status: 'processed', processed_at: new Date().toISOString() })
+    .eq('event_id', eventId);
+}
 
-  const supabase = getSupabaseServer();
+async function markEventFailed(
+  supabase: SupabaseClient,
+  eventId: string,
+  errorMessage: string,
+): Promise<void> {
+  // Increment attempts and store error
+  const { data: current } = await supabase
+    .from('webhook_events')
+    .select('attempts')
+    .eq('event_id', eventId)
+    .limit(1)
+    .single();
 
+  await supabase
+    .from('webhook_events')
+    .update({
+      status: 'failed',
+      error_message: errorMessage,
+      attempts: ((current as { attempts?: number })?.attempts ?? 0) + 1,
+    })
+    .eq('event_id', eventId);
+}
+
+// ---------------------------------------------------------------------------
+// Core event processing logic — extracted so it can be called from both the
+// webhook handler and the admin retry endpoint.
+// ---------------------------------------------------------------------------
+export async function processSquareEvent(
+  event: SquareEvent,
+  supabase: SupabaseClient,
+): Promise<void> {
   switch (event.type) {
     case 'payment.created':
     case 'payment.updated': {
       const paymentObj = event.data?.object as Record<string, unknown> | undefined;
       const payment = paymentObj?.payment as Record<string, unknown> | undefined;
-      if (!payment || !supabase) break;
+      if (!payment) break;
 
       // Only process completed payments
       const paymentStatus = (payment.status as string) || '';
@@ -183,6 +245,52 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // Decrement inventory for each order item
+      if (order) {
+        try {
+          const { data: orderItems } = await supabase
+            .from('order_items')
+            .select('product_name, quantity')
+            .eq('order_id', order.id);
+
+          if (orderItems && orderItems.length > 0) {
+            for (const oi of orderItems) {
+              const nameLower = (oi.product_name || '').toLowerCase();
+              // Match product slug by keyword from Square item name
+              let slug: string | null = null;
+              if (nameLower.includes('case')) slug = 'nitrile-5mil-case';
+              else if (nameLower.includes('box')) slug = 'nitrile-5mil-box';
+
+              if (slug) {
+                const { data: result } = await supabase.rpc('decrement_stock', {
+                  p_slug: slug,
+                  p_qty: oi.quantity || 1,
+                });
+
+                const newQty = typeof result === 'number' ? result : null;
+                if (newQty !== null && newQty >= 0) {
+                  // Check if below threshold
+                  const { data: productRow } = await supabase
+                    .from('products')
+                    .select('low_stock_threshold')
+                    .eq('slug', slug)
+                    .single();
+                  const threshold = productRow?.low_stock_threshold ?? 10;
+                  if (newQty <= threshold) {
+                    console.warn(`[Inventory] Low stock warning: ${slug} now at ${newQty} (threshold: ${threshold})`);
+                  }
+                }
+                if (newQty !== null && newQty < 0) {
+                  console.warn(`[Inventory] Negative stock for ${slug}: ${newQty}. Manual correction needed.`);
+                }
+              }
+            }
+          }
+        } catch (invErr) {
+          console.error('[Inventory] Failed to decrement stock:', invErr instanceof Error ? invErr.message : 'unknown');
+        }
+      }
+
       // Send order confirmation email (non-blocking — don't fail webhook on email error)
       if (order && buyerEmail) {
         try {
@@ -232,7 +340,7 @@ export async function POST(req: NextRequest) {
               }
             }
           }
-          // Minimum 5 lbs, fallback estimate from total ($1 ≈ 0.5 lbs for glove cases)
+          // Minimum 5 lbs, fallback estimate from total ($1 ~ 0.5 lbs for glove cases)
           if (weightLbs <= 0) {
             weightLbs = Math.max(5, Math.round((totalCents / 100) * 0.5));
           }
@@ -314,7 +422,7 @@ export async function POST(req: NextRequest) {
       const fulfillment = orderObj?.order_fulfillment_updated as Record<string, unknown> | undefined;
       const sqOrderId = fulfillment?.order_id as string | undefined;
 
-      if (supabase && sqOrderId) {
+      if (sqOrderId) {
         const fulfillments = fulfillment?.fulfillment_update as Array<{ new_state?: string }> | undefined;
         const latestState = fulfillments?.[0]?.new_state;
         const statusMap: Record<string, string> = {
@@ -328,7 +436,6 @@ export async function POST(req: NextRequest) {
         const newStatus = statusMap[latestState || ''] || 'processing';
 
         await supabase.from('orders').update({ status: newStatus }).eq('square_order_id', sqOrderId);
-        // Fulfillment status updated
       }
       break;
     }
@@ -337,7 +444,7 @@ export async function POST(req: NextRequest) {
     case 'subscription.updated': {
       const subObj = event.data?.object as Record<string, unknown> | undefined;
       const subscription = subObj?.subscription as Record<string, unknown> | undefined;
-      if (supabase && subscription) {
+      if (subscription) {
         const subId = subscription.id as string;
         const status = subscription.status as string;
 
@@ -347,8 +454,6 @@ export async function POST(req: NextRequest) {
             status: status === 'CANCELED' ? 'cancelled' : 'paused',
           }).eq('subscription_id', subId);
         }
-
-        // Subscription event processed
       }
       break;
     }
@@ -366,6 +471,64 @@ export async function POST(req: NextRequest) {
     default:
       // Unhandled event type — no action required
   }
+}
 
+// ---------------------------------------------------------------------------
+// POST handler — store event first, then process, always return 200
+// ---------------------------------------------------------------------------
+export async function POST(req: NextRequest) {
+  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim();
+  const notificationUrl = (process.env.SQUARE_WEBHOOK_URL?.trim()) ?? 'https://valuesuppliers.co/api/square/webhook';
+
+  const rawBody = await req.text();
+  const signature = req.headers.get('x-square-hmacsha256-signature');
+
+  if (!signatureKey) {
+    console.error('[Square Webhook] SQUARE_WEBHOOK_SIGNATURE_KEY not configured');
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  }
+  if (!verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
+    console.error('[Square Webhook] Signature verification failed');
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+
+  let event: SquareEvent;
+  try {
+    event = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const supabase = getSupabaseServer();
+  if (!supabase) {
+    // Cannot store or process — return 500 so Square retries
+    console.error('[Square Webhook] Supabase unavailable, returning 500 for Square retry');
+    return NextResponse.json({ error: 'Database unavailable' }, { status: 500 });
+  }
+
+  // Generate a deterministic event ID (Square sends event_id in the payload)
+  const eventId = event.event_id || `fallback-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+  // Step 1: Store the raw event immediately — this is the critical resilience layer
+  const storeResult = await storeWebhookEvent(supabase, eventId, event.type, event);
+
+  if (storeResult === 'already_processed') {
+    // Idempotent: we already handled this event successfully
+    return NextResponse.json({ received: true, status: 'already_processed' });
+  }
+
+  // Step 2: Process the event. Even if processing fails, we have the payload stored.
+  try {
+    await processSquareEvent(event, supabase);
+    await markEventProcessed(supabase, eventId);
+  } catch (processingError) {
+    const errorMsg = processingError instanceof Error ? processingError.message : 'Unknown processing error';
+    console.error('[Square Webhook] Processing failed for event', eventId, errorMsg);
+    await markEventFailed(supabase, eventId, errorMsg);
+    // Still return 200 — we have the event stored and can retry via admin
+  }
+
+  // Always return 200 after storing the event. Square does not need to retry
+  // because we have the full payload persisted for our own retry mechanism.
   return NextResponse.json({ received: true });
 }

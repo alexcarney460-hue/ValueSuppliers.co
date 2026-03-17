@@ -4,7 +4,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 
 /* ── GET  /api/admin/marketing/queue ─────────────────────── */
 export async function GET(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 
 /* ── POST  /api/admin/marketing/queue ────────────────────── */
 export async function POST(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

@@ -6,7 +6,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 /* ── POST  /api/admin/marketing/publish/:id ──────────────── */
 export async function POST(req: Request, ctx: Ctx) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

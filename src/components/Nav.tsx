@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
+import { Menu, X, Search, User, ShoppingCart, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import SearchModal from '@/components/SearchModal';
 
@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'Distribution', href: '/distribution' },
   { label: 'Affiliate', href: '/affiliate' },
+  { label: 'Track Order', href: '/track' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

@@ -4,6 +4,7 @@ import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square';
 import type { CartItem } from '@/context/CartContext';
 import PRODUCTS, { getCasePriceForQuantity } from '@/lib/products';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { getSupabaseServer } from '@/lib/supabase-server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -55,6 +56,36 @@ export async function POST(req: NextRequest) {
       const product = PRODUCTS.find((p) => p.slug === item.id);
       if (!product) {
         return NextResponse.json({ error: `Unknown product "${item.id}".` }, { status: 400 });
+      }
+    }
+
+    // ── Inventory check ──
+    const supabase = getSupabaseServer();
+    if (supabase) {
+      const { data: stockRows } = await supabase
+        .from('products')
+        .select('slug, quantity_on_hand');
+
+      if (stockRows && stockRows.length > 0) {
+        const stockMap = new Map(stockRows.map((r) => [r.slug, r.quantity_on_hand ?? 0]));
+
+        for (const item of items) {
+          const available = stockMap.get(item.id);
+          if (available !== undefined && available < item.quantity) {
+            const product = PRODUCTS.find((p) => p.slug === item.id);
+            const name = product?.shortName ?? item.id;
+            if (available <= 0) {
+              return NextResponse.json(
+                { error: `"${name}" is currently out of stock.` },
+                { status: 400 },
+              );
+            }
+            return NextResponse.json(
+              { error: `Insufficient stock for "${name}". Only ${available} available.` },
+              { status: 400 },
+            );
+          }
+        }
       }
     }
 

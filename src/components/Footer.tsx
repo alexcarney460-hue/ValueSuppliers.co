@@ -19,7 +19,7 @@ const FOOTER_LINKS = {
   ],
   Account: [
     { label: 'Sign In', href: '/account' },
-    { label: 'Create Account', href: '/account' },
+    { label: 'Track Order', href: '/track' },
     { label: 'Order History', href: '/account' },
   ],
 };

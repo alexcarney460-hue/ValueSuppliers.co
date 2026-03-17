@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck, Loader2, Package, Box } from 'lucide-react';
+import { X, Minus, Plus, Trash2, RefreshCw, ShoppingBag, ArrowRight, AlertCircle, Truck, Loader2, Package, Box, Mail } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { getSupabase } from '@/lib/supabase';
 import { getTierName, casesToNextTier, getCasePriceForQuantity, getProductBySlug } from '@/lib/products';
 import { formatPrice } from '@/lib/pricing';
 
@@ -23,6 +24,31 @@ export default function CartDrawer() {
   const [error, setError] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
+  // Email verification state: null = not logged in (guest), true = verified, false = unverified
+  const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const supabase = getSupabase();
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        setEmailVerified(!!data.session.user.email_confirmed_at);
+      } else {
+        setEmailVerified(null);
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setEmailVerified(!!session.user.email_confirmed_at);
+      } else {
+        setEmailVerified(null);
+      }
+    });
+    return () => { subscription.unsubscribe(); };
+  }, []);
+
+  // Block checkout for logged-in users with unverified email (guests can still checkout)
+  const emailBlocked = emailVerified === false;
+
   // Shipping state
   const [zip, setZip] = useState('');
   const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
@@ -31,6 +57,8 @@ export default function CartDrawer() {
   const [ratesError, setRatesError] = useState<string | null>(null);
   const [ratesFetched, setRatesFetched] = useState(false);
 
+  // TODO: Re-enable when recurring billing is implemented
+  // Autoship is disabled — these flags will always be false for new carts
   const hasAutoship = items.some((i) => i.plan === 'autoship');
   const hasOneTime  = items.some((i) => i.plan === 'one-time');
   const mixedPlans  = hasAutoship && hasOneTime;
@@ -103,7 +131,7 @@ export default function CartDrawer() {
   }, [zip, items]);
 
   async function handleCheckout() {
-    if (mixedPlans || !selectedRate) return;
+    if (mixedPlans || !selectedRate || emailBlocked) return;
     setLoading(true);
     setError(null);
     try {
@@ -685,18 +713,47 @@ export default function CartDrawer() {
               </>
             )}
 
+            {/* Email verification warning */}
+            {emailBlocked && (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  backgroundColor: '#FFF8EC',
+                  border: '1px solid rgba(200,146,42,0.3)',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                  marginBottom: 14,
+                }}
+              >
+                <Mail size={15} color="var(--color-amber)" style={{ flexShrink: 0, marginTop: 1 }} />
+                <p style={{ fontSize: '0.78rem', color: 'var(--color-charcoal)', lineHeight: 1.5, margin: 0 }}>
+                  Please verify your email before checking out.{' '}
+                  <Link
+                    href="/account"
+                    onClick={closeCart}
+                    style={{ color: 'var(--color-forest)', fontWeight: 600, textDecoration: 'underline' }}
+                  >
+                    Go to Account
+                  </Link>{' '}
+                  to resend the verification email.
+                </p>
+              </div>
+            )}
+
             {error && (
               <p style={{ color: 'var(--color-alert-red)', fontSize: '0.78rem', marginBottom: 10 }}>{error}</p>
             )}
 
             <button
               onClick={handleCheckout}
-              disabled={loading || mixedPlans || !selectedRate}
+              disabled={loading || mixedPlans || !selectedRate || emailBlocked}
               className="vs-btn-forest"
               style={{
                 width: '100%',
-                backgroundColor: (mixedPlans || !selectedRate) ? 'var(--color-border)' : 'var(--color-forest)',
-                color: (mixedPlans || !selectedRate) ? 'var(--color-warm-gray)' : '#fff',
+                backgroundColor: (mixedPlans || !selectedRate || emailBlocked) ? 'var(--color-border)' : 'var(--color-forest)',
+                color: (mixedPlans || !selectedRate || emailBlocked) ? 'var(--color-warm-gray)' : '#fff',
                 border: 'none',
                 borderRadius: 10,
                 padding: '15px 24px',
@@ -705,15 +762,15 @@ export default function CartDrawer() {
                 fontSize: '0.9rem',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                cursor: (mixedPlans || !selectedRate) ? 'not-allowed' : 'pointer',
+                cursor: (mixedPlans || !selectedRate || emailBlocked) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
               }}
             >
-              {loading ? 'Redirecting...' : !selectedRate ? 'Select Shipping to Continue' : 'Proceed to Checkout'}
-              {!loading && selectedRate && <ArrowRight size={16} />}
+              {loading ? 'Redirecting...' : emailBlocked ? 'Verify Email to Checkout' : !selectedRate ? 'Select Shipping to Continue' : 'Proceed to Checkout'}
+              {!loading && selectedRate && !emailBlocked && <ArrowRight size={16} />}
             </button>
 
             <button

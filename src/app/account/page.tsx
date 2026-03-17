@@ -5,8 +5,27 @@ import Link from 'next/link';
 import { getSupabase } from '@/lib/supabase';
 import { ADMIN_EMAILS } from '@/lib/admin/constants';
 import type { Profile } from '@/lib/account';
+import OrderHistory from './OrderHistory';
 
 type View = 'login' | 'signup' | 'dashboard';
+
+/** Sync the Supabase access token to a server-side cookie for admin fallback auth. */
+function syncAdminSession(accessToken: string): void {
+  fetch('/api/auth/sync-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token: accessToken }),
+  }).catch(() => {
+    // Non-critical — admin can still use token-based auth
+  });
+}
+
+/** Clear the admin session cookie on logout. */
+function clearAdminSession(): void {
+  fetch('/api/auth/sync-session', { method: 'DELETE' }).catch(() => {
+    // Non-critical
+  });
+}
 
 export default function AccountPage() {
   const [view, setView] = useState<View>('login');
@@ -17,12 +36,18 @@ export default function AccountPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(true);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState('');
 
   useEffect(() => {
     const supabase = getSupabase();
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) {
+        setEmailVerified(!!data.session.user.email_confirmed_at);
         loadProfile(data.session.user.id, data.session.user.email ?? '');
+        // Sync admin session cookie for middleware fallback auth
+        syncAdminSession(data.session.access_token);
       } else {
         setChecking(false);
       }
@@ -93,13 +118,34 @@ export default function AccountPage() {
       setLoading(false);
       return;
     }
+    setEmailVerified(!!data.user.email_confirmed_at);
+    // Sync admin session cookie for middleware fallback auth
+    if (data.session?.access_token) {
+      syncAdminSession(data.session.access_token);
+    }
     await loadProfile(data.user.id, data.user.email ?? email);
     setLoading(false);
+  }
+
+  async function handleResendVerification() {
+    setResending(true);
+    setResendSuccess('');
+    setError('');
+    const supabase = getSupabase();
+    const { error: resendError } = await supabase.auth.resend({ type: 'signup', email: profile?.email ?? email });
+    if (resendError) {
+      setError(resendError.message);
+    } else {
+      setResendSuccess('Verification email sent! Check your inbox.');
+    }
+    setResending(false);
   }
 
   async function handleLogout() {
     const supabase = getSupabase();
     await supabase.auth.signOut();
+    // Clear the admin session cookie
+    clearAdminSession();
     setProfile(null);
     setView('login');
     setEmail('');
@@ -303,6 +349,55 @@ export default function AccountPage() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Email verification banner */}
+            {!emailVerified && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  backgroundColor: '#FFF8EC',
+                  border: '1px solid rgba(200,146,42,0.35)',
+                  borderRadius: 12,
+                  padding: '16px 20px',
+                }}
+              >
+                <p style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--color-charcoal)', margin: 0 }}>
+                  Please verify your email to place orders
+                </p>
+                <p style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', margin: 0, lineHeight: 1.5 }}>
+                  Check your inbox for a verification link. You can browse and add items to your cart, but checkout requires a verified email.
+                </p>
+                {resendSuccess && (
+                  <div style={{ fontSize: '0.78rem', color: '#166534', backgroundColor: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: 8, padding: '8px 12px' }}>
+                    {resendSuccess}
+                  </div>
+                )}
+                <button
+                  onClick={handleResendVerification}
+                  disabled={resending}
+                  style={{
+                    alignSelf: 'flex-start',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: resending ? 'var(--color-warm-gray)' : 'var(--color-forest)',
+                    background: 'none',
+                    border: '1px solid var(--color-forest)',
+                    borderRadius: 9999,
+                    padding: '7px 16px',
+                    cursor: resending ? 'not-allowed' : 'pointer',
+                    fontFamily: "'Barlow', Arial, sans-serif",
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    transition: 'all 150ms ease',
+                    opacity: resending ? 0.6 : 1,
+                  }}
+                >
+                  {resending ? 'Sending...' : 'Resend Verification Email'}
+                </button>
+              </div>
+            )}
+
             {/* Account type card */}
             <div
               style={{
@@ -364,6 +459,9 @@ export default function AccountPage() {
                 ))}
               </div>
             </div>
+
+            {/* Order History */}
+            {profile?.email && <OrderHistory email={profile.email} />}
 
             <button
               onClick={handleLogout}

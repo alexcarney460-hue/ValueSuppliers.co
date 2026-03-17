@@ -4,7 +4,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 
 /** Batch approve sends — marks pending_review sends as approved */
 export async function POST(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

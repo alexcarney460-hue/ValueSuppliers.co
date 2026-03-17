@@ -6,7 +6,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 /* ── GET  /api/admin/marketing/queue/:id ─────────────────── */
 export async function GET(req: Request, ctx: Ctx) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -29,7 +29,7 @@ export async function GET(req: Request, ctx: Ctx) {
 
 /* ── PATCH  /api/admin/marketing/queue/:id ───────────────── */
 export async function PATCH(req: Request, ctx: Ctx) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -65,7 +65,7 @@ export async function PATCH(req: Request, ctx: Ctx) {
 
 /* ── DELETE  /api/admin/marketing/queue/:id ──────────────── */
 export async function DELETE(req: Request, ctx: Ctx) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();

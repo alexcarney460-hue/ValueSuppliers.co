@@ -4,7 +4,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 import PRODUCTS from '@/lib/products';
 
 export async function GET(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const supabase = getSupabaseServer();
@@ -61,7 +61,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ ok: false, error: 'Missing product id' }, { status: 400 });
   }
 
-  const allowedFields = ['name', 'short_name', 'slug', 'category', 'price', 'unit', 'badge', 'img', 'description', 'in_stock', 'sort_order', 'box_price', 'case_price'];
+  const allowedFields = ['name', 'short_name', 'slug', 'category', 'price', 'unit', 'badge', 'img', 'description', 'in_stock', 'sort_order', 'box_price', 'case_price', 'quantity_on_hand', 'low_stock_threshold', 'weight_lbs'];
   const updates: Record<string, unknown> = {};
   for (const key of allowedFields) {
     if (body[key] !== undefined) updates[key] = body[key];
