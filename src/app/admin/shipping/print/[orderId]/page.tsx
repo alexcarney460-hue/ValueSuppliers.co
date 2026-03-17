@@ -101,10 +101,10 @@ export default function PrintLabelPage({ params }: { params: Promise<{ orderId: 
 
   return (
     <>
-      {/* Print-specific styles */}
+      {/* Print-specific styles — optimized for 4x6 thermal label printers */}
       <style>{`
         @page {
-          size: landscape;
+          size: 6in 4in;
           margin: 0;
         }
         @media print {
@@ -115,17 +115,18 @@ export default function PrintLabelPage({ params }: { params: Promise<{ orderId: 
           .print-actions { display: none !important; }
           .order-summary { display: none !important; }
           .label-wrapper {
-            width: 100vw !important;
-            height: 100vh !important;
+            width: 6in !important;
+            height: 4in !important;
             display: flex !important;
             align-items: center;
             justify-content: center;
             padding: 0 !important;
             margin: 0 !important;
+            overflow: hidden;
           }
           .label-frame {
-            width: 100% !important;
-            height: 100% !important;
+            width: 6in !important;
+            height: 4in !important;
             border: none !important;
           }
         }
@@ -189,16 +190,16 @@ export default function PrintLabelPage({ params }: { params: Promise<{ orderId: 
           </div>
         </div>
 
-        {/* Shipping Label (PDF iframe) */}
+        {/* Shipping Label (rotated PDF via our proxy for print-ready alignment) */}
         {order.label_url && (
           <div className="label-wrapper" style={{ marginBottom: 24 }}>
             <iframe
               className="label-frame"
-              src={order.label_url}
+              src={`/api/shipping/label-pdf?url=${encodeURIComponent(order.label_url)}&rotate=90`}
               title="Shipping Label"
               style={{
                 width: '100%',
-                height: 600,
+                height: 500,
                 border: '1px solid #e4e1db',
                 borderRadius: 12,
                 backgroundColor: '#fff',
