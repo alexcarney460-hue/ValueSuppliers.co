@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { CheckCircle, ArrowRight, RefreshCw, Package } from 'lucide-react';
 import ClearCartOnMount from './ClearCartOnMount';
 
-export const metadata: Metadata = { title: 'Order Confirmed' };
+export const metadata: Metadata = {
+  title: 'Order Confirmed',
+  robots: { index: false, follow: false },
+};
 
 export default function CheckoutSuccessPage() {
   return (

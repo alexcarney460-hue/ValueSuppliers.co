@@ -5,14 +5,20 @@ import { Truck, BadgeCheck, ArrowRight, Package, ChevronRight, Shield, Building2
 import AnimateIn from '@/components/AnimateIn';
 
 export const metadata: Metadata = {
-  title: 'Commercial Disposable Gloves — Bulk Pricing for Every Industry | Value Suppliers',
+  title: 'Commercial Disposable Gloves — Bulk Industry Pricing',
   description:
-    'Professional-grade nitrile, latex, and vinyl disposable gloves for food service, medical, janitorial, automotive, and industrial operations. Bulk case pricing with wholesale and distribution tiers. Fast nationwide shipping.',
+    'Bulk disposable gloves for food service, medical, janitorial, automotive, and industrial use. Nitrile, latex, and vinyl. Case pricing with fast nationwide shipping.',
+  keywords: ['commercial disposable gloves', 'bulk nitrile gloves', 'food service gloves', 'medical exam gloves', 'industrial gloves bulk', 'janitorial gloves case'],
   alternates: { canonical: 'https://valuesuppliers.co/commercial' },
   openGraph: {
-    title: 'Value Suppliers — Commercial Disposable Gloves at Bulk Pricing',
-    description: 'Nitrile, latex, and vinyl gloves for every industry. Retail $80/case, wholesale $70/case (30+), distribution $60/case (120+).',
+    title: 'Commercial Disposable Gloves — Bulk Industry Pricing',
+    description: 'Nitrile, latex, and vinyl gloves for every industry. Wholesale $70/case (30+), distribution $60/case (120+).',
     url: 'https://valuesuppliers.co/commercial',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Commercial Disposable Gloves | ValueSuppliers.co',
+    description: 'Bulk gloves for food service, medical, janitorial, and industrial operations. ASTM certified, fast shipping.',
   },
 };
 

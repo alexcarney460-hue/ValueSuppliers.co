@@ -6,14 +6,19 @@ import PRODUCTS from '@/lib/products';
 import { formatPrice } from '@/lib/pricing';
 
 export const metadata: Metadata = {
-  title: 'Product Catalog — Gloves, Trimmers & Cannabis Supplies',
+  title: 'Buy Nitrile Gloves Online — Gloves by the Case',
   description:
-    'Shop professional-grade nitrile, latex, and vinyl disposable gloves by the case. Plus cannabis trimming scissors, precision snips, and harvest accessories. Retail $80/case, wholesale $70/case (30+ cases), distribution $60/case (120+ cases).',
-  keywords: ['buy nitrile gloves bulk', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'glove catalog', 'wholesale gloves online'],
+    'Shop nitrile, latex, and vinyl disposable gloves by the case. Cannabis trimming scissors and harvest accessories. From $60/case with wholesale pricing.',
+  keywords: ['buy nitrile gloves online', 'gloves by the case', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'wholesale gloves online'],
   openGraph: {
-    title: 'Product Catalog | ValueSuppliers.co',
-    description: 'Nitrile, latex, vinyl gloves and cannabis trimming tools by the case. Wholesale and distribution pricing available.',
+    title: 'Buy Nitrile Gloves Online — Gloves by the Case',
+    description: 'Nitrile, latex, and vinyl gloves by the case. Cannabis trimming tools. Wholesale and distribution pricing available.',
     url: 'https://valuesuppliers.co/catalog',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Buy Nitrile Gloves Online | ValueSuppliers.co',
+    description: 'Disposable gloves by the case plus cannabis trimming supplies. Wholesale pricing from $70/case.',
   },
   alternates: { canonical: 'https://valuesuppliers.co/catalog' },
 };
@@ -39,12 +44,34 @@ export default function CatalogPage() {
       position: i + 1,
       url: `https://valuesuppliers.co/catalog/${p.slug}`,
       name: p.name,
+      image: `https://valuesuppliers.co${p.img}`,
     })),
+  };
+
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Product Catalog — Gloves, Trimmers & Cannabis Supplies',
+    description:
+      'Professional-grade nitrile gloves by the case, cannabis trimming scissors, and harvest accessories. Retail, wholesale, and distribution pricing.',
+    url: 'https://valuesuppliers.co/catalog',
+    isPartOf: { '@type': 'WebSite', name: 'ValueSuppliers.co', url: 'https://valuesuppliers.co' },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: PRODUCTS.length,
+    },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://valuesuppliers.co' },
+        { '@type': 'ListItem', position: 2, name: 'Catalog', item: 'https://valuesuppliers.co/catalog' },
+      ],
+    },
   };
 
   return (
     <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([itemListSchema, collectionPageSchema]) }} />
 
       {/* Header */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '56px 24px 48px', position: 'relative', overflow: 'hidden' }}>

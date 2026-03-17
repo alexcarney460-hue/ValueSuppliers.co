@@ -5,14 +5,19 @@ import AnimateIn from '@/components/AnimateIn';
 import WholesaleForm from '@/components/forms/WholesaleForm';
 
 export const metadata: Metadata = {
-  title: 'Wholesale Pricing — $70/Case (30+ Cases)',
+  title: 'Wholesale Gloves Supplier — $70/Case Bulk Pricing',
   description:
-    'Wholesale accounts at ValueSuppliers.co get $70/case pricing on 30+ case orders. Nitrile gloves by the case. Priority fulfillment, dedicated support, and NET 30 available. Cannabis dispensaries, hydro stores, and grow operations welcome.',
-  keywords: ['wholesale gloves', 'bulk nitrile gloves', 'wholesale disposable gloves', 'cannabis dispensary supplies', 'hydro store gloves', 'wholesale glove supplier'],
+    'Wholesale gloves at $70/case on 30+ case orders. Nitrile, latex, and vinyl disposable gloves. Priority fulfillment for dispensaries, hydro stores, and grows.',
+  keywords: ['wholesale gloves supplier', 'bulk glove pricing', 'wholesale disposable gloves', 'bulk nitrile gloves', 'cannabis dispensary supplies', 'hydro store gloves'],
   openGraph: {
-    title: 'Wholesale Glove Pricing — $70/Case | ValueSuppliers.co',
-    description: 'Wholesale accounts get $70/case on 30+ case orders. Priority fulfillment and dedicated support. Apply online — approval within 1 business day.',
+    title: 'Wholesale Gloves Supplier — $70/Case Bulk Pricing',
+    description: 'Wholesale glove pricing at $70/case on 30+ case orders. Priority fulfillment and dedicated support. Apply online.',
     url: 'https://valuesuppliers.co/wholesale',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wholesale Gloves — $70/Case | ValueSuppliers.co',
+    description: 'Bulk glove pricing for dispensaries, grows, and hydro stores. $70/case on 30+ case orders. Apply online.',
   },
   alternates: { canonical: 'https://valuesuppliers.co/wholesale' },
 };

@@ -8,14 +8,29 @@ import FAQSection from './(home)/FAQSection';
 import CTASection from './(home)/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Professional Gloves & Cannabis Trimming Supplies — Buy by the Case',
+  title: 'Disposable Gloves Wholesale & Cannabis Trimming Supplies',
   description:
-    'ValueSuppliers.co: professional-grade nitrile, latex, and vinyl disposable gloves and cannabis trimming equipment. Retail from $80/case. Wholesale $70/case (30+ cases). Distribution $60/case (120+ cases). Serving cannabis, food service, medical, and industrial industries nationwide.',
+    'Buy nitrile gloves in bulk from $60/case. Wholesale disposable gloves and cannabis trimming supplies shipped fast. Retail, wholesale, and distribution tiers available.',
+  keywords: [
+    'disposable gloves wholesale',
+    'nitrile gloves bulk',
+    'cannabis trimming supplies',
+    'buy nitrile gloves by the case',
+    'wholesale glove supplier',
+    'vinyl gloves bulk',
+    'latex gloves case',
+    'trimming scissors cannabis',
+  ],
   alternates: { canonical: 'https://valuesuppliers.co' },
   openGraph: {
-    title: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies',
-    description: 'Case pricing for retail ($80/case), wholesale ($70/case, 30+), and distribution ($60/case, 120+). Nitrile, latex, vinyl gloves and cannabis trimming tools.',
+    title: 'Disposable Gloves Wholesale & Cannabis Trimming Supplies',
+    description: 'Nitrile, latex, and vinyl gloves by the case. Wholesale $70/case (30+), distribution $60/case (120+). Cannabis trimming tools in stock.',
     url: 'https://valuesuppliers.co',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Disposable Gloves Wholesale & Cannabis Supplies',
+    description: 'Nitrile gloves by the case. Wholesale $70/case, distribution $60/case. Cannabis trimming supplies shipped fast.',
   },
 };
 

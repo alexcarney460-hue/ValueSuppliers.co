@@ -22,8 +22,38 @@ export const viewport: Viewport = {
   themeColor: '#1B3A2D',
 };
 
+/*
+ * ── Search Engine & Platform Verification Tags ──────────────────────────
+ * To get the actual verification codes:
+ *
+ * Google Search Console:
+ *   1. Go to https://search.google.com/search-console
+ *   2. Add property → URL prefix → enter https://valuesuppliers.co
+ *   3. Choose "HTML tag" verification method
+ *   4. Copy the content="..." value and replace REPLACE_WITH_GOOGLE_VERIFICATION_CODE below
+ *
+ * Bing Webmaster Tools:
+ *   1. Go to https://www.bing.com/webmasters
+ *   2. Add your site → choose "HTML Meta Tag" method
+ *   3. Copy the content="..." value and replace REPLACE_WITH_BING_VERIFICATION_CODE below
+ *   (Bing XML file auth is also available at /BingSiteAuth.xml)
+ *
+ * Pinterest:
+ *   1. Go to https://pinterest.com/settings/claim
+ *   2. Choose "Add HTML tag" method
+ *   3. Copy the content="..." value and replace REPLACE_WITH_PINTEREST_CODE below
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
+  verification: {
+    google: 'REPLACE_WITH_GOOGLE_VERIFICATION_CODE',
+    other: {
+      'msvalidate.01': 'REPLACE_WITH_BING_VERIFICATION_CODE',
+      'p:domain_verify': 'REPLACE_WITH_PINTEREST_CODE',
+    },
+  },
   title: {
     default: 'ValueSuppliers.co — Professional Gloves & Cannabis Trimming Supplies',
     template: '%s | ValueSuppliers.co',
@@ -99,13 +129,26 @@ const orgSchema = {
   logo: `${BASE}/logo.jpg`,
   description:
     'Professional-grade disposable gloves and cannabis trimming equipment supplier. Wholesale and distribution pricing for cannabis operations, food service, medical, and industrial industries.',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    email: 'orders@valuesuppliers.co',
-    availableLanguage: 'English',
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'orders@valuesuppliers.co',
+      availableLanguage: 'English',
+    },
+    {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      email: 'orders@valuesuppliers.co',
+      availableLanguage: 'English',
+    },
+  ],
+  areaServed: {
+    '@type': 'Country',
+    name: 'United States',
+    sameAs: 'https://en.wikipedia.org/wiki/United_States',
   },
-  areaServed: 'US',
+  sameAs: [],
   knowsAbout: [
     'disposable gloves',
     'nitrile gloves',
@@ -113,6 +156,16 @@ const orgSchema = {
     'wholesale gloves',
     'trimming scissors',
   ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'ValueSuppliers.co Product Catalog',
+    url: `${BASE}/catalog`,
+    itemListElement: [
+      { '@type': 'OfferCatalog', name: 'Disposable Gloves', url: `${BASE}/catalog#gloves` },
+      { '@type': 'OfferCatalog', name: 'Trimming Tools', url: `${BASE}/catalog#trimmers` },
+      { '@type': 'OfferCatalog', name: 'Harvest Accessories', url: `${BASE}/catalog#accessories` },
+    ],
+  },
 };
 
 const websiteSchema = {
@@ -131,6 +184,13 @@ const websiteSchema = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://hpakqrnvjnzznhffoqaf.supabase.co" />
+        <link rel="preconnect" href="https://js.squareup.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://pci-connect.squareup.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://hpakqrnvjnzznhffoqaf.supabase.co" />
+        <link rel="dns-prefetch" href="https://js.squareup.com" />
+      </head>
       <body className={`${barlow.variable} ${barlowCondensed.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
         <script
           type="application/ld+json"

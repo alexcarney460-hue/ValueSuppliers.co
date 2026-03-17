@@ -4,14 +4,19 @@ import { ArrowRight, BadgeCheck, Shield, Users, Calendar, MapPin, ClipboardList 
 import AnimateIn from '@/components/AnimateIn';
 
 export const metadata: Metadata = {
-  title: 'Onsite Cannabis Trimming Services — Licensed & Bonded',
+  title: 'Cannabis Trimming Services — Licensed Onsite Crews',
   description:
-    'Fully licensed and bonded onsite cannabis trimming crews available for your facility. Professional trimmers, your schedule, full compliance documentation. Chain-of-custody records, liability insurance, and state licensing included on every job.',
-  keywords: ['cannabis trimming service', 'onsite trimming crew', 'licensed trimming service', 'cannabis harvest service', 'trimming labor cannabis', 'contract trimming'],
+    'Hire licensed and bonded cannabis trimming crews for your facility. Onsite trimming services with full compliance documentation. Book by the day or harvest run.',
+  keywords: ['cannabis trimming services', 'onsite trimming crew', 'licensed trimming service', 'cannabis harvest service', 'contract trimming', 'trimming labor cannabis'],
   openGraph: {
-    title: 'Onsite Cannabis Trimming Services | ValueSuppliers.co',
-    description: 'Licensed and bonded trimming crews for your facility. Professional, compliant, and fully documented. Get a quote today.',
+    title: 'Cannabis Trimming Services — Licensed Onsite Crews',
+    description: 'Licensed and bonded onsite trimming crews for cannabis grows. Full compliance documentation included. Get a quote today.',
     url: 'https://valuesuppliers.co/services',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cannabis Trimming Services | ValueSuppliers.co',
+    description: 'Licensed and bonded onsite trimming crews. Professional trimmers for your facility on your schedule.',
   },
   alternates: { canonical: 'https://valuesuppliers.co/services' },
 };

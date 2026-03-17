@@ -5,13 +5,19 @@ import AnimateIn from '@/components/AnimateIn';
 import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact Us — Orders, Quotes & Wholesale Inquiries',
+  title: 'Contact Us — Glove Orders & Wholesale Inquiries',
   description:
-    'Get in touch with ValueSuppliers.co. Order support, wholesale account setup, custom volume quotes, and onsite trimming service scheduling. We respond within 1 business day.',
+    'Contact ValueSuppliers.co for order support, wholesale account setup, custom volume quotes, and trimming service scheduling. We respond within 1 business day.',
+  keywords: ['contact glove supplier', 'wholesale gloves inquiry', 'glove order support', 'ValueSuppliers contact'],
   openGraph: {
+    title: 'Contact Us — Glove Orders & Wholesale Inquiries',
+    description: 'Order support, wholesale inquiries, and custom volume quotes. We respond within 1 business day.',
+    url: 'https://valuesuppliers.co/contact',
+  },
+  twitter: {
+    card: 'summary',
     title: 'Contact ValueSuppliers.co',
     description: 'Order support, wholesale inquiries, and custom quotes. We respond within 1 business day.',
-    url: 'https://valuesuppliers.co/contact',
   },
   alternates: { canonical: 'https://valuesuppliers.co/contact' },
 };

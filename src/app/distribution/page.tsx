@@ -5,14 +5,19 @@ import AnimateIn from '@/components/AnimateIn';
 import DistributionForm from '@/components/forms/DistributionForm';
 
 export const metadata: Metadata = {
-  title: 'Distribution Program — $60/case + NET 30 Terms',
+  title: 'Glove Distributor Program — $60/Case + NET 30',
   description:
-    'Distribution partners get $60/case pricing (save $20/case off retail) on all gloves and cannabis trimming supplies. 120+ case orders. NET 30 billing, priority inventory allocation, dedicated account rep, and custom volume pricing for commercial resellers and large operations.',
-  keywords: ['glove distributor', 'wholesale glove distributor', 'disposable gloves distributor', 'cannabis supplies distributor', 'net 30 gloves'],
+    'Become a glove distributor. $60/case pricing on 120+ case orders with NET 30 terms, dedicated rep, and priority inventory. Save $20/case off retail.',
+  keywords: ['glove distributor', 'distribution pricing gloves', 'wholesale glove distributor', 'disposable gloves distributor', 'net 30 gloves', 'cannabis supplies distributor'],
   openGraph: {
-    title: 'Distribution Program — $60/case + NET 30 | ValueSuppliers.co',
-    description: 'Distribution accounts get $60/case pricing (save $20/case), NET 30 billing, and a dedicated rep. 120+ cases to qualify. Apply online for priority allocation.',
+    title: 'Glove Distributor Program — $60/Case + NET 30',
+    description: 'Distribution pricing at $60/case on 120+ case orders. NET 30 billing, dedicated rep, and priority inventory allocation.',
     url: 'https://valuesuppliers.co/distribution',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Glove Distribution Program | ValueSuppliers.co',
+    description: '$60/case glove pricing for distributors. NET 30 terms, priority allocation, and dedicated account rep.',
   },
   alternates: { canonical: 'https://valuesuppliers.co/distribution' },
 };

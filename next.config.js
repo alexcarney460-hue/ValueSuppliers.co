@@ -74,6 +74,41 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/products',
+        destination: '/catalog',
+        permanent: true,
+      },
+      {
+        source: '/products/:slug',
+        destination: '/catalog/:slug',
+        permanent: true,
+      },
+      {
+        source: '/shop',
+        destination: '/catalog',
+        permanent: true,
+      },
+      {
+        source: '/store',
+        destination: '/catalog',
+        permanent: true,
+      },
+      {
+        source: '/gloves',
+        destination: '/catalog',
+        permanent: true,
+      },
+      {
+        source: '/contact-us',
+        destination: '/contact',
+        permanent: true,
+      },
+      {
+        source: '/about-us',
+        destination: '/about',
+        permanent: true,
+      },
     ];
   },
 };

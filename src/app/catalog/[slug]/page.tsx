@@ -26,18 +26,18 @@ export async function generateMetadata({
   const wholesalePrice = (product.price * 0.875).toFixed(2);
 
   return {
-    title: `${product.name} — Buy by the Case`,
-    description: `${product.tagline} ${product.description.slice(0, 120)}. Retail $${product.price}${product.unit}, wholesale from $${wholesalePrice}. In stock, ships fast.`,
+    title: `Buy ${product.shortName} Bulk — Wholesale from $${wholesalePrice}`,
+    description: `${product.tagline} Retail $${product.price}${product.unit}, wholesale from $${wholesalePrice}. ${product.description.slice(0, 90)}. In stock, ships fast.`,
     keywords: [
+      `buy ${product.shortName} bulk`,
+      `${product.shortName} wholesale`,
       ...product.useCases,
       product.category.toLowerCase(),
-      `${product.shortName} wholesale`,
-      `buy ${product.shortName} bulk`,
       'disposable gloves case',
       'ValueSuppliers',
     ],
     openGraph: {
-      title: `${product.name} | ValueSuppliers.co`,
+      title: `Buy ${product.shortName} — Wholesale & Bulk Pricing`,
       description: `${product.tagline} Available by the case with wholesale and distribution pricing.`,
       url,
       type: 'website',
@@ -45,7 +45,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | ValueSuppliers.co`,
+      title: `${product.shortName} — Bulk & Wholesale`,
       description: product.tagline,
       images: [imgUrl],
     },
@@ -69,54 +69,104 @@ export default async function ProductPage({
 
   const productUrl = `https://valuesuppliers.co/catalog/${product.slug}`;
 
-  const productSchema = {
+  const availabilityUrl = product.inStock
+    ? 'https://schema.org/InStock'
+    : 'https://schema.org/OutOfStock';
+
+  const seller = { '@type': 'Organization', name: 'ValueSuppliers.co', url: 'https://valuesuppliers.co' };
+
+  // Extract material and weight from specs when available
+  const materialSpec = product.specs.find((s) => s.label === 'Material');
+  const dimensionsSpec = product.specs.find((s) => s.label === 'Dimensions');
+
+  // Build pricing tier offers — use actual product tier prices when available,
+  // otherwise fall back to the generic discount calculation
+  const retailPrice = product.casePrice ?? product.price;
+  const wholesaleTierPrice = product.wholesalePrice ?? wholesalePrice;
+  const distroTierPrice = product.distributorPrice ?? distroPrice;
+
+  const offers: Record<string, unknown>[] = [
+    {
+      '@type': 'Offer',
+      name: 'Retail',
+      price: retailPrice.toFixed(2),
+      priceCurrency: 'USD',
+      availability: availabilityUrl,
+      url: productUrl,
+      priceValidUntil: '2026-12-31',
+      seller,
+      eligibleQuantity: {
+        '@type': 'QuantitativeValue',
+        minValue: 1,
+        ...(product.casePrice != null ? { maxValue: 29, unitText: 'cases' } : {}),
+      },
+    },
+  ];
+
+  // Only add wholesale/distribution tiers for products that have tiered pricing
+  if (product.wholesalePrice != null || product.casePrice != null) {
+    offers.push(
+      {
+        '@type': 'Offer',
+        name: `Wholesale — $${wholesaleTierPrice.toFixed(2)}${product.unit} (save $${(retailPrice - wholesaleTierPrice).toFixed(0)}${product.unit})`,
+        price: wholesaleTierPrice.toFixed(2),
+        priceCurrency: 'USD',
+        availability: availabilityUrl,
+        url: 'https://valuesuppliers.co/wholesale',
+        priceValidUntil: '2026-12-31',
+        seller,
+        eligibleCustomerType: 'https://schema.org/Business',
+        eligibleQuantity: {
+          '@type': 'QuantitativeValue',
+          minValue: 30,
+          maxValue: 119,
+          unitText: 'cases',
+        },
+      },
+      {
+        '@type': 'Offer',
+        name: `Distribution — $${distroTierPrice.toFixed(2)}${product.unit} (save $${(retailPrice - distroTierPrice).toFixed(0)}${product.unit})`,
+        price: distroTierPrice.toFixed(2),
+        priceCurrency: 'USD',
+        availability: availabilityUrl,
+        url: 'https://valuesuppliers.co/distribution',
+        priceValidUntil: '2026-12-31',
+        seller,
+        eligibleCustomerType: 'https://schema.org/Business',
+        eligibleQuantity: {
+          '@type': 'QuantitativeValue',
+          minValue: 120,
+          unitText: 'cases',
+        },
+      },
+    );
+  }
+
+  const productSchema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: `https://valuesuppliers.co${product.img}`,
+    image: product.images.map((img) => `https://valuesuppliers.co${img}`),
     sku: product.slug,
     brand: { '@type': 'Brand', name: 'ValueSuppliers.co' },
     category: product.category,
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'USD',
-      lowPrice: distroPrice.toFixed(2),
-      highPrice: product.price.toFixed(2),
-      offerCount: 3,
-      offers: [
-        {
-          '@type': 'Offer',
-          name: 'Retail',
-          price: product.price.toFixed(2),
-          priceCurrency: 'USD',
-          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          url: productUrl,
-          priceValidUntil: '2026-12-31',
-          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
-        },
-        {
-          '@type': 'Offer',
-          name: 'Wholesale ($70/case — save $10/case)',
-          price: wholesalePrice.toFixed(2),
-          priceCurrency: 'USD',
-          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          url: 'https://valuesuppliers.co/wholesale',
-          eligibleCustomerType: 'https://schema.org/Business',
-          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
-        },
-        {
-          '@type': 'Offer',
-          name: 'Distribution ($60/case — save $20/case)',
-          price: distroPrice.toFixed(2),
-          priceCurrency: 'USD',
-          availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          url: 'https://valuesuppliers.co/distribution',
-          eligibleCustomerType: 'https://schema.org/Business',
-          seller: { '@type': 'Organization', name: 'ValueSuppliers.co' },
-        },
-      ],
-    },
+    url: productUrl,
+    ...(materialSpec ? { material: materialSpec.value } : {}),
+    ...(dimensionsSpec ? { size: dimensionsSpec.value } : {}),
+    offers:
+      offers.length > 1
+        ? {
+            '@type': 'AggregateOffer',
+            priceCurrency: 'USD',
+            lowPrice: distroTierPrice.toFixed(2),
+            highPrice: retailPrice.toFixed(2),
+            offerCount: offers.length,
+            offers,
+          }
+        : {
+            ...offers[0],
+          },
   };
 
   const breadcrumbSchema = {
