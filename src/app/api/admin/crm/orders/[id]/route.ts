@@ -32,11 +32,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const body = await req.json();
 
-  const allowed = ['status', 'tracking_number', 'tracking_carrier', 'notes'];
+  const allowed = ['status', 'tracking_number', 'shipping_carrier', 'notes'];
   const update: Record<string, unknown> = {};
   for (const key of allowed) {
     if (body[key] !== undefined) update[key] = body[key];
   }
+  update.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase.from('orders').update(update).eq('id', id).select().single();
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });

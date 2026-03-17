@@ -77,7 +77,7 @@ export default function DistributionForm() {
           </button>
           <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--color-warm-gray)' }}>
             By submitting you agree to our{' '}
-            <a href="/terms" style={{ color: 'var(--color-forest)' }}>Terms of Service</a>.
+            <a href="/contact" style={{ color: 'var(--color-forest)' }}>Terms of Service</a>.
             We review all applications within 1 business day.
           </p>
         </>

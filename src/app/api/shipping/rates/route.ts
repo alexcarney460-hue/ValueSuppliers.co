@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createShipment } from '@/lib/shippo';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 /**
  * POST /api/shipping/rates
@@ -8,10 +9,8 @@ import { createShipment } from '@/lib/shippo';
  */
 export async function POST(req: NextRequest) {
   try {
-    const token = req.headers.get('authorization')?.replace('Bearer ', '');
-    if (token !== process.env.ADMIN_ANALYTICS_TOKEN) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const denied = requireAdmin(req);
+    if (denied) return denied;
 
     const body = await req.json();
     const { addressTo, weightLbs } = body;

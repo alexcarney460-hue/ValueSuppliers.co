@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Mail, Phone, Clock, MessageSquare, ArrowRight } from 'lucide-react';
+import { Mail, Clock, MessageSquare, ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
 import ContactForm from '@/components/forms/ContactForm';
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const CONTACT_OPTIONS = [
   { icon: Mail, label: 'Email Us', value: 'orders@valuesuppliers.co', sub: 'We respond within 1 business day', href: 'mailto:orders@valuesuppliers.co' },
-  { icon: Phone, label: 'Call or Text', value: '(800) 000-0000', sub: 'Mon–Fri, 9am–5pm EST', href: 'tel:+18000000000' },
+  { icon: Mail, label: 'Order Support', value: 'orders@valuesuppliers.co', sub: 'Mon–Fri, 9am–5pm EST', href: 'mailto:orders@valuesuppliers.co' },
   { icon: Clock, label: 'Business Hours', value: 'Mon–Fri 9am–5pm EST', sub: 'Orders placed after hours ship next day', href: null },
 ];
 

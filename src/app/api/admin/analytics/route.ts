@@ -49,10 +49,10 @@ export async function GET(req: NextRequest) {
       supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
       supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo),
       supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', monthStart),
-      supabase.from('page_views').select('created_at').gte('created_at', thirtyDaysAgo).order('created_at', { ascending: true }),
-      supabase.from('page_views').select('path').gte('created_at', thirtyDaysAgo),
-      supabase.from('page_views').select('referrer').gte('created_at', thirtyDaysAgo).not('referrer', 'is', null),
-      supabase.from('page_views').select('country').gte('created_at', thirtyDaysAgo).not('country', 'is', null),
+      supabase.from('page_views').select('created_at').gte('created_at', thirtyDaysAgo).order('created_at', { ascending: true }).limit(10000),
+      supabase.from('page_views').select('path').gte('created_at', thirtyDaysAgo).limit(10000),
+      supabase.from('page_views').select('referrer').gte('created_at', thirtyDaysAgo).not('referrer', 'is', null).limit(10000),
+      supabase.from('page_views').select('country').gte('created_at', thirtyDaysAgo).not('country', 'is', null).limit(10000),
     ]);
 
     // Daily views for last 30 days

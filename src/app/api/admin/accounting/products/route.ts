@@ -2,14 +2,12 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/requireAdmin';
 import { getSupabaseServer } from '@/lib/supabase-server';
 
-interface OrderItem {
-  name?: string;
-  product_name?: string;
-  title?: string;
-  quantity?: number;
-  qty?: number;
-  price?: number;
-  unit_price?: number;
+interface OrderItemRow {
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  order_id: string;
 }
 
 export async function GET(req: Request) {
@@ -21,28 +19,24 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   try {
-    const { data: orders, error } = await supabase
-      .from('orders')
-      .select('items, status')
-      .not('status', 'in', '("cancelled","refunded")');
+    const { data: items, error } = await supabase
+      .from('order_items')
+      .select('product_name, quantity, unit_price, total_price, order_id');
 
     if (error) throw error;
 
     const productMap: Record<string, { name: string; units_sold: number; revenue: number }> = {};
 
-    for (const order of orders ?? []) {
-      const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
-      for (const item of items) {
-        const name = item.name || item.product_name || item.title || 'Unknown Product';
-        const qty = item.quantity || item.qty || 1;
-        const price = item.price || item.unit_price || 0;
+    for (const item of (items ?? []) as OrderItemRow[]) {
+      const name = item.product_name || 'Unknown Product';
+      const qty = item.quantity || 1;
+      const revenue = item.total_price || qty * (item.unit_price || 0);
 
-        if (!productMap[name]) {
-          productMap[name] = { name, units_sold: 0, revenue: 0 };
-        }
-        productMap[name].units_sold += qty;
-        productMap[name].revenue += qty * price;
+      if (!productMap[name]) {
+        productMap[name] = { name, units_sold: 0, revenue: 0 };
       }
+      productMap[name].units_sold += qty;
+      productMap[name].revenue += revenue;
     }
 
     const products = Object.values(productMap)

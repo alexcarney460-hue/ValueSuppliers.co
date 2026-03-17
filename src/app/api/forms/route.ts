@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 const VALID_TYPES = ['contact', 'wholesale', 'distribution', 'affiliate'] as const;
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  if (!rateLimit(`forms:${ip}`, 5, 60_000)) {
+    return NextResponse.json({ ok: false, error: 'Too many submissions. Please try again later.' }, { status: 429 });
+  }
+
   const supabase = getSupabaseServer();
   if (!supabase) return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 

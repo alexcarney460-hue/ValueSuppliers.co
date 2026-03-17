@@ -21,7 +21,10 @@ export async function GET(req: Request) {
     .select('*, companies(id, name), contacts(id, firstname, lastname)', { count: 'exact' });
 
   if (q) {
-    query = query.ilike('name', `%${q}%`);
+    const safeQ = q.replace(/[,()*\\"]/g, '');
+    if (safeQ) {
+      query = query.ilike('name', `%${safeQ}%`);
+    }
   }
 
   if (stage) {
@@ -45,7 +48,10 @@ export async function POST(req: Request) {
   if (!supabase) return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   const body = await req.json();
-  const { data, error } = await supabase.from('deals').insert(body).select().single();
+  const allowedFields = ['name', 'stage', 'amount', 'close_date', 'contact_id', 'company_id', 'description', 'pipeline'];
+  const filtered = Object.fromEntries(Object.entries(body).filter(([k]) => allowedFields.includes(k)));
+  if (!filtered.name) return NextResponse.json({ ok: false, error: 'name is required' }, { status: 400 });
+  const { data, error } = await supabase.from('deals').insert(filtered).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

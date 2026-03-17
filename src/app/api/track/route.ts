@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 /**
  * Lightweight page view tracker.
@@ -7,6 +8,11 @@ import { getSupabaseServer } from '@/lib/supabase-server';
  * POST { path, referrer }
  */
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (!rateLimit(`track:${ip}`, 30, 60_000)) {
+    return NextResponse.json({ ok: false }, { status: 429 });
+  }
+
   const supabase = getSupabaseServer();
   if (!supabase) return NextResponse.json({ ok: false }, { status: 503 });
 

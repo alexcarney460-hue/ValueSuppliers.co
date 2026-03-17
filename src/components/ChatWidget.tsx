@@ -54,8 +54,8 @@ export default function ChatWidget() {
           style={{
             position: 'fixed',
             bottom: 96,
-            right: 24,
-            width: 360,
+            right: 16,
+            width: 'min(360px, calc(100vw - 32px))',
             maxHeight: 520,
             backgroundColor: '#fff',
             borderRadius: 16,
@@ -98,6 +98,7 @@ export default function ChatWidget() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
+              aria-label="Close chat"
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)', display: 'flex', padding: 4 }}
             >
               <X size={18} />
@@ -190,6 +191,7 @@ export default function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Ask about gloves, pricing, wholesale..."
+              aria-label="Type your message"
               disabled={isLoading}
               style={{
                 flex: 1,
@@ -204,6 +206,7 @@ export default function ChatWidget() {
             />
             <button
               onClick={send}
+              aria-label="Send message"
               disabled={isLoading || !input.trim()}
               style={{
                 width: 36,

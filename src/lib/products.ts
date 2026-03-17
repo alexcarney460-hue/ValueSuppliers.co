@@ -68,6 +68,7 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-5mil-case'],
+    boxPrice: 10.00,
   },
   {
     id: 2,
@@ -111,6 +112,7 @@ const PRODUCTS: Product[] = [
     ],
     inStock: true,
     relatedSlugs: ['nitrile-5mil-box'],
+    boxPrice: 8.00,
     casePrice: 80.00,
     caseBoxCount: 10,
     caseGloveCount: 1000,

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CheckCircle, ArrowRight, RefreshCw, Package } from 'lucide-react';
+import ClearCartOnMount from './ClearCartOnMount';
 
 export const metadata: Metadata = { title: 'Order Confirmed' };
 
@@ -17,6 +18,7 @@ export default function CheckoutSuccessPage() {
         padding: 'calc(var(--nav-height) + 48px) 24px 80px',
       }}
     >
+      <ClearCartOnMount />
       <div style={{ maxWidth: 540, width: '100%', textAlign: 'center' }}>
 
         {/* Icon */}

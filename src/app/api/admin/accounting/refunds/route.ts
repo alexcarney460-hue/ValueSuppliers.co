@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   try {
     const { data, error } = await supabase
       .from('orders')
-      .select('id, email, total, items, created_at, updated_at')
+      .select('id, email, total, status, created_at, updated_at')
       .eq('status', 'refunded')
       .order('updated_at', { ascending: false });
 

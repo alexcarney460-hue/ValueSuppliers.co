@@ -71,7 +71,7 @@ export default function CheckoutCancelPage() {
             <ArrowLeft size={14} /> Back to Catalog
           </Link>
           <a
-            href="tel:+18000000000"
+            href="mailto:orders@valuesuppliers.co"
             style={{
               backgroundColor: 'transparent',
               color: 'var(--color-charcoal)',
@@ -87,7 +87,7 @@ export default function CheckoutCancelPage() {
               gap: 8,
             }}
           >
-            <Phone size={14} /> Call Us
+            <Phone size={14} /> Email Us
           </a>
         </div>
       </div>

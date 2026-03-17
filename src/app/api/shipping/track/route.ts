@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTracking } from '@/lib/shippo';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 /**
  * GET /api/shipping/track?carrier=usps&tracking=1234567890
@@ -7,6 +8,10 @@ import { getTracking } from '@/lib/shippo';
  */
 export async function GET(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    if (!rateLimit(`ship-track:${ip}`, 20, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
     const carrier = req.nextUrl.searchParams.get('carrier');
     const tracking = req.nextUrl.searchParams.get('tracking');
 

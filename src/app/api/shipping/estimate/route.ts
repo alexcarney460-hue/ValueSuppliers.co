@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRatesForZip } from '@/lib/shippo';
 import { DEFAULT_WEIGHTS } from '@/lib/shipping';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 /**
  * POST /api/shipping/estimate
@@ -9,20 +10,29 @@ import { DEFAULT_WEIGHTS } from '@/lib/shipping';
  */
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    if (!rateLimit(`ship-est:${ip}`, 15, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
     const body = await req.json();
     const { zip, items } = body;
 
-    if (!zip || typeof zip !== 'string' || zip.length < 5) {
-      return NextResponse.json({ error: 'Valid zip code required' }, { status: 400 });
+    if (!zip || typeof zip !== 'string' || !/^\d{5}(-\d{4})?$/.test(zip.trim())) {
+      return NextResponse.json({ error: 'Valid US zip code required (e.g., 93727)' }, { status: 400 });
     }
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
     }
+    if (items.length > 100) {
+      return NextResponse.json({ error: 'Too many items' }, { status: 400 });
+    }
 
-    // Calculate total weight from cart items
-    const weightLbs = items.reduce((sum: number, item: { id: string; quantity: number }) => {
-      const w = DEFAULT_WEIGHTS[item.id] ?? 5;
-      return sum + w * (item.quantity || 1);
+    // Calculate total weight from cart items using slug to match DEFAULT_WEIGHTS keys
+    const weightLbs = items.reduce((sum: number, item: { id?: string; slug?: string; quantity?: number }) => {
+      const key = item.slug || item.id || '';
+      const w = DEFAULT_WEIGHTS[key] ?? 5;
+      const qty = Math.max(1, Math.floor(Number(item.quantity) || 1));
+      return sum + w * qty;
     }, 0);
 
     const rates = await getRatesForZip(zip.trim(), Math.max(1, weightLbs));

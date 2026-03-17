@@ -34,7 +34,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     .range(offset, offset + limit - 1);
 
   if (search) {
-    query = query.ilike('companies.name', `%${search}%`);
+    const safeSearch = search.replace(/[,()*\\"]/g, '');
+    if (safeSearch) {
+      query = query.ilike('companies.name', `%${safeSearch}%`);
+    }
   }
 
   const { data: members, count: memberCount, error: memberErr } = await query;
@@ -58,9 +61,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params;
   const body = await req.json();
-  body.updated_at = new Date().toISOString();
+  const allowedFields = ['name', 'description', 'type', 'filter_criteria'];
+  const update: Record<string, unknown> = {};
+  for (const key of allowedFields) {
+    if (body[key] !== undefined) update[key] = body[key];
+  }
+  update.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase.from('lists').update(body).eq('id', id).select().single();
+  const { data, error } = await supabase.from('lists').update(update).eq('id', id).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

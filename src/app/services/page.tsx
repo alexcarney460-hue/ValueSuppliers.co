@@ -84,7 +84,7 @@ export default function ServicesPage() {
               Request a Quote <ArrowRight size={14} />
             </Link>
             <a
-              href="tel:+18000000000"
+              href="mailto:orders@valuesuppliers.co"
               style={{
                 backgroundColor: 'transparent',
                 color: 'var(--color-charcoal)',
@@ -99,7 +99,7 @@ export default function ServicesPage() {
                 textDecoration: 'none',
               }}
             >
-              Call to Schedule
+              Email to Schedule
             </a>
           </div>
         </div>

@@ -20,7 +20,10 @@ export async function GET(req: Request) {
     .select('*, contacts(id)', { count: 'exact' });
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,domain.ilike.%${q}%,city.ilike.%${q}%,industry.ilike.%${q}%`);
+    const safeQ = q.replace(/[,()*\\"]/g, '');
+    if (safeQ) {
+      query = query.or(`name.ilike.%${safeQ}%,domain.ilike.%${safeQ}%,city.ilike.%${safeQ}%,industry.ilike.%${safeQ}%`);
+    }
   }
 
   const { data, count, error } = await query
@@ -46,7 +49,10 @@ export async function POST(req: Request) {
   if (!supabase) return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   const body = await req.json();
-  const { data, error } = await supabase.from('companies').insert(body).select().single();
+  const allowedFields = ['name', 'domain', 'phone', 'city', 'state', 'industry', 'description', 'website', 'employee_count', 'source', 'rating', 'notes', 'address'];
+  const filtered = Object.fromEntries(Object.entries(body).filter(([k]) => allowedFields.includes(k)));
+  if (!filtered.name) return NextResponse.json({ ok: false, error: 'name is required' }, { status: 400 });
+  const { data, error } = await supabase.from('companies').insert(filtered).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

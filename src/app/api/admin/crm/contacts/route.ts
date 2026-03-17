@@ -20,8 +20,20 @@ export async function GET(req: Request) {
     .select('*, companies(id, name, domain)', { count: 'exact' });
 
   if (q) {
-    query = query.or(`firstname.ilike.%${q}%,lastname.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%`);
+    // Sanitize search query to prevent PostgREST injection
+    const safeQ = q.replace(/[,()*\\"]/g, '');
+    if (safeQ) {
+      query = query.or(`firstname.ilike.%${safeQ}%,lastname.ilike.%${safeQ}%,email.ilike.%${safeQ}%,phone.ilike.%${safeQ}%`);
+    }
   }
+
+  // Apply filters sent by the UI
+  const leadStatus = url.searchParams.get('lead_status');
+  const lifecycleStage = url.searchParams.get('lifecycle_stage');
+  const source = url.searchParams.get('source');
+  if (leadStatus) query = query.eq('lead_status', leadStatus);
+  if (lifecycleStage) query = query.eq('lifecycle_stage', lifecycleStage);
+  if (source) query = query.eq('source', source);
 
   const { data, count, error } = await query
     .order('created_at', { ascending: false })
@@ -40,7 +52,9 @@ export async function POST(req: Request) {
   if (!supabase) return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   const body = await req.json();
-  const { data, error } = await supabase.from('contacts').insert(body).select().single();
+  const allowedFields = ['firstname', 'lastname', 'email', 'phone', 'city', 'state', 'role', 'source', 'lead_status', 'lifecycle_stage', 'company_id'];
+  const filtered = Object.fromEntries(Object.entries(body).filter(([k]) => allowedFields.includes(k)));
+  const { data, error } = await supabase.from('contacts').insert(filtered).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

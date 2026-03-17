@@ -31,6 +31,13 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [open]);
+
   return (
     <>
       <header
@@ -242,6 +249,9 @@ export default function Nav() {
       {/* Mobile drawer */}
       {open && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
           style={{
             position: 'fixed',
             inset: 0,

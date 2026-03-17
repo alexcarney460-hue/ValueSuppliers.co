@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { autoShipOrder } from '@/lib/shippo';
 import { DEFAULT_WEIGHTS } from '@/lib/shipping';
@@ -20,7 +20,11 @@ function verifySquareSignature(
   const hmac = createHmac('sha256', signatureKey);
   hmac.update(notificationUrl + body);
   const expected = hmac.digest('base64');
-  return expected === signature;
+  try {
+    return timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch {
+    return false;
+  }
 }
 
 /** Find or create a contact by email, return contact_id */
@@ -62,7 +66,11 @@ export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const signature = req.headers.get('x-square-hmacsha256-signature');
 
-  if (signatureKey && !verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
+  if (!signatureKey) {
+    console.error('[Square Webhook] SQUARE_WEBHOOK_SIGNATURE_KEY not configured');
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  }
+  if (!verifySquareSignature(rawBody, signature, signatureKey, notificationUrl)) {
     console.error('[Square Webhook] Signature verification failed');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
@@ -155,11 +163,15 @@ export async function POST(req: NextRequest) {
               const orderData = await orderRes.json();
               const lineItems = orderData.order?.line_items || [];
               for (const item of lineItems) {
+                // Skip shipping line item — it's not a product
+                if ((item.name || '').toLowerCase().startsWith('shipping')) continue;
+
+                const parsedQty = parseInt(item.quantity || '1', 10);
                 await supabase.from('order_items').insert({
                   order_id: order.id,
                   product_name: item.name || 'Unknown',
                   sku: item.catalog_object_id || null,
-                  quantity: parseInt(item.quantity || '1', 10),
+                  quantity: Number.isNaN(parsedQty) || parsedQty < 1 ? 1 : parsedQty,
                   unit_price: (item.base_price_money?.amount || 0) / 100,
                   total_price: (item.total_money?.amount || 0) / 100,
                 });
@@ -211,9 +223,11 @@ export async function POST(req: NextRequest) {
             const { data: items } = await supabase.from('order_items').select('product_name, quantity').eq('order_id', order.id);
             if (items && items.length > 0) {
               for (const item of items) {
-                // Try to match product name to known weights
-                const slug = (item.product_name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                const w = DEFAULT_WEIGHTS[slug] ?? 5;
+                // Match product name by keyword — Square names include extra text like "(Case of 10)"
+                const nameLower = (item.product_name || '').toLowerCase();
+                let w = 5; // default fallback
+                if (nameLower.includes('case')) w = DEFAULT_WEIGHTS['nitrile-5mil-case'] ?? 65;
+                else if (nameLower.includes('box')) w = DEFAULT_WEIGHTS['nitrile-5mil-box'] ?? 6.5;
                 weightLbs += w * (item.quantity || 1);
               }
             }

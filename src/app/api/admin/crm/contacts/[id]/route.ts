@@ -49,9 +49,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params;
   const body = await req.json();
-  body.updated_at = new Date().toISOString();
+  const allowedFields = ['firstname', 'lastname', 'email', 'phone', 'city', 'state', 'role', 'source', 'lead_status', 'lifecycle_stage', 'company_id', 'owner', 'notes', 'last_contacted_at'];
+  const update: Record<string, unknown> = {};
+  for (const key of allowedFields) {
+    if (body[key] !== undefined) update[key] = body[key];
+  }
+  update.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase.from('contacts').update(body).eq('id', id).select().single();
+  const { data, error } = await supabase.from('contacts').update(update).eq('id', id).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

@@ -4,8 +4,8 @@ interface Contact {
   id: number;
   email: string | null;
   phone: string | null;
-  first_name: string | null;
-  last_name: string | null;
+  firstname: string | null;
+  lastname: string | null;
   city: string | null;
   state: string | null;
   company_id: number | null;
@@ -25,21 +25,43 @@ const FALLBACKS: Record<string, string> = {
   state: '',
 };
 
-/** Replace {{token}} placeholders with contact/company data */
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+};
+
+function escapeHtml(str: string): string {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, (ch) => HTML_ESCAPE_MAP[ch] || ch);
+}
+
+/**
+ * Replace {{token}} placeholders with contact/company data.
+ * When `escapeForHtml` is true, all token values are HTML-escaped
+ * to prevent injection in email HTML bodies.
+ */
 export function mergeTokens(
   template: string,
   contact: Contact,
-  company: Company | null
+  company: Company | null,
+  escapeForHtml = false,
 ): string {
-  const tokens: Record<string, string> = {
-    first_name: contact.first_name || FALLBACKS.first_name,
-    last_name: contact.last_name || '',
+  const rawTokens: Record<string, string> = {
+    first_name: contact.firstname || FALLBACKS.first_name,
+    last_name: contact.lastname || '',
     email: contact.email || '',
     phone: contact.phone || '',
     city: contact.city || company?.city || FALLBACKS.city,
     state: contact.state || company?.state || FALLBACKS.state,
     company_name: company?.name || FALLBACKS.company_name,
   };
+
+  const tokens = escapeForHtml
+    ? Object.fromEntries(Object.entries(rawTokens).map(([k, v]) => [k, escapeHtml(v)]))
+    : rawTokens;
 
   let result = template;
   for (const [key, value] of Object.entries(tokens)) {
@@ -90,7 +112,7 @@ export async function queueSendsForStep(
 
   // Build contact query based on filters
   const filters = segData.filter_criteria as Record<string, unknown>;
-  let contactQuery = supabase.from('contacts').select('id, email, phone, first_name, last_name, city, state, company_id');
+  let contactQuery = supabase.from('contacts').select('id, email, phone, firstname, lastname, city, state, company_id');
 
   if (channel === 'email') {
     contactQuery = contactQuery.not('email', 'is', null);
@@ -142,9 +164,9 @@ export async function queueSendsForStep(
 
     const company = contact.company_id ? companyMap.get(contact.company_id) || null : null;
 
-    const personalizedSubject = subject ? mergeTokens(subject, contact, company) : null;
-    const personalizedHtml = bodyHtml ? mergeTokens(bodyHtml, contact, company) : null;
-    const personalizedText = mergeTokens(bodyText, contact, company);
+    const personalizedSubject = subject ? mergeTokens(subject, contact, company, false) : null;
+    const personalizedHtml = bodyHtml ? mergeTokens(bodyHtml, contact, company, true) : null;
+    const personalizedText = mergeTokens(bodyText, contact, company, false);
 
     sendBatch.push({
       campaign_id: campaignId,
@@ -163,14 +185,20 @@ export async function queueSendsForStep(
 
     // Insert in batches of 100
     if (sendBatch.length >= 100) {
-      await supabase.from('sends').insert(sendBatch);
+      const { error: insertErr } = await supabase.from('sends').insert(sendBatch);
+      if (insertErr) {
+        console.error('[Personalizer] Batch insert error:', insertErr.message);
+      }
       sendBatch.length = 0;
     }
   }
 
   // Insert remaining
   if (sendBatch.length > 0) {
-    await supabase.from('sends').insert(sendBatch);
+    const { error: insertErr } = await supabase.from('sends').insert(sendBatch);
+    if (insertErr) {
+      console.error('[Personalizer] Final batch insert error:', insertErr.message);
+    }
   }
 
   return { queued, skipped };

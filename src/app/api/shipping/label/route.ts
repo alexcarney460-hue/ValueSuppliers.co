@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { purchaseLabel } from '@/lib/shippo';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 import {
   sendOrderShippedEmail,
   type OrderData,
@@ -14,10 +15,8 @@ import {
  */
 export async function POST(req: NextRequest) {
   try {
-    const token = req.headers.get('authorization')?.replace('Bearer ', '');
-    if (token !== process.env.ADMIN_ANALYTICS_TOKEN) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const denied = requireAdmin(req);
+    if (denied) return denied;
 
     const body = await req.json();
     const { orderId, rateId, shipmentId, carrier, servicelevel } = body;

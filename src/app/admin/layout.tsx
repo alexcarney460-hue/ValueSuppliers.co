@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getSupabase } from '@/lib/supabase';
+import { ADMIN_EMAILS } from '@/lib/admin/constants';
 
 const navItems = [
   { label: 'Mission Control', href: '/admin/mission-control' },
@@ -15,8 +16,6 @@ const navItems = [
   { label: 'Settings', href: '/admin/settings' },
 ];
 
-const ADMIN_EMAIL = 'gardenablaze@gmail.com';
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
@@ -26,7 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const supabase = getSupabase();
       const { data } = await supabase.auth.getUser();
       const email = data.user?.email ?? '';
-      setAuthorized(email.toLowerCase() === ADMIN_EMAIL);
+      setAuthorized(ADMIN_EMAILS.includes(email.toLowerCase()));
     })();
   }, []);
 

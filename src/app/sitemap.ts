@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/affiliate`,           lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/about`,               lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE}/contact`,             lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/commercial`,          lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE}/account`,             lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
   ];
 
   const productRoutes: MetadataRoute.Sitemap = PRODUCTS.map((p) => ({

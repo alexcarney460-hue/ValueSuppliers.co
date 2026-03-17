@@ -41,10 +41,13 @@ export interface TrackingData {
 
 const FROM_ADDRESS = 'Value Suppliers <orders@valuesuppliers.co>';
 
+let _resend: Resend | null = null;
+
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY?.trim();
   if (!key) return null;
-  return new Resend(key);
+  if (!_resend) _resend = new Resend(key);
+  return _resend;
 }
 
 // ---------------------------------------------------------------------------
@@ -128,6 +131,35 @@ function emailLayout(title: string, preheader: string, body: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Security: HTML escaping for user-provided data
+// ---------------------------------------------------------------------------
+
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+};
+
+function escapeHtml(str: string | null | undefined): string {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, (ch) => HTML_ESCAPE_MAP[ch] || ch);
+}
+
+/**
+ * Validate and sanitize a URL for use in href attributes.
+ * Only allows http/https protocols to prevent javascript: injection.
+ */
+function sanitizeUrl(url: string): string {
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return escapeHtml(trimmed);
+  }
+  return '#';
+}
+
+// ---------------------------------------------------------------------------
 // Format helpers
 // ---------------------------------------------------------------------------
 
@@ -142,11 +174,14 @@ function formatDate(dateStr?: string | null): string {
 
 function formatAddress(order: OrderData): string {
   const parts = [
-    order.shipping_name,
-    order.shipping_address_line1,
-    order.shipping_address_line2,
-    [order.shipping_city, order.shipping_state, order.shipping_zip].filter(Boolean).join(', '),
-    order.shipping_country && order.shipping_country !== 'US' ? order.shipping_country : null,
+    escapeHtml(order.shipping_name),
+    escapeHtml(order.shipping_address_line1),
+    escapeHtml(order.shipping_address_line2),
+    [order.shipping_city, order.shipping_state, order.shipping_zip]
+      .filter(Boolean)
+      .map(escapeHtml)
+      .join(', '),
+    order.shipping_country && order.shipping_country !== 'US' ? escapeHtml(order.shipping_country) : null,
   ].filter(Boolean);
   return parts.join('<br>');
 }
@@ -161,10 +196,10 @@ function buildOrderConfirmationHtml(order: OrderData): string {
       (item) => `
         <tr>
           <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
-            ${item.product_name}
+            ${escapeHtml(item.product_name)}
           </td>
           <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
-            ${item.quantity}
+            ${Number(item.quantity) || 0}
           </td>
           <td style="padding:12px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;text-align:right;">
             ${formatCurrency(item.total_price, order.currency)}
@@ -225,7 +260,7 @@ function buildOrderConfirmationHtml(order: OrderData): string {
     <!-- Footer note -->
     <p style="margin:28px 0 0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       You'll receive another email with tracking information once your order ships. If you have any questions, reply to this email or contact us at
-      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
     </p>
   `;
 
@@ -292,13 +327,13 @@ function buildShippingNotificationHtml(trackingData: TrackingData): string {
             <tr>
               <td>
                 <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Carrier</p>
-                <p style="margin:0 0 16px;color:${BRAND.dark};font-size:15px;font-weight:600;">${trackingData.shipping_carrier}${trackingData.shipping_service ? ` — ${trackingData.shipping_service}` : ''}</p>
+                <p style="margin:0 0 16px;color:${BRAND.dark};font-size:15px;font-weight:600;">${escapeHtml(trackingData.shipping_carrier)}${trackingData.shipping_service ? ` — ${escapeHtml(trackingData.shipping_service)}` : ''}</p>
               </td>
             </tr>
             <tr>
               <td>
                 <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tracking Number</p>
-                <p style="margin:0;color:${BRAND.dark};font-size:15px;font-weight:600;font-family:monospace;">${trackingData.tracking_number}</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:15px;font-weight:600;font-family:monospace;">${escapeHtml(trackingData.tracking_number)}</p>
               </td>
             </tr>
           </table>
@@ -310,7 +345,7 @@ function buildShippingNotificationHtml(trackingData: TrackingData): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
       <tr>
         <td align="center">
-          <a href="${trackingData.tracking_url}" target="_blank" style="display:inline-block;background-color:${BRAND.primary};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+          <a href="${sanitizeUrl(trackingData.tracking_url)}" target="_blank" style="display:inline-block;background-color:${BRAND.primary};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
             Track Your Package
           </a>
         </td>
@@ -319,7 +354,7 @@ function buildShippingNotificationHtml(trackingData: TrackingData): string {
 
     <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       Tracking information may take a few hours to update after shipment. If you have any questions, reply to this email or contact
-      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
     </p>
   `;
 
@@ -375,10 +410,10 @@ function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string
       (item) => `
         <tr>
           <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;">
-            ${item.product_name}
+            ${escapeHtml(item.product_name)}
           </td>
           <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.muted};font-size:14px;text-align:center;">
-            ${item.quantity}
+            ${Number(item.quantity) || 0}
           </td>
           <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};color:${BRAND.dark};font-size:14px;text-align:right;">
             ${formatCurrency(item.total_price, order.currency)}
@@ -405,11 +440,11 @@ function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string
             <tr>
               <td style="width:50%;">
                 <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Carrier</p>
-                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;">${tracking.shipping_carrier}${tracking.shipping_service ? ` — ${tracking.shipping_service}` : ''}</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;">${escapeHtml(tracking.shipping_carrier)}${tracking.shipping_service ? ` — ${escapeHtml(tracking.shipping_service)}` : ''}</p>
               </td>
               <td style="width:50%;">
                 <p style="margin:0 0 4px;color:${BRAND.muted};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tracking</p>
-                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;font-family:monospace;">${tracking.tracking_number}</p>
+                <p style="margin:0;color:${BRAND.dark};font-size:14px;font-weight:600;font-family:monospace;">${escapeHtml(tracking.tracking_number)}</p>
               </td>
             </tr>
           </table>
@@ -421,7 +456,7 @@ function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
       <tr>
         <td align="center">
-          <a href="${tracking.tracking_url}" target="_blank" style="display:inline-block;background-color:${BRAND.success};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+          <a href="${sanitizeUrl(tracking.tracking_url)}" target="_blank" style="display:inline-block;background-color:${BRAND.success};color:${BRAND.white};text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;">
             Track Your Package
           </a>
         </td>
@@ -459,7 +494,7 @@ function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string
 
     <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       Tracking may take a few hours to update. Questions? Contact
-      <a href="mailto:support@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">support@valuesuppliers.co</a>.
+      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
     </p>
   `;
 

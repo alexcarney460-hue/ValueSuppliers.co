@@ -38,7 +38,9 @@ export async function POST(req: Request) {
   if (!supabase) return NextResponse.json({ ok: false, error: 'DB unavailable' }, { status: 503 });
 
   const body = await req.json();
-  const { data, error } = await supabase.from('activities').insert(body).select().single();
+  const allowedFields = ['type', 'subject', 'body', 'contact_id', 'company_id', 'deal_id'];
+  const filtered = Object.fromEntries(Object.entries(body).filter(([k]) => allowedFields.includes(k)));
+  const { data, error } = await supabase.from('activities').insert(filtered).select().single();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 

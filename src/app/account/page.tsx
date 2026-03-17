@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getSupabase } from '@/lib/supabase';
+import { ADMIN_EMAILS } from '@/lib/admin/constants';
 import type { Profile } from '@/lib/account';
 
 type View = 'login' | 'signup' | 'dashboard';
@@ -44,7 +45,7 @@ export default function AccountPage() {
       approved: false,
     };
     // Auto-approve admin
-    if (userEmail.toLowerCase() === 'gardenablaze@gmail.com' && !prof.approved) {
+    if (ADMIN_EMAILS.includes(userEmail.toLowerCase()) && !prof.approved) {
       await (supabase.from('profiles') as any).upsert({ user_id: userId, email: userEmail, approved: true });
       prof.approved = true;
     }
@@ -67,12 +68,12 @@ export default function AccountPage() {
     }
     if (data.user) {
       // Create profile row
-      const isAdmin = (data.user.email ?? email).toLowerCase() === 'gardenablaze@gmail.com';
+      const isAdmin = ADMIN_EMAILS.includes((data.user.email ?? email).toLowerCase());
       await (supabase.from('profiles') as any).upsert({
         user_id: data.user.id,
         email: data.user.email ?? email,
-        account_type: isAdmin ? 'retail' : 'retail',
-        approved: isAdmin ? true : false,
+        account_type: 'retail',
+        approved: isAdmin,
       });
       setSuccess('Account created! Check your email to confirm, then sign in.');
       setView('login');
@@ -336,7 +337,7 @@ export default function AccountPage() {
               <p className="label-caps" style={{ color: 'var(--color-warm-gray)', fontSize: '0.6rem', marginBottom: 16 }}>Quick Links</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  ...(profile?.email?.toLowerCase() === 'gardenablaze@gmail.com' ? [{ label: 'Admin Dashboard', href: '/admin' }] : []),
+                  ...(ADMIN_EMAILS.includes(profile?.email?.toLowerCase() ?? '') ? [{ label: 'Admin Dashboard', href: '/admin' }] : []),
                   { label: 'Browse Catalog', href: '/catalog' },
                   { label: 'Wholesale Program', href: '/wholesale' },
                   { label: 'Distribution Program', href: '/distribution' },

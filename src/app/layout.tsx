@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Barlow, Barlow_Condensed, Inter, JetBrains_Mono } from 'next/font/google';
 import '@/app/globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -6,6 +7,11 @@ import { CartProvider } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer';
 import ChatWidget from '@/components/ChatWidget';
 import PageTracker from '@/components/PageTracker';
+
+const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-barlow', display: 'swap' });
+const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-barlow-condensed', display: 'swap' });
+const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-inter', display: 'swap' });
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-mono', display: 'swap' });
 
 const BASE = 'https://valuesuppliers.co';
 
@@ -125,7 +131,7 @@ const websiteSchema = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${barlow.variable} ${barlowCondensed.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify([orgSchema, websiteSchema]) }}

@@ -56,9 +56,15 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ ok: false, error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { id, ...updates } = body;
+  const { id } = body;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'Missing product id' }, { status: 400 });
+  }
+
+  const allowedFields = ['name', 'short_name', 'slug', 'category', 'price', 'unit', 'badge', 'img', 'description', 'in_stock', 'sort_order', 'box_price', 'case_price'];
+  const updates: Record<string, unknown> = {};
+  for (const key of allowedFields) {
+    if (body[key] !== undefined) updates[key] = body[key];
   }
 
   const { data, error } = await supabase

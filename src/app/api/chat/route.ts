@@ -1,6 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const MAX_MESSAGES = 50;
+const MAX_MESSAGE_LENGTH = 2000;
+
+const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : null;
 
 const SYSTEM_PROMPT = `You are a helpful assistant for ValueSuppliers.co, a professional supplier of disposable gloves and cannabis trimming supplies. Keep answers concise and friendly.
 
@@ -33,6 +39,19 @@ CONTACT:
 Always be helpful and direct. If asked about something outside your knowledge, direct them to orders@valuesuppliers.co. Do not make up prices or product specs not listed above.`;
 
 export async function POST(req: Request) {
+  if (!anthropic) {
+    return Response.json(
+      { error: 'Chat service is currently unavailable.' },
+      { status: 503 }
+    );
+  }
+
+  // Rate limit: 10 requests per minute per IP
+  const ip = getClientIp(req);
+  if (!rateLimit(`chat:${ip}`, 10, 60_000)) {
+    return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const messages = body?.messages;
@@ -41,7 +60,23 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Bad Request: expected { messages: [...] }' }, { status: 400 });
     }
 
-    const response = await client.messages.create({
+    // Input length validation
+    if (messages.length > MAX_MESSAGES) {
+      return Response.json({ error: `Too many messages. Maximum is ${MAX_MESSAGES}.` }, { status: 400 });
+    }
+    for (const m of messages) {
+      if (typeof m.role !== 'string' || !['user', 'assistant'].includes(m.role)) {
+        return Response.json({ error: 'Invalid message role.' }, { status: 400 });
+      }
+      if (typeof m.content !== 'string') {
+        return Response.json({ error: 'Message content must be a string.' }, { status: 400 });
+      }
+      if (m.content.length > MAX_MESSAGE_LENGTH) {
+        return Response.json({ error: `Message too long. Maximum is ${MAX_MESSAGE_LENGTH} characters.` }, { status: 400 });
+      }
+    }
+
+    const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 512,
       system: SYSTEM_PROMPT,

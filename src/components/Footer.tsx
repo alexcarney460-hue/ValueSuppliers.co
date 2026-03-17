@@ -3,8 +3,8 @@ import Image from 'next/image';
 
 const FOOTER_LINKS = {
   Products: [
-    { label: 'Disposable Gloves', href: '/catalog/gloves' },
-    { label: 'Trimming Equipment', href: '/catalog/trimmers' },
+    { label: 'Disposable Gloves', href: '/catalog' },
+    { label: 'Trimming Equipment', href: '/catalog' },
     { label: 'All Products', href: '/catalog' },
   ],
   Business: [
@@ -15,12 +15,12 @@ const FOOTER_LINKS = {
   Company: [
     { label: 'About Us', href: '/about' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Returns & Shipping', href: '/shipping' },
+    { label: 'Returns & Shipping', href: '/contact' },
   ],
   Account: [
-    { label: 'Sign In', href: '/account/login' },
-    { label: 'Create Account', href: '/account/register' },
-    { label: 'Order History', href: '/account/orders' },
+    { label: 'Sign In', href: '/account' },
+    { label: 'Create Account', href: '/account' },
+    { label: 'Order History', href: '/account' },
   ],
 };
 
@@ -75,7 +75,7 @@ export default function Footer() {
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.label}>
                     <Link
                       href={link.href}
                       style={{ color: 'rgba(255,255,255,0.65)', textDecoration: 'none', fontSize: '0.9rem' }}
@@ -104,15 +104,18 @@ export default function Footer() {
             © {new Date().getFullYear()} ValueSuppliers.co. All rights reserved.
           </p>
           <div style={{ display: 'flex', gap: 24 }}>
-            {['Privacy Policy', 'Terms of Service'].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(/ /g, '-')}`}
-                style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}
-              >
-                {item}
-              </Link>
-            ))}
+            <Link
+              href="/contact"
+              style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/contact"
+              style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}
+            >
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>

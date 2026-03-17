@@ -32,9 +32,17 @@ export default function SearchModal({ onClose }: Props) {
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   return (
     <div
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search products"
       style={{
         position: 'fixed',
         inset: 0,
@@ -77,6 +85,7 @@ export default function SearchModal({ onClose }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search gloves, scissors, accessories..."
+            aria-label="Search products"
             style={{
               flex: 1,
               border: 'none',
@@ -88,6 +97,7 @@ export default function SearchModal({ onClose }: Props) {
           />
           <button
             onClick={onClose}
+            aria-label="Close search"
             style={{
               background: 'none',
               border: 'none',

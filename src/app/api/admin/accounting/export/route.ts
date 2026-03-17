@@ -16,7 +16,7 @@ export async function GET(req: Request) {
 
     let query = supabase
       .from('orders')
-      .select('id, email, status, total, items, shipping_address, created_at, updated_at')
+      .select('id, email, status, total, shipping_address_line1, shipping_city, shipping_state, shipping_zip, shipping_country, created_at, updated_at')
       .order('created_at', { ascending: false });
 
     if (status) query = query.eq('status', status);
@@ -26,24 +26,28 @@ export async function GET(req: Request) {
 
     const rows = orders ?? [];
 
-    const headers = ['Order ID', 'Email', 'Status', 'Total', 'Items', 'Shipping Address', 'Created At', 'Updated At'];
+    const headers = ['Order ID', 'Email', 'Status', 'Total', 'Address Line 1', 'City', 'State', 'ZIP', 'Country', 'Created At', 'Updated At'];
     const csvLines = [headers.join(',')];
 
     for (const row of rows) {
-      const itemsSummary = Array.isArray(row.items)
-        ? row.items.map((i: Record<string, unknown>) => `${i.name || i.product_name || 'Item'} x${i.quantity || i.qty || 1}`).join('; ')
-        : '';
-      const address = typeof row.shipping_address === 'object' && row.shipping_address
-        ? Object.values(row.shipping_address).filter(Boolean).join(' ')
-        : String(row.shipping_address || '');
+      const address = [
+        row.shipping_address_line1,
+        row.shipping_city,
+        row.shipping_state,
+        row.shipping_zip,
+        row.shipping_country,
+      ].filter(Boolean).join(', ');
 
       csvLines.push([
         row.id,
         `"${(row.email || '').replace(/"/g, '""')}"`,
         row.status,
         row.total,
-        `"${itemsSummary.replace(/"/g, '""')}"`,
-        `"${address.replace(/"/g, '""')}"`,
+        `"${(row.shipping_address_line1 || '').replace(/"/g, '""')}"`,
+        `"${(row.shipping_city || '').replace(/"/g, '""')}"`,
+        `"${(row.shipping_state || '').replace(/"/g, '""')}"`,
+        `"${(row.shipping_zip || '').replace(/"/g, '""')}"`,
+        `"${(row.shipping_country || '').replace(/"/g, '""')}"`,
         row.created_at,
         row.updated_at,
       ].join(','));

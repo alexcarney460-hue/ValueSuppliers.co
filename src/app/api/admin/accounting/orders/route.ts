@@ -34,7 +34,10 @@ export async function GET(req: Request) {
       );
 
     if (email) {
-      query = query.ilike('email', `%${email}%`);
+      const safeEmail = email.replace(/[,()*\\"]/g, '');
+      if (safeEmail) {
+        query = query.ilike('email', `%${safeEmail}%`);
+      }
     }
     if (status) {
       query = query.eq('status', status);

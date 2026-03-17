@@ -63,6 +63,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [isOpen]);
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>, addQty = 1) => {
+    // Guard: ignore non-positive quantities
+    const safeQty = Math.max(1, Math.floor(addQty));
     setItems((current) => {
       const existing = current.find(
         (i) => i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box')
@@ -70,11 +72,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existing) {
         return current.map((i) =>
           i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box')
-            ? { ...i, quantity: i.quantity + addQty }
+            ? { ...i, quantity: i.quantity + safeQty }
             : i
         );
       }
-      return [...current, { ...newItem, quantity: addQty }];
+      return [...current, { ...newItem, quantity: safeQty }];
     });
     setIsOpen(true);
   };
@@ -86,14 +88,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const updateQty = (id: string, plan: PurchasePlan, qty: number, purchaseUnit?: PurchaseUnit) => {
-    if (qty < 1) {
+    const safeQty = Math.floor(qty);
+    if (safeQty < 1) {
       removeItem(id, plan, purchaseUnit);
       return;
     }
+    // Cap at 10,000 to match server-side limit
+    const clampedQty = Math.min(safeQty, 10000);
     setItems((current) =>
       current.map((i) =>
         i.id === id && i.plan === plan && (i.purchaseUnit ?? 'box') === (purchaseUnit ?? 'box')
-          ? { ...i, quantity: qty }
+          ? { ...i, quantity: clampedQty }
           : i
       )
     );
