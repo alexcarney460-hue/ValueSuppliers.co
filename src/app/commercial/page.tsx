@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://valuesuppliers.co/commercial' },
   openGraph: {
     title: 'Commercial Disposable Gloves — Bulk Industry Pricing',
-    description: 'Nitrile, latex, and vinyl gloves for every industry. Wholesale $70/case (30+), distribution $60/case (120+).',
+    description: 'Nitrile, latex, and vinyl gloves for every industry. Retail $70/case, wholesale $60/case (30+), distribution $50/case (120+).',
     url: 'https://valuesuppliers.co/commercial',
   },
   twitter: {
@@ -32,8 +32,8 @@ const INDUSTRIES = [
 ];
 
 const PRODUCT_TEASERS = [
-  { slug: 'nitrile-5mil-box', category: 'Nitrile', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$10.00', badge: null, img: '/products/product-5.avif' },
-  { slug: 'nitrile-5mil-case', category: 'Nitrile', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$80.00', badge: 'Best Value', img: '/products/product-3.avif' },
+  { slug: 'nitrile-5mil-box', category: 'Nitrile', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$7.00', badge: null, img: '/products/product-5.avif' },
+  { slug: 'nitrile-5mil-case', category: 'Nitrile', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$70.00', badge: 'Best Value', img: '/products/product-3.avif' },
 ];
 
 const TIER_CARDS = [
@@ -42,7 +42,7 @@ const TIER_CARDS = [
     color: 'var(--color-warm-gray)',
     accentBg: '#F7F7F6',
     headline: 'Order What You Need',
-    description: '$80/case ($8/box) for 1–29 cases. No application needed — perfect for small businesses and offices.',
+    description: '$70/case ($7/box) for 1–29 cases. No application needed — perfect for small businesses and offices.',
     cta: 'Shop Now',
     href: '/catalog',
   },
@@ -51,7 +51,7 @@ const TIER_CARDS = [
     color: 'var(--color-muted-green)',
     accentBg: '#EDF7F0',
     headline: 'Volume Discounts',
-    description: '$70/case ($7/box) on 30+ case orders. Save $10/case with fast restock and priority fulfillment.',
+    description: '$60/case ($6/box) on 30+ case orders. Save $10/case with fast restock and priority fulfillment.',
     cta: 'Get Wholesale Pricing',
     href: '/wholesale',
   },
@@ -60,7 +60,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Enterprise Programs',
-    description: '$60/case ($6/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk freight pricing.',
+    description: '$50/case ($5/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk freight pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Is there a minimum order?',
-    a: 'Retail customers can order 1–29 cases at $80/case with no application needed. Wholesale accounts ($70/case) require 30+ cases per order. Distribution accounts ($60/case) require 120+ cases per order and are designed for commercial operations and resellers.',
+    a: 'Retail customers can order 1–29 cases at $70/case ($7/box) with no application needed. Wholesale accounts ($60/case) require 30+ cases per order. Distribution accounts ($50/case) require 120+ cases per order and are designed for commercial operations and resellers.',
   },
   {
     q: 'What are your shipping rates?',
@@ -128,7 +128,7 @@ export default function CommercialPage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Wholesale $70/case &nbsp;·&nbsp; Distribution $60/case &nbsp;·&nbsp; All Industries Served
+              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Retail $7/box &nbsp;·&nbsp; Wholesale $60/case &nbsp;·&nbsp; Distribution $50/case &nbsp;·&nbsp; All Industries Served
             </span>
           ))}
         </div>
