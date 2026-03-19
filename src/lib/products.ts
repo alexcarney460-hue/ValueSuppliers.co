@@ -1,7 +1,7 @@
 export type Product = {
   id: number;
   slug: string;
-  category: 'Gloves' | 'Trimmers' | 'Accessories';
+  category: 'Gloves';
   name: string;
   shortName: string;
   tagline: string;
@@ -118,44 +118,6 @@ const PRODUCTS: Product[] = [
     caseGloveCount: 1000,
     wholesalePrice: 70.00,
     distributorPrice: 60.00,
-  },
-  {
-    id: 6,
-    slug: 'iso-spray-bottle-16oz',
-    category: 'Accessories',
-    name: 'Cleaning Spray Bottle — 16 oz',
-    shortName: 'Spray Bottle',
-    tagline: 'Chemical-resistant spray bottle for cleaning scissors and trays.',
-    price: 6.00,
-    unit: '/ each',
-    badge: null,
-    img: '/products/product-6.avif',
-    images: ['/products/product-6.avif'],
-    specs: [
-      { label: 'Type', value: 'Chemical-Resistant Spray Bottle' },
-      { label: 'Capacity', value: '16 oz (473 ml)' },
-      { label: 'Material', value: 'HDPE Plastic — Solvent Safe' },
-      { label: 'Nozzle', value: 'Adjustable mist-to-stream' },
-      { label: 'Use', value: 'Cleaning scissors, trays, surfaces' },
-    ],
-    description:
-      'Keep your trim tools clean with our chemical-resistant 16 oz spray bottle. HDPE plastic is safe for isopropyl alcohol and other common cleaning solvents. Adjustable nozzle goes from fine mist to direct stream. Essential for keeping scissors resin-free and trim stations sanitary.',
-    features: [
-      'HDPE plastic — safe for isopropyl alcohol',
-      'Adjustable mist-to-stream nozzle',
-      '16 oz capacity',
-      'Leak-proof seal',
-      'Easy to fill and label',
-      'Durable trigger mechanism',
-    ],
-    useCases: [
-      'Cleaning trimming scissors',
-      'Sanitizing trim trays and surfaces',
-      'General facility cleaning',
-      'Tool maintenance during harvest',
-    ],
-    inStock: true,
-    relatedSlugs: ['nitrile-5mil-case', 'nitrile-5mil-box'],
   },
 ];
 

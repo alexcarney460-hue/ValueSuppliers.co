@@ -17,7 +17,7 @@ const TRACKING_FIELDS = [
   'pages_viewed',
 ] as const;
 
-const VALID_TYPES = ['contact', 'wholesale', 'distribution', 'affiliate'] as const;
+const VALID_TYPES = ['contact', 'wholesale', 'distribution', 'affiliate', 'processing_consultation'] as const;
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
@@ -81,12 +81,14 @@ export async function POST(req: Request) {
         wholesale: 'wholesale_application',
         distribution: 'distribution_application',
         affiliate: 'affiliate_application',
+        processing_consultation: 'processing_consultation',
       };
       const lifecycleMap: Record<string, string> = {
         contact: 'lead',
         wholesale: 'mql',
         distribution: 'mql',
         affiliate: 'lead',
+        processing_consultation: 'mql',
       };
 
       const { data: newContact, error: insertErr } = await supabase.from('contacts').insert({
@@ -186,9 +188,13 @@ export async function POST(req: Request) {
         .map(([k, v]) => `${k}: ${v}`)
         .join('\n') || 'No tracking data';
 
+      const notifyTo = formType === 'processing_consultation'
+        ? 'bee@valuesuppliersdirect.com'
+        : 'gardenablaze@gmail.com';
+
       resend.emails.send({
         from: 'Value Suppliers <notifications@valuesuppliers.co>',
-        to: 'gardenablaze@gmail.com',
+        to: notifyTo,
         subject: subjectLine,
         text: [
           `New ${formType} form submission`,

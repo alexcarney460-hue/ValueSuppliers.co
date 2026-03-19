@@ -68,7 +68,7 @@ export default function ServicesPage() {
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
-              href="/contact"
+              href="/services/consultation"
               style={{
                 backgroundColor: 'var(--color-amber)',
                 color: '#fff',
@@ -86,10 +86,10 @@ export default function ServicesPage() {
                 boxShadow: 'var(--shadow-amber)',
               }}
             >
-              Request a Quote <ArrowRight size={14} />
+              Book a Consultation <ArrowRight size={14} />
             </Link>
-            <a
-              href="mailto:admin@valuesuppliersdirect.com"
+            <Link
+              href="/contact"
               style={{
                 backgroundColor: 'transparent',
                 color: 'var(--color-charcoal)',
@@ -104,8 +104,8 @@ export default function ServicesPage() {
                 textDecoration: 'none',
               }}
             >
-              Email to Schedule
-            </a>
+              General Inquiry
+            </Link>
           </div>
         </div>
       </section>
@@ -231,7 +231,7 @@ export default function ServicesPage() {
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
-              href="/contact"
+              href="/services/consultation"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -249,7 +249,7 @@ export default function ServicesPage() {
                 boxShadow: 'var(--shadow-amber)',
               }}
             >
-              Request a Quote <ArrowRight size={14} />
+              Book a Consultation <ArrowRight size={14} />
             </Link>
             <Link
               href="/catalog"

@@ -92,7 +92,7 @@ export function GET() {
     },
     generatedAt: new Date().toISOString(),
     productCount: products.length,
-    categories: ['Gloves', 'Trimmers', 'Accessories'],
+    categories: ['Gloves'],
     pricingModel: {
       retail: { description: 'Standard pricing, no minimum order', minCases: 1 },
       wholesale: { description: 'Approved accounts, 30+ cases per order, save $10/case', minCases: 30 },

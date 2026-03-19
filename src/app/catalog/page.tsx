@@ -23,14 +23,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://valuesuppliers.co/catalog' },
 };
 
-const CATEGORIES = ['All', 'Gloves', 'Trimmers', 'Accessories'] as const;
-
 export default function CatalogPage() {
-  const grouped = {
-    Gloves: PRODUCTS.filter((p) => p.category === 'Gloves'),
-    Trimmers: PRODUCTS.filter((p) => p.category === 'Trimmers'),
-    Accessories: PRODUCTS.filter((p) => p.category === 'Accessories'),
-  };
+  const gloves = PRODUCTS.filter((p) => p.category === 'Gloves');
 
   const itemListSchema = {
     '@context': 'https://schema.org',
@@ -94,32 +88,9 @@ export default function CatalogPage() {
         </div>
       </div>
 
-      {/* Category filter bar */}
+      {/* Wholesale bar */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '16px 24px', position: 'sticky', top: 'var(--nav-height)', zIndex: 10 }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {CATEGORIES.map((cat) => (
-            <a
-              key={cat}
-              href={`#${cat.toLowerCase()}`}
-              style={{
-                padding: '8px 20px',
-                borderRadius: 9999,
-                border: '1px solid var(--color-border)',
-                backgroundColor: 'transparent',
-                color: 'var(--color-charcoal)',
-                fontFamily: "'Barlow', Arial, sans-serif",
-                fontWeight: 600,
-                fontSize: '0.8rem',
-                letterSpacing: '0.06em',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                transition: 'background-color 150ms ease, color 150ms ease',
-              }}
-            >
-              {cat}
-            </a>
-          ))}
-          <div style={{ flex: 1 }} />
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'flex-end' }}>
           <Link
             href="/wholesale"
             style={{
@@ -145,7 +116,7 @@ export default function CatalogPage() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
 
         {/* Gloves */}
-        <section id="gloves" style={{ marginBottom: 64 }}>
+        <section id="gloves" style={{ marginBottom: 48 }}>
           <div style={{ marginBottom: 28 }}>
             <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem' }}>Disposable Gloves</span>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 6, color: 'var(--color-charcoal)' }}>
@@ -153,37 +124,7 @@ export default function CatalogPage() {
             </h2>
           </div>
           <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Gloves.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* Trimmers */}
-        <section id="trimmers" style={{ marginBottom: 64 }}>
-          <div style={{ marginBottom: 28 }}>
-            <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem' }}>Trimming Tools</span>
-            <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 6, color: 'var(--color-charcoal)' }}>
-              Trimmers & Scissors
-            </h2>
-          </div>
-          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Trimmers.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* Accessories */}
-        <section id="accessories" style={{ marginBottom: 48 }}>
-          <div style={{ marginBottom: 28 }}>
-            <span className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.68rem' }}>Harvest Accessories</span>
-            <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 6, color: 'var(--color-charcoal)' }}>
-              Accessories
-            </h2>
-          </div>
-          <div className="vs-grid-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {grouped.Accessories.map((product) => (
+            {gloves.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
           </div>

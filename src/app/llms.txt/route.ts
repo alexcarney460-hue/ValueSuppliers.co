@@ -3,26 +3,16 @@ import PRODUCTS from '@/lib/products';
 export const dynamic = 'force-static';
 
 export function GET() {
-  const gloves = PRODUCTS.filter((p) => p.category === 'Gloves');
-  const trimmers = PRODUCTS.filter((p) => p.category === 'Trimmers');
-  const accessories = PRODUCTS.filter((p) => p.category === 'Accessories');
-
   const body = `# ValueSuppliers.co
-> Professional-grade disposable gloves and cannabis trimming supplies.
+> Professional-grade disposable gloves for cannabis operations and beyond.
 
 ## What We Sell
-ValueSuppliers.co is an online store selling disposable gloves (nitrile, by the box or case) and cannabis trimming equipment (scissors, trim trays, cleaning supplies). We serve cannabis operations, food service, medical, janitorial, and industrial customers nationwide in the United States.
+ValueSuppliers.co is an online store selling disposable nitrile gloves by the box or case. We serve cannabis operations, food service, medical, janitorial, and industrial customers nationwide in the United States. We also offer onsite cannabis trimming services with licensed and bonded crews.
 
 ## Product Catalog
 
-### Gloves (${gloves.length} products)
-${gloves.map((p) => `- ${p.name}: $${p.price.toFixed(2)} ${p.unit} — ${p.tagline}`).join('\n')}
-
-### Trimming Scissors (${trimmers.length} products)
-${trimmers.map((p) => `- ${p.name}: $${p.price.toFixed(2)} ${p.unit} — ${p.tagline}`).join('\n')}
-
-### Accessories (${accessories.length} products)
-${accessories.map((p) => `- ${p.name}: $${p.price.toFixed(2)} ${p.unit} — ${p.tagline}`).join('\n')}
+### Gloves (${PRODUCTS.length} products)
+${PRODUCTS.map((p) => `- ${p.name}: $${p.price.toFixed(2)} ${p.unit} — ${p.tagline}`).join('\n')}
 
 ## Pricing Tiers (Gloves — Cases)
 We offer volume-based pricing on glove cases (10 boxes / 1,000 gloves per case):
