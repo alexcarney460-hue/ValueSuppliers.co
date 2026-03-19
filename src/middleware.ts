@@ -66,12 +66,73 @@ function hasSupabaseAdminSession(request: NextRequest): boolean {
   return isAdminEmail(email);
 }
 
+// ---------------------------------------------------------------------------
+// Visitor tracking cookie — captures UTMs, landing page, page view count
+// ---------------------------------------------------------------------------
+const VS_COOKIE = 'vs_visitor';
+
+function setVisitorTracking(request: NextRequest, response: NextResponse): NextResponse {
+  const { pathname, searchParams } = request.nextUrl;
+
+  // Skip tracking for admin, api, and static asset paths
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.startsWith('/_next')) {
+    return response;
+  }
+
+  const existing = request.cookies.get(VS_COOKIE)?.value;
+  let cookie: {
+    firstVisit: string;
+    landingPage: string;
+    utm_source: string;
+    utm_medium: string;
+    utm_campaign: string;
+    pageViews: number;
+  };
+
+  if (existing) {
+    try {
+      cookie = JSON.parse(existing);
+      // Immutable update: increment page views
+      cookie = { ...cookie, pageViews: cookie.pageViews + 1 };
+    } catch {
+      cookie = {
+        firstVisit: new Date().toISOString(),
+        landingPage: pathname,
+        utm_source: searchParams.get('utm_source') || '',
+        utm_medium: searchParams.get('utm_medium') || '',
+        utm_campaign: searchParams.get('utm_campaign') || '',
+        pageViews: 1,
+      };
+    }
+  } else {
+    cookie = {
+      firstVisit: new Date().toISOString(),
+      landingPage: pathname,
+      utm_source: searchParams.get('utm_source') || '',
+      utm_medium: searchParams.get('utm_medium') || '',
+      utm_campaign: searchParams.get('utm_campaign') || '',
+      pageViews: 1,
+    };
+  }
+
+  response.cookies.set(VS_COOKIE, JSON.stringify(cookie), {
+    httpOnly: false, // Must be readable by client-side JS for form tracking
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+  });
+
+  return response;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // Only gate admin paths
+  // For non-admin paths, set visitor tracking cookie and pass through
   if (!isAdminPath(pathname)) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    return setVisitorTracking(request, response);
   }
 
   const expectedToken = process.env.ADMIN_ANALYTICS_TOKEN;
@@ -148,5 +209,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: [
+    // Admin auth
+    '/admin/:path*',
+    '/api/admin/:path*',
+    // Visitor tracking — match all pages except static assets and Next internals
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
 };

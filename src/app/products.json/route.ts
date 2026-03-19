@@ -86,7 +86,7 @@ export function GET() {
       url: BASE,
       description:
         'Professional-grade disposable gloves and cannabis trimming supplies. Retail, wholesale, and distribution pricing.',
-      contact: 'orders@valuesuppliers.co',
+      contact: 'admin@valuesuppliersdirect.com',
       shipsTo: 'US (48 contiguous states)',
       processingTime: '1-2 business days',
     },

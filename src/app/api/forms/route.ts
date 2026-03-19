@@ -1,6 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+
+const TRACKING_FIELDS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'referrer',
+  'landing_page',
+  'session_duration',
+  'pages_viewed',
+] as const;
 
 const VALID_TYPES = ['contact', 'wholesale', 'distribution', 'affiliate'] as const;
 
@@ -59,6 +74,8 @@ export async function POST(req: Request) {
       }
     } else {
       // Determine source based on form type
+      // If a UTM source was provided, use it as the source; otherwise fall back to form type
+      const utmSource = ((body.utm_source as string) || '').trim();
       const sourceMap: Record<string, string> = {
         contact: 'contact_form',
         wholesale: 'wholesale_application',
@@ -79,7 +96,7 @@ export async function POST(req: Request) {
         phone: phone || null,
         city: city || null,
         state: state || null,
-        source: sourceMap[formType],
+        source: utmSource || sourceMap[formType],
         lead_status: 'NEW',
         lifecycle_stage: lifecycleMap[formType],
       }).select('id').single();
@@ -119,14 +136,28 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. Save form submission with full data
-    const { form_type: _, ...formData } = body;
+    // 3. Extract tracking data and form data separately
+    const { form_type: _, ...rawFormData } = body;
+    const trackingData: Record<string, unknown> = {};
+    const formData: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(rawFormData)) {
+      if ((TRACKING_FIELDS as readonly string[]).includes(key)) {
+        trackingData[key] = value;
+      } else {
+        formData[key] = value;
+      }
+    }
+
+    // Merge tracking data into the JSONB data column alongside form fields
+    const mergedData = { ...formData, _tracking: trackingData };
+
     const { error: subErr } = await supabase.from('form_submissions').insert({
       form_type: formType,
       contact_id: contactId,
       company_id: companyId,
       email,
-      data: formData,
+      data: mergedData,
     });
 
     if (subErr) {
@@ -142,9 +173,42 @@ export async function POST(req: Request) {
           company_id: companyId,
           type: 'form_submission',
           subject: `${formType} form submitted`,
-          body: JSON.stringify(formData),
+          body: JSON.stringify(mergedData),
         });
       } catch { /* activities table might not have these columns */ }
+    }
+
+    // 5. Send email notification (fire-and-forget, never block the response)
+    if (resend) {
+      const subjectLine = `New ${formType} submission: ${firstName || ''} ${lastName || ''}`.trim();
+      const trackingSummary = Object.entries(trackingData)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n') || 'No tracking data';
+
+      resend.emails.send({
+        from: 'Value Suppliers <notifications@valuesuppliers.co>',
+        to: 'gardenablaze@gmail.com',
+        subject: subjectLine,
+        text: [
+          `New ${formType} form submission`,
+          '',
+          `Name: ${firstName} ${lastName}`,
+          `Email: ${email}`,
+          `Phone: ${phone || 'N/A'}`,
+          `Company: ${companyName || 'N/A'}`,
+          `Type: ${formType}`,
+          '',
+          '--- Tracking ---',
+          trackingSummary,
+          '',
+          '--- Full Data ---',
+          JSON.stringify(formData, null, 2),
+        ].join('\n'),
+      }).catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : 'unknown';
+        console.error('[forms] email notification failed:', msg);
+      });
     }
 
     return NextResponse.json({ ok: true, contact_id: contactId, company_id: companyId });

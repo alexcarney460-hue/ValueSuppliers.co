@@ -61,7 +61,7 @@ Would it make sense to send you a sample case?
 
 — Alex
 Value Suppliers
-orders@valuesuppliers.co
+admin@valuesuppliersdirect.com
 valuesuppliers.co`,
     },
     followup_1: {
@@ -95,7 +95,7 @@ Most labs we work with restock monthly. Want me to send pricing for your volume?
 
 — Alex
 Value Suppliers
-orders@valuesuppliers.co`,
+admin@valuesuppliersdirect.com`,
     },
     distributor: {
       subject: `glove supply for ${company}`,
@@ -109,7 +109,7 @@ Worth a conversation?
 
 — Alex
 Value Suppliers
-orders@valuesuppliers.co`,
+admin@valuesuppliersdirect.com`,
     },
   };
 

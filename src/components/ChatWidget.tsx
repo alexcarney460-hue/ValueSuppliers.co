@@ -37,10 +37,10 @@ export default function ChatWidget() {
         body: JSON.stringify({ messages: updated }),
       });
       const data = await res.json();
-      const reply = data?.choices?.[0]?.message?.content ?? 'Sorry, something went wrong. Email orders@valuesuppliers.co for help.';
+      const reply = data?.choices?.[0]?.message?.content ?? 'Sorry, something went wrong. Email admin@valuesuppliersdirect.com for help.';
       setMessages([...updated, { role: 'assistant', content: reply }]);
     } catch {
-      setMessages([...updated, { role: 'assistant', content: 'Something went wrong. Please email orders@valuesuppliers.co.' }]);
+      setMessages([...updated, { role: 'assistant', content: 'Something went wrong. Please email admin@valuesuppliersdirect.com.' }]);
     } finally {
       setIsLoading(false);
     }

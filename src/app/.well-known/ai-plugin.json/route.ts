@@ -28,7 +28,7 @@ export function GET() {
       has_user_authentication: false,
     },
     logo_url: `${BASE}/logo.jpg`,
-    contact_email: 'orders@valuesuppliers.co',
+    contact_email: 'admin@valuesuppliersdirect.com',
     legal_info_url: `${BASE}/about`,
     product_catalog_url: `${BASE}/products.json`,
     website_url: BASE,

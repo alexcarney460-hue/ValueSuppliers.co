@@ -149,7 +149,7 @@ const orgSchema = {
     'Professional-grade disposable gloves and cannabis trimming equipment supplier. Wholesale and distribution pricing for cannabis operations, food service, medical, and industrial industries.',
   /* TODO: Replace with real phone number */
   telephone: '+1-559-000-0000',
-  email: 'orders@valuesuppliers.co',
+  email: 'admin@valuesuppliersdirect.com',
   address: {
     '@type': 'PostalAddress',
     /* TODO: Replace with real street address once GBP is verified */
@@ -178,7 +178,7 @@ const orgSchema = {
     {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'orders@valuesuppliers.co',
+      email: 'admin@valuesuppliersdirect.com',
       /* TODO: Replace with real phone number */
       telephone: '+1-559-000-0000',
       availableLanguage: 'English',
@@ -186,7 +186,7 @@ const orgSchema = {
     {
       '@type': 'ContactPoint',
       contactType: 'sales',
-      email: 'orders@valuesuppliers.co',
+      email: 'admin@valuesuppliersdirect.com',
       /* TODO: Replace with real phone number */
       telephone: '+1-559-000-0000',
       availableLanguage: 'English',

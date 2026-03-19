@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_OPTIONS = [
-  { icon: Mail, label: 'Email Us', value: 'orders@valuesuppliers.co', sub: 'We respond within 1 business day', href: 'mailto:orders@valuesuppliers.co' },
-  { icon: Mail, label: 'Order Support', value: 'orders@valuesuppliers.co', sub: 'Mon–Fri, 9am–5pm EST', href: 'mailto:orders@valuesuppliers.co' },
+  { icon: Mail, label: 'Email Us', value: 'admin@valuesuppliersdirect.com', sub: 'We respond within 1 business day', href: 'mailto:admin@valuesuppliersdirect.com' },
+  { icon: Mail, label: 'Order Support', value: 'admin@valuesuppliersdirect.com', sub: 'Mon–Fri, 9am–5pm EST', href: 'mailto:admin@valuesuppliersdirect.com' },
   { icon: Clock, label: 'Business Hours', value: 'Mon–Fri 9am–5pm EST', sub: 'Orders placed after hours ship next day', href: null },
 ];
 
@@ -40,7 +40,7 @@ const localBusinessSchema = {
     'Professional-grade disposable gloves and cannabis trimming supplies. Wholesale and distribution pricing for cannabis, food service, medical, and industrial operations.',
   /* TODO: Replace with real phone number */
   telephone: '+1-559-000-0000',
-  email: 'orders@valuesuppliers.co',
+  email: 'admin@valuesuppliersdirect.com',
   address: {
     '@type': 'PostalAddress',
     /* TODO: Replace with real street address once GBP is verified */

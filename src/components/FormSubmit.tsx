@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ReactNode } from 'react';
+import { useVisitorTracking } from '@/hooks/useVisitorTracking';
 
 interface Props {
   formType: 'contact' | 'wholesale' | 'distribution' | 'affiliate';
@@ -22,6 +23,7 @@ export default function FormSubmit({ formType, fields, children, successMessage 
   const [values, setValues] = useState(initial);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const { getTrackingData } = useVisitorTracking();
 
   const onChange = (field: string, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -33,10 +35,11 @@ export default function FormSubmit({ formType, fields, children, successMessage 
     setErrorMsg('');
 
     try {
+      const tracking = getTrackingData();
       const res = await fetch('/api/forms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ form_type: formType, ...values }),
+        body: JSON.stringify({ form_type: formType, ...values, ...tracking }),
       });
       const json = await res.json();
 

@@ -89,7 +89,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Do you offer NET terms for businesses?',
-    a: 'Distribution accounts have access to NET 30 terms with approved credit. Contact us at orders@valuesuppliers.co for custom payment arrangements on large or recurring orders.',
+    a: 'Distribution accounts have access to NET 30 terms with approved credit. Contact us at admin@valuesuppliersdirect.com for custom payment arrangements on large or recurring orders.',
   },
 ];
 

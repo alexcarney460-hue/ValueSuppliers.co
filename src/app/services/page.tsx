@@ -89,7 +89,7 @@ export default function ServicesPage() {
               Request a Quote <ArrowRight size={14} />
             </Link>
             <a
-              href="mailto:orders@valuesuppliers.co"
+              href="mailto:admin@valuesuppliersdirect.com"
               style={{
                 backgroundColor: 'transparent',
                 color: 'var(--color-charcoal)',

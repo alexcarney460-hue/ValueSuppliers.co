@@ -27,7 +27,7 @@ export async function GET(req: Request) {
 <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;">
   <div style="text-align:center;max-width:400px;padding:40px;">
     <h1 style="font-size:1.5rem;color:#1a1a1a;margin-bottom:8px;">You've been unsubscribed</h1>
-    <p style="color:#6b7280;font-size:0.95rem;">You won't receive any more emails from us. If this was a mistake, contact <a href="mailto:orders@valuesuppliers.co">orders@valuesuppliers.co</a>.</p>
+    <p style="color:#6b7280;font-size:0.95rem;">You won't receive any more emails from us. If this was a mistake, contact <a href="mailto:admin@valuesuppliersdirect.com">admin@valuesuppliersdirect.com</a>.</p>
   </div>
 </body></html>`,
     { headers: { 'Content-Type': 'text/html' } },

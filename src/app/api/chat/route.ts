@@ -33,10 +33,10 @@ SERVICES:
 - Contact for custom branding
 
 CONTACT:
-- Email: orders@valuesuppliers.co
+- Email: admin@valuesuppliersdirect.com
 - Website: valuesuppliers.co
 
-Always be helpful and direct. If asked about something outside your knowledge, direct them to orders@valuesuppliers.co. Do not make up prices or product specs not listed above.`;
+Always be helpful and direct. If asked about something outside your knowledge, direct them to admin@valuesuppliersdirect.com. Do not make up prices or product specs not listed above.`;
 
 export async function POST(req: Request) {
   if (!anthropic) {

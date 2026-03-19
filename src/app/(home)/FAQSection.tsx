@@ -29,7 +29,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Can I get a custom quote for a large order?',
-    a: 'Absolutely. Contact us at orders@valuesuppliers.co with your product needs, quantity, and delivery frequency. We provide custom volume pricing for operations outside our standard retail/wholesale/distribution tiers.',
+    a: 'Absolutely. Contact us at admin@valuesuppliersdirect.com with your product needs, quantity, and delivery frequency. We provide custom volume pricing for operations outside our standard retail/wholesale/distribution tiers.',
   },
 ];
 

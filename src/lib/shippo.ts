@@ -16,7 +16,7 @@ export const WAREHOUSE_ADDRESS = {
   state: 'CA',
   zip: '93727',
   country: 'US',
-  email: 'orders@valuesuppliers.co',
+  email: 'admin@valuesuppliersdirect.com',
   phone: '5592974700',
 } as const;
 

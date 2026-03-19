@@ -74,7 +74,7 @@ export default function CheckoutCancelPage() {
             <ArrowLeft size={14} /> Back to Catalog
           </Link>
           <a
-            href="mailto:orders@valuesuppliers.co"
+            href="mailto:admin@valuesuppliersdirect.com"
             style={{
               backgroundColor: 'transparent',
               color: 'var(--color-charcoal)',

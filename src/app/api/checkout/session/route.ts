@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
         },
       },
       checkoutOptions: {
-        merchantSupportEmail: 'orders@valuesuppliers.co',
+        merchantSupportEmail: 'admin@valuesuppliersdirect.com',
         allowTipping: false,
         redirectUrl: `${origin}/checkout/success`,
         askForShippingAddress: true,

@@ -43,7 +43,7 @@ Individual glove boxes (100 gloves) are available at $10.00/box.
 
 For wholesale (30+ cases) or distribution (120+ cases) orders:
 - Visit https://valuesuppliers.co/wholesale
-- Or email orders@valuesuppliers.co
+- Or email admin@valuesuppliersdirect.com
 
 ## Shipping
 - We ship nationwide within the United States
@@ -51,7 +51,7 @@ For wholesale (30+ cases) or distribution (120+ cases) orders:
 - Track your order at https://valuesuppliers.co/track
 
 ## Contact
-- Email: orders@valuesuppliers.co
+- Email: admin@valuesuppliersdirect.com
 - Website: https://valuesuppliers.co/contact
 - Live chat available on our website
 

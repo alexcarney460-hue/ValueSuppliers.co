@@ -39,7 +39,7 @@ export interface TrackingData {
 // Resend client (lazy init)
 // ---------------------------------------------------------------------------
 
-const FROM_ADDRESS = 'Value Suppliers <orders@valuesuppliers.co>';
+const FROM_ADDRESS = 'Value Suppliers <admin@valuesuppliersdirect.com>';
 
 let _resend: Resend | null = null;
 
@@ -260,7 +260,7 @@ function buildOrderConfirmationHtml(order: OrderData): string {
     <!-- Footer note -->
     <p style="margin:28px 0 0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       You'll receive another email with tracking information once your order ships. If you have any questions, reply to this email or contact us at
-      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
+      <a href="mailto:admin@valuesuppliersdirect.com" style="color:${BRAND.primary};text-decoration:none;">admin@valuesuppliersdirect.com</a>.
     </p>
   `;
 
@@ -354,7 +354,7 @@ function buildShippingNotificationHtml(trackingData: TrackingData): string {
 
     <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       Tracking information may take a few hours to update after shipment. If you have any questions, reply to this email or contact
-      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
+      <a href="mailto:admin@valuesuppliersdirect.com" style="color:${BRAND.primary};text-decoration:none;">admin@valuesuppliersdirect.com</a>.
     </p>
   `;
 
@@ -494,7 +494,7 @@ function buildOrderShippedHtml(order: OrderData, tracking: TrackingData): string
 
     <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       Tracking may take a few hours to update. Questions? Contact
-      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
+      <a href="mailto:admin@valuesuppliersdirect.com" style="color:${BRAND.primary};text-decoration:none;">admin@valuesuppliersdirect.com</a>.
     </p>
   `;
 
@@ -860,7 +860,7 @@ function buildPaymentFailedHtml(data: PaymentFailedData): string {
 
     <p style="margin:0;color:${BRAND.muted};font-size:13px;line-height:1.6;">
       If you need help, reply to this email or contact
-      <a href="mailto:orders@valuesuppliers.co" style="color:${BRAND.primary};text-decoration:none;">orders@valuesuppliers.co</a>.
+      <a href="mailto:admin@valuesuppliersdirect.com" style="color:${BRAND.primary};text-decoration:none;">admin@valuesuppliersdirect.com</a>.
     </p>
   `;
 

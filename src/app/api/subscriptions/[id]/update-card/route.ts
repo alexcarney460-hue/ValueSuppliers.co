@@ -122,7 +122,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         },
       },
       checkoutOptions: {
-        merchantSupportEmail: 'orders@valuesuppliers.co',
+        merchantSupportEmail: 'admin@valuesuppliersdirect.com',
         allowTipping: false,
         redirectUrl: `${origin}/checkout/success?renewal=true&card_updated=true`,
         askForShippingAddress: true,

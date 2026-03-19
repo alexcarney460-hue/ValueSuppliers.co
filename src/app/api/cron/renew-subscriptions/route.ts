@@ -246,7 +246,7 @@ export async function GET(req: NextRequest) {
           },
         },
         checkoutOptions: {
-          merchantSupportEmail: 'orders@valuesuppliers.co',
+          merchantSupportEmail: 'admin@valuesuppliersdirect.com',
           allowTipping: false,
           redirectUrl: `${origin}/checkout/success?renewal=true`,
           askForShippingAddress: true,

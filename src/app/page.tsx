@@ -73,8 +73,6 @@ const FEATURE_ITEMS = [
 const PRODUCT_TEASERS = [
   { slug: 'nitrile-5mil-case', category: 'Gloves', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$80.00', badge: 'Best Value', img: '/products/product-3.avif' },
   { slug: 'nitrile-5mil-box', category: 'Gloves', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$10.00', badge: null, img: '/products/product-5.avif' },
-  { slug: 'spring-loaded-trimming-scissors', category: 'Trimmers', name: 'Spring-Loaded Trimming Scissors', detail: 'Curved tip · Ergonomic grip', price: '$14.00', badge: null, img: '/products/product-1.avif' },
-  { slug: 'trim-tray-150-micron', category: 'Accessories', name: 'Trim Tray — 150 Micron Screen', detail: 'Kief collection · BPA-free', price: '$28.00', badge: null, img: '/products/product-4.avif' },
 ];
 
 const SERVICE_FEATURES = [

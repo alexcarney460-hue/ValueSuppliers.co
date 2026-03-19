@@ -33,7 +33,7 @@ const ONLY_STATE = STATE_IDX !== -1 ? process.argv[STATE_IDX + 1]?.toUpperCase()
 const TPL_IDX = process.argv.indexOf('--template');
 const FORCE_TEMPLATE = TPL_IDX !== -1 ? process.argv[TPL_IDX + 1] : null;
 
-const FROM = 'Value Suppliers <grow@mail.valuesuppliers.co>';
+const FROM = 'Bee | Value Suppliers <bee@mail.valuesuppliers.co>';
 const UNSUB_BASE = 'https://valuesuppliers.co/api/unsubscribe';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -76,69 +76,65 @@ function parseCSVLine(line) {
 // Templates
 // ---------------------------------------------------------------------------
 
+function cleanField(val) {
+  if (!val) return '';
+  const s = val.trim();
+  if (s === 'Data Not Available' || s === 'None' || s === 'N/A' || s === 'null') return '';
+  return s;
+}
+
 function buildEmail(lead, template) {
-  const firstName = (lead.Owner || lead.Name || '').split(/[,\s]/)[0] || 'there';
-  const company = lead.Name || '';
-  const loc = [lead.City, lead.County ? `${lead.County} County` : '', lead.State].filter(Boolean).join(', ');
+  const ownerRaw = cleanField(lead.Owner);
+  const nameRaw = cleanField(lead.Name);
+  const dbaRaw = cleanField(lead.DBA);
+
+  // Use owner name for greeting, company/DBA for subject line
+  const firstName = ownerRaw ? ownerRaw.split(/[,\s]/)[0] : (nameRaw ? nameRaw.split(/[,\s]/)[0] : 'there');
+
+  // For subject: prefer DBA, then Name (but only if it looks like a business, not a person)
+  const looksLikePerson = (s) => s && /^[A-Z][a-z]+ [A-Z][a-z]+$/.test(s.trim()) && !s.includes('LLC') && !s.includes('Inc') && !s.includes('Corp');
+  const company = dbaRaw || nameRaw || '';
+  const subjectCompany = dbaRaw || (looksLikePerson(nameRaw) ? 'your operation' : nameRaw) || 'your operation';
+
+  const city = cleanField(lead.City);
+  const county = cleanField(lead.County);
+  const state = cleanField(lead.State);
+  const loc = [city, county ? `${county} County` : '', state].filter(Boolean).join(', ');
   const unsubUrl = `${UNSUB_BASE}?email=${encodeURIComponent(lead.Email)}`;
 
   const templates = {
+    // Cannabis leads — all types (grows, labs, distributors, processors, manufacturers)
     intro: {
-      subject: `gloves for ${company}?`,
+      subject: `gloves for ${subjectCompany}?`,
       body: `Hey ${firstName},
 
-Saw you guys are licensed in ${loc}.
+Saw you guys are licensed in ${loc || state}.
 
-We supply 5 mil nitrile gloves at $60-80/case (1,000 gloves per case) — most grows and labs in ${lead.State} are restocking with us monthly.
+We supply 5 mil nitrile gloves that have been battle-tested at large California grow facilities for 2+ years — it's become the glove of choice for trim crews and harvest teams running 12-hour days.
 
-Would it make sense to send you a sample case?
+Case pricing runs $60-80/case (1,000 gloves per case) depending on volume. Most operations in ${state || 'your state'} are restocking with us monthly.
 
-— Alex
+Want me to put together a quote for your operation?
+
+— Bee
 Value Suppliers
-orders@valuesuppliers.co
+Bee@valuesuppliersdirect.com
 valuesuppliers.co`,
     },
-    lab: {
-      subject: `lab gloves for ${company}?`,
+    // Non-cannabis leads (food service, medical, janitorial, auto, etc.)
+    commercial: {
+      subject: `PPE for ${subjectCompany}?`,
       body: `Hey ${firstName},
 
-Noticed ${company} is a licensed testing lab in ${loc}.
-
-We supply exam-grade 5 mil nitrile gloves — ASTM certified, powder-free, XS through XXL. Case pricing starts at $80/case (1,000 gloves), wholesale $70 for 30+ cases.
-
-Most labs we work with restock monthly. Want me to send pricing for your volume?
-
-— Alex
-Value Suppliers
-orders@valuesuppliers.co`,
-    },
-    distributor: {
-      subject: `glove supply for ${company}`,
-      body: `Hey ${firstName},
-
-${company} showed up on our radar as a licensed distributor in ${lead.State}.
-
-If you're moving product that needs PPE — we do distribution pricing at $60/case (120+ cases) with NET 30 terms. 5 mil nitrile, case of 1,000.
-
-Worth a conversation?
-
-— Alex
-Value Suppliers
-orders@valuesuppliers.co`,
-    },
-    manufacturer: {
-      subject: `PPE for ${company}?`,
-      body: `Hey ${firstName},
-
-Running a licensed manufacturing operation in ${loc} means your team goes through gloves fast.
+Running an operation in ${loc || state} means your team goes through gloves fast.
 
 We supply 5 mil nitrile at case pricing — $80 retail, $70 wholesale (30+ cases), $60 distribution (120+). 1,000 gloves per case, ships same week.
 
 Want me to put together a quote based on your volume?
 
-— Alex
+— Bee
 Value Suppliers
-orders@valuesuppliers.co`,
+Bee@valuesuppliersdirect.com`,
     },
   };
 
@@ -155,11 +151,21 @@ orders@valuesuppliers.co`,
 
 function pickTemplate(lead) {
   if (FORCE_TEMPLATE) return FORCE_TEMPLATE;
+  // All cannabis/hemp leads use intro template
+  // Non-cannabis leads (future campaigns) use commercial template
+  const source = (lead.Source || '').toLowerCase();
   const type = (lead['License Type'] || '').toUpperCase();
-  if (type.includes('LAB') || type.includes('TEST')) return 'lab';
-  if (type.includes('DISTRIBUT') || type.includes('WHOLESALE')) return 'distributor';
-  if (type.includes('MANUFACTUR') || type.includes('PROCESSOR') || type.includes('INFUSE')) return 'manufacturer';
-  return 'intro';
+  // Everything from our cannabis scrapers is cannabis
+  const isCannabis = source.includes('dcc') || source.includes('olcc') || source.includes('ocm')
+    || source.includes('cannabis') || source.includes('brave') || source.includes('ca_dcc')
+    || source.includes('wa_lcb') || source.includes('or_olcc') || source.includes('ny_ocm')
+    || source.includes('tableau') || source.includes('socrata')
+    || type.includes('MARIJUANA') || type.includes('CANNABIS') || type.includes('HEMP')
+    || type.includes('CULTIVAT') || type.includes('PRODUCER') || type.includes('PROCESSOR')
+    || type.includes('DISTRIBUT') || type.includes('WHOLESALE') || type.includes('LAB')
+    || type.includes('TEST') || type.includes('NURSERY') || type.includes('MANUFACTUR')
+    || type.includes('COMMERCIAL') || type.includes('RECREATIONAL') || type.includes('RETAILER');
+  return isCannabis ? 'intro' : 'commercial';
 }
 
 // ---------------------------------------------------------------------------
@@ -239,6 +245,10 @@ async function main() {
     const email = r.Email.toLowerCase();
     if (email.includes('noreply') || email.includes('no-reply') || email.includes('donotreply')) return false;
     if (email.endsWith('.gov') || email.endsWith('.edu')) return false;
+    // Skip placeholder/junk emails from scrapers
+    if (email === 'user@domain.com' || email === 'yourname@email.com' || email === 'info@example.com') return false;
+    if (email.includes('domain.com') || email.includes('example.com')) return false;
+    if (email.includes('sentry.io') || email.includes('schema.org')) return false;
     return true;
   }).slice(0, LIMIT);
 
