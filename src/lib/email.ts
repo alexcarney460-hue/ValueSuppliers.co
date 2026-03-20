@@ -12,7 +12,7 @@ export interface OrderItem {
 }
 
 export interface OrderData {
-  id: number;
+  id: string | number;
   email: string;
   total: number;
   currency?: string;

@@ -42,7 +42,7 @@ const PRODUCTS: Product[] = [
     specs: [
       { label: 'Material', value: 'Nitrile' },
       { label: 'Thickness', value: '5 mil' },
-      { label: 'Color', value: 'Blue' },
+      { label: 'Color', value: 'Black' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL, XXL' },
       { label: 'Count', value: '100 gloves / box' },
@@ -67,7 +67,7 @@ const PRODUCTS: Product[] = [
       'Auto mechanics & detailing',
     ],
     inStock: true,
-    relatedSlugs: ['nitrile-5mil-case', 'nitrile-5mil-case'],
+    relatedSlugs: ['nitrile-5mil-case'],
     boxPrice: 10.00,
   },
   {
@@ -85,7 +85,7 @@ const PRODUCTS: Product[] = [
     specs: [
       { label: 'Material', value: 'Nitrile' },
       { label: 'Thickness', value: '5 mil' },
-      { label: 'Color', value: 'Blue' },
+      { label: 'Color', value: 'Black' },
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL, XXL' },
       { label: 'Count', value: '10 boxes / case (1,000 gloves)' },

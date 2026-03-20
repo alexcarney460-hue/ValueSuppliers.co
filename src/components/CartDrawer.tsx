@@ -312,7 +312,7 @@ export default function CartDrawer() {
 
                 return (
                   <div
-                    key={`${item.id}-${item.plan}-${item.purchaseUnit ?? 'default'}`}
+                    key={`${item.id}-${item.plan}-${item.purchaseUnit ?? 'default'}-${item.size ?? ''}`}
                     style={{
                       display: 'flex',
                       gap: 14,
@@ -377,6 +377,23 @@ export default function CartDrawer() {
                           </span>
                         )}
 
+                        {/* Size badge */}
+                        {item.size && (
+                          <span
+                            style={{
+                              backgroundColor: 'var(--color-sage-light)',
+                              color: 'var(--color-charcoal)',
+                              fontSize: '0.65rem',
+                              fontWeight: 600,
+                              padding: '3px 8px',
+                              borderRadius: 4,
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            Size: {item.size}
+                          </span>
+                        )}
+
                         {/* Purchase unit badge */}
                         {item.purchaseUnit && (
                           <span
@@ -410,7 +427,7 @@ export default function CartDrawer() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid var(--color-border)', borderRadius: 7, overflow: 'hidden' }}>
                           <button
-                            onClick={() => updateQty(item.id, item.plan, item.quantity - 1, item.purchaseUnit)}
+                            onClick={() => updateQty(item.id, item.plan, item.quantity - 1, item.purchaseUnit, item.size)}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
                           >
                             <Minus size={12} />
@@ -419,7 +436,7 @@ export default function CartDrawer() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQty(item.id, item.plan, item.quantity + 1, item.purchaseUnit)}
+                            onClick={() => updateQty(item.id, item.plan, item.quantity + 1, item.purchaseUnit, item.size)}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center' }}
                           >
                             <Plus size={12} />
@@ -431,7 +448,7 @@ export default function CartDrawer() {
                             ${(effectivePrice * item.quantity).toFixed(2)}
                           </span>
                           <button
-                            onClick={() => removeItem(item.id, item.plan, item.purchaseUnit)}
+                            onClick={() => removeItem(item.id, item.plan, item.purchaseUnit, item.size)}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-warm-gray)', display: 'flex', padding: 4 }}
                           >
                             <Trash2 size={14} />

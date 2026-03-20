@@ -4,12 +4,12 @@ import { ArrowRight, Package, Truck, BadgeCheck, Users } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
 
 export const metadata: Metadata = {
-  title: 'About ValueSuppliers.co — Gloves & Cannabis Supplies',
+  title: 'About Triple OG Gloves — Cannabis-Grade Black Nitrile Gloves',
   description:
-    'ValueSuppliers.co supplies professional-grade disposable gloves and cannabis trimming equipment to operations across the United States. Learn about our commitment to quality, fast restock, and industry-grade products.',
+    'Triple OG Gloves by ValueSuppliers.co — 5mil black nitrile exam gloves purpose-built for cannabis trimmers, growers, and commercial operations. OG energy meets professional supply.',
   openGraph: {
-    title: 'About ValueSuppliers.co',
-    description: 'Professional-grade gloves and cannabis trimming supplies. Built for the operations that need reliability.',
+    title: 'About Triple OG Gloves',
+    description: '5mil black nitrile gloves built for the cannabis industry. Supplied for the Grow.',
     url: 'https://valuesuppliers.co/about',
   },
   alternates: { canonical: 'https://valuesuppliers.co/about' },
@@ -18,31 +18,31 @@ export const metadata: Metadata = {
 const VALUES = [
   {
     icon: Package,
-    title: 'Professional Grade, Every Time',
-    desc: "We source products built for commercial operations — not hobby kits. If it doesn't hold up under real workload conditions, it doesn't make our catalog.",
+    title: 'Built for Cannabis, Not Borrowed',
+    desc: "Most gloves on the market are designed for medical or food service — then slapped with a cannabis label. Triple OG is different. We built this brand from the ground up for trimmers, growers, and extraction techs.",
   },
   {
     icon: BadgeCheck,
-    title: 'Value Without Compromise',
-    desc: "Professional grade shouldn't mean unaffordable. We negotiate volume pricing so you don't have to — and pass those savings straight through.",
+    title: '5mil Heavy-Duty Construction',
+    desc: "Trim work destroys thin gloves. Our 5mil black nitrile is thick enough to resist tears and resin buildup, with textured fingertips for precision grip — glove after glove, box after box.",
   },
   {
     icon: Truck,
-    title: 'Reliable Restock',
-    desc: 'Running out of gloves mid-harvest is not an option. We keep deep inventory and fulfill fast so your operation never stops for supplies.',
+    title: 'Reliable Supply, Fast Restock',
+    desc: "Running out of gloves mid-harvest is not an option. We keep deep inventory and ship within 48 hours so your operation never stops waiting on supplies.",
   },
   {
     icon: Users,
-    title: 'Built for Every Scale',
-    desc: "Whether you're a home grower ordering your first case or a licensed commercial operation running through 10,000 pairs a month — you get the same quality and service.",
+    title: 'Volume Pricing for Every Operation',
+    desc: "Whether you're a home grower grabbing a single box or a licensed commercial facility running through cases every week — we have a pricing tier that fits. The more you buy, the better your rate.",
   },
 ];
 
 const STATS = [
-  { stat: '3', label: 'Customer Tiers' },
-  { stat: '100+', label: 'SKUs Available' },
-  { stat: '48hr', label: 'Average Fulfillment' },
-  { stat: 'NET 30', label: 'Terms Available' },
+  { stat: '5mil', label: 'Thickness' },
+  { stat: '1,000', label: 'Gloves Per Case' },
+  { stat: '48hr', label: 'Ships In' },
+  { stat: '3', label: 'Pricing Tiers' },
 ];
 
 export default function AboutPage() {
@@ -60,11 +60,11 @@ export default function AboutPage() {
             <span style={{ width: 24, height: 1.5, backgroundColor: 'var(--color-amber)', display: 'inline-block', borderRadius: 99 }} />
           </span>
           <h1 className="font-display" style={{ fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', lineHeight: 1.0, color: 'var(--color-charcoal)', marginBottom: 24 }}>
-            The Supply Chain for Serious Growers.
+            Built for the Grow. Worn by the OGs.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: '1.05rem', maxWidth: 560, margin: '0 auto', lineHeight: 1.8 }}>
-            ValueSuppliers.co started with a simple observation: the grow industry was underserved on supplies.
-            Quality gloves and trimming equipment existed — but not at prices that made sense for operations of every size.
+            Triple OG Gloves exist because the cannabis industry deserved its own glove brand — not hand-me-downs from medical supply catalogs.
+            Purpose-built 5mil black nitrile for trimmers, growers, and commercial operations. Supplied for the Grow.
           </p>
         </div>
       </section>
@@ -78,13 +78,13 @@ export default function AboutPage() {
               What We Do
             </span>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginTop: 14, marginBottom: 20, color: 'var(--color-charcoal)', lineHeight: 1.05 }}>
-              One Supplier.<br />Every Scale.
+              The Cannabis Industry&apos;s<br />Glove Brand.
             </h2>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 16, fontSize: '0.95rem' }}>
-              We supply disposable gloves and cannabis trimming equipment to retail customers, hydro stores, dispensaries, licensed grows, and commercial distributors across the country.
+              Triple OG Gloves is the premium black nitrile glove brand built specifically for cannabis operations. Our 5mil exam gloves are powder-free, latex-free, and feature textured fingertips — engineered for the precision and durability that trim work demands.
             </p>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 36, fontSize: '0.95rem' }}>
-              Our pricing is tiered by volume — the more you buy, the better your rate. And we make it easy to move up tiers as your operation grows.
+              Sold by the box (100 pcs) or by the case (1,000 pcs), with volume pricing that scales as your operation grows. From home grows to licensed facilities — Triple OG has you covered.
             </p>
             <Link
               href="/catalog"
@@ -139,7 +139,7 @@ export default function AboutPage() {
           <AnimateIn style={{ textAlign: 'center', marginBottom: 52 }}>
             <span className="label-caps" style={{ color: 'var(--color-amber)' }}>What We Stand For</span>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', marginTop: 10, color: 'var(--color-charcoal)' }}>
-              How We Operate
+              The Triple OG Standard
             </h2>
           </AnimateIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
@@ -176,10 +176,10 @@ export default function AboutPage() {
         <div style={{ position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)', width: 500, height: 300, borderRadius: '50%', background: 'rgba(200,146,42,0.09)', filter: 'blur(80px)', pointerEvents: 'none' }} />
         <AnimateIn style={{ maxWidth: 560, margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <h2 className="font-display" style={{ color: '#fff', fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', marginBottom: 16 }}>
-            Ready to Get Supplied?
+            Ready to Gear Up?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 40, fontSize: '1.05rem', lineHeight: 1.75 }}>
-            Browse the catalog or apply for wholesale and distribution pricing.
+            Browse the Triple OG catalog or apply for wholesale and distribution pricing on cases.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
@@ -201,7 +201,7 @@ export default function AboutPage() {
                 boxShadow: 'var(--shadow-amber)',
               }}
             >
-              Shop the Catalog <ArrowRight size={14} />
+              Shop Triple OG <ArrowRight size={14} />
             </Link>
             <Link
               href="/wholesale"

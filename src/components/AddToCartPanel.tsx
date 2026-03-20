@@ -27,6 +27,9 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
   const [added, setAdded] = useState(false);
 
   const isGlove = product != null && hasCasePricing(product);
+  const isGloveCategory = product?.category === 'Gloves';
+  const GLOVE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'] as const;
+  const [size, setSize] = useState<string>('L');
   const [purchaseUnit, setPurchaseUnit] = useState<PurchaseUnit>(isGlove ? 'case' : 'box');
 
   // Derive the correct unit price
@@ -55,6 +58,7 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
         img,
         unit: purchaseUnit === 'case' ? '/ case' : unit,
         purchaseUnit: isGlove ? purchaseUnit : undefined,
+        size: isGloveCategory ? size : undefined,
       },
       qty,
     );
@@ -232,6 +236,38 @@ export default function AddToCartPanel({ id, name, price, img, unit, product }: 
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Glove size selector */}
+      {isGloveCategory && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-charcoal)', marginBottom: 8 }}>
+            Size
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {GLOVE_SIZES.map((s) => (
+              <button
+                key={s}
+                onClick={() => setSize(s)}
+                style={{
+                  flex: 1,
+                  padding: '9px 0',
+                  borderRadius: 20,
+                  border: size === s ? 'none' : '1px solid var(--color-border)',
+                  backgroundColor: size === s ? 'var(--color-forest)' : '#fff',
+                  color: size === s ? '#fff' : 'var(--color-charcoal)',
+                  fontFamily: "'Barlow', Arial, sans-serif",
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease',
+                }}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

@@ -15,13 +15,14 @@ export type CartItem = {
   img: string;
   unit: string;
   purchaseUnit?: PurchaseUnit;  // 'box' or 'case' for gloves; undefined for non-glove items
+  size?: string;    // glove size (S, M, L, XL, XXL)
 };
 
 type CartContextType = {
   items: CartItem[];
   addItem: (item: Omit<CartItem, 'quantity'>, addQty?: number) => void;
-  removeItem: (id: string, plan: PurchasePlan, purchaseUnit?: PurchaseUnit) => void;
-  updateQty: (id: string, plan: PurchasePlan, qty: number, purchaseUnit?: PurchaseUnit) => void;
+  removeItem: (id: string, plan: PurchasePlan, purchaseUnit?: PurchaseUnit, size?: string) => void;
+  updateQty: (id: string, plan: PurchasePlan, qty: number, purchaseUnit?: PurchaseUnit, size?: string) => void;
   clearCart: () => void;
   total: number;
   count: number;
@@ -67,11 +68,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const safeQty = Math.max(1, Math.floor(addQty));
     setItems((current) => {
       const existing = current.find(
-        (i) => i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box')
+        (i) => i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box') && (i.size ?? '') === (newItem.size ?? '')
       );
       if (existing) {
         return current.map((i) =>
-          i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box')
+          i.id === newItem.id && i.plan === newItem.plan && (i.purchaseUnit ?? 'box') === (newItem.purchaseUnit ?? 'box') && (i.size ?? '') === (newItem.size ?? '')
             ? { ...i, quantity: i.quantity + safeQty }
             : i
         );
@@ -81,23 +82,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setIsOpen(true);
   };
 
-  const removeItem = (id: string, plan: PurchasePlan, purchaseUnit?: PurchaseUnit) => {
+  const removeItem = (id: string, plan: PurchasePlan, purchaseUnit?: PurchaseUnit, size?: string) => {
     setItems((current) => current.filter(
-      (i) => !(i.id === id && i.plan === plan && (i.purchaseUnit ?? 'box') === (purchaseUnit ?? 'box'))
+      (i) => !(i.id === id && i.plan === plan && (i.purchaseUnit ?? 'box') === (purchaseUnit ?? 'box') && (i.size ?? '') === (size ?? ''))
     ));
   };
 
-  const updateQty = (id: string, plan: PurchasePlan, qty: number, purchaseUnit?: PurchaseUnit) => {
+  const updateQty = (id: string, plan: PurchasePlan, qty: number, purchaseUnit?: PurchaseUnit, size?: string) => {
     const safeQty = Math.floor(qty);
     if (safeQty < 1) {
-      removeItem(id, plan, purchaseUnit);
+      removeItem(id, plan, purchaseUnit, size);
       return;
     }
     // Cap at 10,000 to match server-side limit
     const clampedQty = Math.min(safeQty, 10000);
     setItems((current) =>
       current.map((i) =>
-        i.id === id && i.plan === plan && (i.purchaseUnit ?? 'box') === (purchaseUnit ?? 'box')
+        i.id === id && i.plan === plan && (i.purchaseUnit ?? 'box') === (purchaseUnit ?? 'box') && (i.size ?? '') === (size ?? '')
           ? { ...i, quantity: clampedQty }
           : i
       )

@@ -48,6 +48,10 @@ export async function POST(req: NextRequest) {
       if (item.purchaseUnit && item.purchaseUnit !== 'box' && item.purchaseUnit !== 'case') {
         return NextResponse.json({ error: `Invalid purchaseUnit "${item.purchaseUnit}" for "${item.id}".` }, { status: 400 });
       }
+      const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+      if (item.size && !VALID_SIZES.includes(item.size)) {
+        return NextResponse.json({ error: `Invalid size "${item.size}" for "${item.id}".` }, { status: 400 });
+      }
     }
 
     // ── Server-side price validation ──
@@ -137,10 +141,12 @@ export async function POST(req: NextRequest) {
         : item.purchaseUnit === 'box'
           ? ' (Box)'
           : '';
+      const sizeLabel = item.size ? ` — Size ${item.size}` : '';
       const planLabel = item.plan === 'autoship' ? ' — Subscribe & Save' : '';
-      const itemName = `${item.name}${unitLabel}${planLabel}`;
+      const itemName = `${item.name}${unitLabel}${sizeLabel}${planLabel}`;
 
       const notes: string[] = [];
+      if (item.size) notes.push(`Size: ${item.size}`);
       if (item.plan === 'autoship') notes.push('Monthly autoship — 10% off');
       if (item.purchaseUnit === 'case') notes.push('1 case = 10 boxes (1000 gloves)');
 

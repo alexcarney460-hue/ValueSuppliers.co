@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface OrderItem {
   product_name: string;
@@ -44,6 +45,7 @@ function fmtDate(iso: string) {
 }
 
 export default function OrdersPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -135,7 +137,7 @@ export default function OrdersPage() {
                   ? items.map((i) => `${i.product_name}${i.quantity > 1 ? ` ×${i.quantity}` : ''}`).join(', ')
                   : '—';
                 return (
-                  <tr key={String(o.id)} style={{ borderBottom: '1px solid var(--color-border, #e4e1db)' }}>
+                  <tr key={String(o.id)} onClick={() => router.push(`/admin/accounting/orders/${o.id}`)} style={{ borderBottom: '1px solid var(--color-border, #e4e1db)', cursor: 'pointer' }}>
                     <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>#{String(o.id).slice(-8)}</td>
                     <td style={{ padding: '12px' }}>
                       <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>{o.shipping_name || '—'}</div>
