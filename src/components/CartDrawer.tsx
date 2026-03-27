@@ -29,7 +29,8 @@ export default function CartDrawer() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const supabase = getSupabase();
+    let supabase: ReturnType<typeof getSupabase>;
+    try { supabase = getSupabase(); } catch { return; }
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) {
         setEmailVerified(!!data.session.user.email_confirmed_at);

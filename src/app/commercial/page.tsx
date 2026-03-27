@@ -1,24 +1,36 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Truck, BadgeCheck, ArrowRight, Package, ChevronRight, Shield, Building2, Utensils, Stethoscope, Wrench, Beaker } from 'lucide-react';
+import { Truck, BadgeCheck, ArrowRight, Package, ChevronRight, Shield, Building2, Utensils, Stethoscope, Wrench, Beaker, Leaf } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
+import COMMERCIAL_PRODUCTS, { type CommercialProduct } from '@/lib/commercial-products';
 
 export const metadata: Metadata = {
-  title: 'Commercial Disposable Gloves — Bulk Industry Pricing',
+  title: 'Commercial Disposable Gloves — Nitrile, Latex & Vinyl | Bulk Pricing',
   description:
-    'Bulk disposable gloves for food service, medical, janitorial, automotive, and industrial use. Nitrile, latex, and vinyl. Case pricing with fast nationwide shipping.',
-  keywords: ['commercial disposable gloves', 'bulk nitrile gloves', 'food service gloves', 'medical exam gloves', 'industrial gloves bulk', 'janitorial gloves case'],
+    'Full catalog of nitrile, latex, and vinyl disposable gloves for food service, medical, janitorial, automotive, cannabis, and industrial use. 19 SKUs from 3mil to 8mil. Case pricing with fast nationwide shipping.',
+  keywords: ['commercial disposable gloves', 'bulk nitrile gloves', 'food service gloves', 'medical exam gloves', 'industrial gloves bulk', 'vinyl gloves', 'latex gloves', 'diamond grip gloves', '8mil nitrile'],
   alternates: { canonical: 'https://valuesuppliers.co/commercial' },
   openGraph: {
-    title: 'Commercial Disposable Gloves — Bulk Industry Pricing',
-    description: 'Nitrile, latex, and vinyl gloves for every industry. Retail $70/case, wholesale $60/case (30+), distribution $50/case (120+).',
+    title: 'Commercial Disposable Gloves — Nitrile, Latex & Vinyl',
+    description: '19 SKUs from 3mil to 8mil. Nitrile, latex, and vinyl gloves for every industry. Bulk case pricing with volume discounts.',
     url: 'https://valuesuppliers.co/commercial',
+    type: 'website',
+    siteName: 'Value Suppliers',
+    images: [
+      {
+        url: 'https://valuesuppliers.co/og-commercial.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Value Suppliers commercial disposable gloves — nitrile, latex, and vinyl in bulk cases',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Commercial Disposable Gloves | ValueSuppliers.co',
-    description: 'Bulk gloves for food service, medical, janitorial, and industrial operations. ASTM certified, fast shipping.',
+    title: 'Commercial Disposable Gloves — Nitrile, Latex & Vinyl | Value Suppliers',
+    description: '19 SKUs from 3mil to 8mil. Bulk case pricing with volume discounts for every industry.',
+    images: ['https://valuesuppliers.co/og-commercial.jpg'],
   },
 };
 
@@ -29,11 +41,22 @@ const INDUSTRIES = [
   { icon: Wrench, name: 'Automotive & Trades', desc: 'Mechanics, body shops, painting, and detailing', color: '#37474F' },
   { icon: Beaker, name: 'Laboratory & Research', desc: 'Scientific, quality control, and testing environments', color: '#6A1B9A' },
   { icon: Shield, name: 'Safety & Compliance', desc: 'Hazmat handling, industrial safety, and PPE programs', color: '#C62828' },
+  { icon: Leaf, name: 'Cannabis & Cultivation', desc: 'Trimming, processing, and grow operations', color: '#388E3C' },
 ];
 
-const PRODUCT_TEASERS = [
-  { slug: 'nitrile-5mil-box', category: 'Nitrile', name: '5 mil Nitrile Gloves — Box', detail: '5 mil · S–XXL · 100 gloves', price: '$7.00', badge: null, img: '/products/product-5.avif' },
-  { slug: 'nitrile-5mil-case', category: 'Nitrile', name: '5 mil Nitrile Gloves — Case', detail: '10 boxes · 1,000 gloves', price: '$70.00', badge: 'Best Value', img: '/products/product-3.avif' },
+const PRICING_CHART = [
+  { sku: 'GP30/31/32/33', desc: '3.5mil Nitrile (Colors)', perBox: '$49.99', perCase: '$399.99', wholesale: '$349.99', distributor: '$299.99', glovesBox: '100', color: '#7B1FA2' },
+  { sku: 'Dental Mates', desc: '4mil Nitrile Exam', perBox: '$35.00', perCase: '$299.00', wholesale: '$259.00', distributor: '$219.00', glovesBox: '100', color: '#1565C0' },
+  { sku: 'GP40', desc: '4mil Nitrile Blue', perBox: '$54.99', perCase: '$449.99', wholesale: '$389.99', distributor: '$339.99', glovesBox: '100', color: '#1565C0' },
+  { sku: 'Super Thin', desc: '4mil Surgeon Grade', perBox: '$39.99', perCase: '$319.00', wholesale: '$279.00', distributor: '$239.00', glovesBox: '100', color: '#0277BD' },
+  { sku: 'GP50', desc: '5mil Nitrile Black', perBox: '$59.99', perCase: '$479.99', wholesale: '$419.99', distributor: '$359.99', glovesBox: '100', color: '#212121' },
+  { sku: 'GP51', desc: '5.5mil Nitrile Black', perBox: '$63.99', perCase: '$489.99', wholesale: '$429.99', distributor: '$369.99', glovesBox: '100', color: '#212121' },
+  { sku: 'GP63', desc: '6mil Nitrile Black', perBox: '$69.99', perCase: '$529.99', wholesale: '$459.99', distributor: '$399.99', glovesBox: '100', color: '#212121' },
+  { sku: 'GP66/67/68', desc: '8mil Diamond Grip (3 Colors)', perBox: '$119.99', perCase: '$939.99', wholesale: '$819.99', distributor: '$699.99', glovesBox: '50', color: '#E65100' },
+  { sku: '3mil Purple', desc: '3mil Nitrile 200ct', perBox: '$79.00', perCase: '$699.00', wholesale: '$599.00', distributor: '$499.00', glovesBox: '200', color: '#7B1FA2' },
+  { sku: 'GP35', desc: '3.5mil Blue 250ct', perBox: '$119.99', perCase: '$969.00', wholesale: '$849.00', distributor: '$749.00', glovesBox: '250', color: '#1565C0' },
+  { sku: 'Latex Exam', desc: '5.6mil Polymer Coated', perBox: '$52.22', perCase: '$489.00', wholesale: '$429.00', distributor: '$369.00', glovesBox: '100', color: '#F9A825' },
+  { sku: 'GP36/37/38', desc: 'Vinyl (Blue/Black/Clear)', perBox: '$54.99', perCase: '$409.99', wholesale: '$359.99', distributor: '$309.99', glovesBox: '100', color: '#546E7A' },
 ];
 
 const TIER_CARDS = [
@@ -42,7 +65,7 @@ const TIER_CARDS = [
     color: 'var(--color-warm-gray)',
     accentBg: '#F7F7F6',
     headline: 'Order What You Need',
-    description: '$70/case ($7/box) for 1–29 cases. No application needed — perfect for small businesses and offices.',
+    description: 'Per-box and per-case pricing for 1–29 cases. No application needed — perfect for small businesses and offices.',
     cta: 'Shop Now',
     href: '/catalog',
   },
@@ -51,7 +74,7 @@ const TIER_CARDS = [
     color: 'var(--color-muted-green)',
     accentBg: '#EDF7F0',
     headline: 'Volume Discounts',
-    description: '$60/case ($6/box) on 30+ case orders. Save $10/case with fast restock and priority fulfillment.',
+    description: 'Save 10–15% per case on 30+ case orders. Priority fulfillment and fast restock.',
     cta: 'Get Wholesale Pricing',
     href: '/wholesale',
   },
@@ -60,7 +83,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Enterprise Programs',
-    description: '$50/case ($5/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk freight pricing.',
+    description: 'Save 20–25% per case on 120+ case orders. NET terms, dedicated rep, and bulk freight pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -69,42 +92,136 @@ const TIER_CARDS = [
 const FAQ_ITEMS = [
   {
     q: 'What types of gloves do you carry?',
-    a: 'We carry nitrile (blue and black), latex exam-grade, and vinyl disposable gloves — all 5 mil thickness. Every glove is powder-free and available in sizes XS through XXL, sold by the 100-count case.',
+    a: 'We carry 19 SKUs across nitrile (3mil to 8mil in purple, blue, pink, rose red, black, green, and orange), latex exam-grade (5.6mil polymer-coated), and vinyl (blue, black, clear). All gloves are powder-free and available in sizes XS through XXL.',
   },
   {
     q: 'What certifications do your gloves have?',
-    a: 'Our nitrile and latex gloves are ASTM-certified for industrial and exam-grade use (ASTM D6319 and ASTM D3578). Vinyl gloves meet FDA food-contact requirements. All products carry an AQL rating of 1.5–2.5.',
+    a: 'Our nitrile and latex gloves are ASTM-certified for industrial and exam-grade use (ASTM D6319 and ASTM D3578). The GP51 is approved for chemo and fentanyl protection. Vinyl gloves meet FDA food-contact requirements. All products carry an AQL rating of 1.5–2.5.',
   },
   {
     q: 'Is there a minimum order?',
-    a: 'Retail customers can order 1–29 cases at $70/case ($7/box) with no application needed. Wholesale accounts ($60/case) require 30+ cases per order. Distribution accounts ($50/case) require 120+ cases per order and are designed for commercial operations and resellers.',
+    a: 'No minimum — buy a single box or a full case. Retail pricing applies to 1–29 cases. Wholesale accounts (30+ cases) and distribution accounts (120+ cases) unlock deeper volume discounts.',
   },
   {
     q: 'What are your shipping rates?',
-    a: 'Shipping is calculated by weight, starting at $7.99 for light packages. We automatically select the cheapest carrier rate for every order. We ship to all 48 contiguous states with 1–2 day processing.',
-  },
-  {
-    q: 'Can I set up recurring orders?',
-    a: 'Yes! Our Subscribe & Save program gives you 10% off every order with automatic monthly, biweekly, or quarterly delivery. Select "Subscribe & Save" when adding items to your cart. You can pause, change frequency, or cancel anytime from your account page.',
+    a: 'Shipping is calculated by weight, starting at $7.99 for light packages. We automatically select the cheapest carrier rate for every order and ship to all 48 contiguous states with 1–2 day processing.',
   },
   {
     q: 'Do you offer NET terms for businesses?',
     a: 'Distribution accounts have access to NET 30 terms with approved credit. Contact us at admin@valuesuppliersdirect.com for custom payment arrangements on large or recurring orders.',
   },
+  {
+    q: 'What is the difference between 3.5mil and 8mil gloves?',
+    a: 'Thinner gloves (3–4mil) offer better tactile sensitivity and are ideal for food handling, medical exams, and light tasks. Thicker gloves (5–8mil) provide superior puncture, chemical, and grease resistance for heavy industrial, automotive, and hazmat applications. The 8mil diamond grip adds raised texture for maximum grip.',
+  },
 ];
 
 const STATS = [
-  { value: '500+', label: 'Businesses Served' },
-  { value: '5 mil', label: 'Glove Thickness' },
+  { value: '19', label: 'Product SKUs' },
+  { value: '3–8', label: 'Mil Range' },
   { value: '48',  label: 'States Shipped' },
   { value: '1-2d', label: 'Processing Time' },
 ];
 
 const FEATURE_ITEMS = [
   { icon: Package, label: 'Bulk Case Pricing', sub: 'Volume discounts that scale with your business' },
-  { icon: BadgeCheck, label: 'ASTM Certified', sub: 'Industrial and exam-grade certifications' },
+  { icon: BadgeCheck, label: 'ASTM & FDA Certified', sub: 'Industrial, exam, and food-grade certifications' },
   { icon: Truck, label: 'Fast Shipping', sub: 'Best-rate carriers to all 48 states' },
 ];
+
+const nitrileProducts = COMMERCIAL_PRODUCTS.filter(p => p.category === 'Nitrile');
+const latexProducts = COMMERCIAL_PRODUCTS.filter(p => p.category === 'Latex');
+const vinylProducts = COMMERCIAL_PRODUCTS.filter(p => p.category === 'Vinyl');
+
+function ProductCard({ product, index }: { product: CommercialProduct; index: number }) {
+  return (
+    <AnimateIn delay={index * 60}>
+      <Link href={`/commercial/${product.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+        <div
+          className="tilt-card"
+          style={{
+            backgroundColor: '#fff',
+            border: '1px solid var(--color-border)',
+            borderRadius: 20,
+            overflow: 'hidden',
+            boxShadow: 'var(--shadow-xs)',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            transition: 'box-shadow 0.25s ease, transform 0.25s ease',
+            cursor: 'pointer',
+          }}
+        >
+          <div className="vs-img-shine" style={{ height: 200, position: 'relative', backgroundColor: '#f5f5f5', flexShrink: 0 }}>
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(21,101,192,0.06) 0%, transparent 70%)',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            />
+            <Image
+              src={product.img}
+              alt={product.name}
+              fill
+              style={{ objectFit: 'contain', padding: 12 }}
+              sizes="(max-width: 768px) 50vw, 20vw"
+            />
+            {product.badge && (
+              <span
+                className="label-caps"
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                  backgroundColor: product.badge === 'Heavy Duty' ? '#E65100' : '#1565C0',
+                  color: '#fff',
+                  padding: '4px 10px',
+                  borderRadius: 9999,
+                  fontSize: '0.58rem',
+                  zIndex: 2,
+                }}
+              >
+                {product.badge}
+              </span>
+            )}
+          </div>
+
+          <div style={{ padding: '16px 16px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <span className="label-caps" style={{ color: '#1565C0', fontSize: '0.58rem' }}>
+              {product.category} · {product.thickness}
+            </span>
+            <h3 className="font-heading" style={{ fontSize: '0.88rem', marginTop: 4, marginBottom: 4, color: 'var(--color-charcoal)', lineHeight: 1.3 }}>
+              {product.shortName}
+            </h3>
+            <p style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginBottom: 'auto', paddingBottom: 12, lineHeight: 1.5 }}>
+              {product.color} · {product.glovesPerBox}ct/box · {product.boxesPerCase} boxes/case
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
+              <div>
+                <span className="font-mono" style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-charcoal)' }}>
+                  ${product.price.toFixed(2)}
+                </span>
+                <span style={{ fontSize: '0.68rem', color: 'var(--color-warm-gray)', marginLeft: 4 }}>
+                  {product.unit}
+                </span>
+              </div>
+              {product.sku ? (
+                <span className="label-caps" style={{ color: 'var(--color-warm-gray)', fontSize: '0.58rem' }}>
+                  {product.sku}
+                </span>
+              ) : (
+                <span style={{ color: '#1565C0', fontSize: '0.72rem', fontWeight: 600 }}>View &rarr;</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Link>
+    </AnimateIn>
+  );
+}
 
 export default function CommercialPage() {
   return (
@@ -112,6 +229,8 @@ export default function CommercialPage() {
 
       {/* MARQUEE TRUST BAR */}
       <div
+        role="marquee"
+        aria-label="Product highlights: 19 SKUs in stock, 3mil to 8mil thickness, ASTM and FDA certified, bulk case pricing, fast 48-state shipping"
         style={{ backgroundColor: '#1C1C1C', padding: '14px 0', overflow: 'hidden' }}
         className="vs-marquee"
       >
@@ -128,7 +247,7 @@ export default function CommercialPage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              ASTM Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast Shipping &nbsp;·&nbsp; Retail $7/box &nbsp;·&nbsp; Wholesale $60/case &nbsp;·&nbsp; Distribution $50/case &nbsp;·&nbsp; All Industries Served
+              19 SKUs In Stock &nbsp;·&nbsp; 3mil to 8mil Thickness &nbsp;·&nbsp; Nitrile · Latex · Vinyl &nbsp;·&nbsp; ASTM & FDA Certified &nbsp;·&nbsp; Bulk Case Pricing &nbsp;·&nbsp; Fast 48-State Shipping &nbsp;·&nbsp; Volume Discounts Available
             </span>
           ))}
         </div>
@@ -188,25 +307,25 @@ export default function CommercialPage() {
               className="font-display vs-fade-up-1"
               style={{ fontSize: 'clamp(2.75rem, 5.5vw, 4.75rem)', lineHeight: 0.93, marginBottom: 26, letterSpacing: '-0.01em', color: 'var(--color-charcoal)' }}
             >
-              Professional Gloves
+              19 SKUs.
               <br />
-              for Every
+              Every Thickness.
               <br />
-              <span style={{ color: '#1565C0' }}>Industry.</span>
+              <span style={{ color: '#1565C0' }}>Every Industry.</span>
             </h1>
 
             <p
               className="vs-fade-up-2"
               style={{ fontSize: '1.05rem', color: 'var(--color-warm-gray)', maxWidth: 440, lineHeight: 1.8, marginBottom: 40 }}
             >
-              ASTM-certified nitrile, latex, and vinyl disposable gloves.
-              Bulk case pricing for food service, medical, janitorial,
-              automotive, and industrial operations.
+              Nitrile, latex, and vinyl disposable gloves from 3mil to 8mil.
+              FDA and ASTM certified. Bulk case pricing for food service, medical,
+              automotive, cannabis, and industrial operations.
             </p>
 
             <div className="vs-fade-up-3" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <Link
-                href="/catalog"
+              <a
+                href="#products"
                 className="vs-btn-amber"
                 style={{
                   backgroundColor: '#1565C0',
@@ -217,7 +336,7 @@ export default function CommercialPage() {
                   fontWeight: 700,
                   fontSize: '0.82rem',
                   letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
+                  textTransform: 'uppercase' as const,
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -225,10 +344,10 @@ export default function CommercialPage() {
                   boxShadow: '0 4px 20px rgba(21,101,192,0.25)',
                 }}
               >
-                Shop Gloves <ArrowRight size={14} />
-              </Link>
-              <Link
-                href="/wholesale"
+                View Full Catalog <ArrowRight size={14} />
+              </a>
+              <a
+                href="#pricing"
                 style={{
                   backgroundColor: 'transparent',
                   color: 'var(--color-charcoal)',
@@ -239,15 +358,15 @@ export default function CommercialPage() {
                   fontWeight: 600,
                   fontSize: '0.82rem',
                   letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
+                  textTransform: 'uppercase' as const,
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
                 }}
               >
-                Wholesale Pricing
-              </Link>
+                Pricing Chart
+              </a>
             </div>
 
             <div
@@ -304,8 +423,8 @@ export default function CommercialPage() {
                 }}
               >
                 <Image
-                  src="/products/product-1.avif"
-                  alt="Professional Nitrile Gloves"
+                  src="/products/gp/gp66-black-8mil.jpg"
+                  alt="GP66 Heavy Duty 8mil Diamond Grip Nitrile Gloves"
                   fill
                   style={{ objectFit: 'cover' }}
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -338,8 +457,8 @@ export default function CommercialPage() {
                   <Shield size={18} color="#1565C0" />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-charcoal)' }}>ASTM Certified</div>
-                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>Industrial &amp; Exam Grade</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-charcoal)' }}>ASTM & FDA Certified</div>
+                  <div style={{ fontSize: '0.73rem', color: 'var(--color-warm-gray)', marginTop: 1 }}>Industrial, Exam &amp; Food Grade</div>
                 </div>
               </div>
 
@@ -358,11 +477,11 @@ export default function CommercialPage() {
                   fontFamily: "'Barlow', Arial, sans-serif",
                   fontWeight: 700,
                   letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
+                  textTransform: 'uppercase' as const,
                   boxShadow: '0 4px 16px rgba(21,101,192,0.3)',
                 }}
               >
-                100 ct / case
+                19 Products In Stock
               </div>
             </div>
           </div>
@@ -395,6 +514,157 @@ export default function CommercialPage() {
         </div>
       </section>
 
+      {/* ─── PRICING CHART ─────────────────────────────────────────────── */}
+      <section id="pricing" aria-label="Pricing chart for all disposable glove products" style={{ backgroundColor: '#fff', padding: '96px 24px', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <AnimateIn style={{ textAlign: 'center', marginBottom: 48 }}>
+            <span className="label-caps" style={{ color: '#1565C0' }}>
+              Transparent Pricing
+            </span>
+            <h2
+              className="font-display"
+              style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginTop: 10, color: 'var(--color-charcoal)' }}
+            >
+              Complete Pricing Chart
+            </h2>
+            <p style={{ color: 'var(--color-warm-gray)', fontSize: '0.95rem', marginTop: 12, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
+              All prices shown per box (retail) and per case (10 boxes). Volume discounts unlock automatically at 30+ and 120+ cases.
+            </p>
+          </AnimateIn>
+
+          <AnimateIn>
+            <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800, fontSize: '0.85rem' }}>
+                <caption style={{ captionSide: 'top', textAlign: 'left', padding: '0 0 12px', fontSize: '0.78rem', color: 'var(--color-warm-gray)', fontStyle: 'italic' }}>
+                  Pricing for all 19 disposable glove SKUs across retail, wholesale, and distributor tiers
+                </caption>
+                <thead>
+                  <tr style={{ backgroundColor: '#1C1C1C' }}>
+                    <th scope="col" style={{ ...thStyle, borderTopLeftRadius: 15 }}>Product</th>
+                    <th scope="col" style={thStyle}>Description</th>
+                    <th scope="col" style={thStyle}>Ct/Box</th>
+                    <th scope="col" style={thStyle}>Per Box</th>
+                    <th scope="col" style={{ ...thStyle, backgroundColor: 'rgba(21,101,192,0.15)' }}>Per Case (10)</th>
+                    <th scope="col" style={{ ...thStyle, backgroundColor: 'rgba(46,125,50,0.15)' }}>Wholesale (30+)</th>
+                    <th scope="col" style={{ ...thStyle, borderTopRightRadius: 15, backgroundColor: 'rgba(200,146,42,0.15)' }}>Distributor (120+)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PRICING_CHART.map((row, i) => (
+                    <tr
+                      key={row.sku}
+                      style={{
+                        backgroundColor: i % 2 === 0 ? '#fff' : '#FAFAFA',
+                        borderBottom: '1px solid var(--color-border)',
+                      }}
+                    >
+                      <th scope="row" style={{ ...tdStyle, fontWeight: 700 }}>
+                        <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: row.color, marginRight: 8, flexShrink: 0 }} aria-hidden="true" />
+                        {row.sku}
+                      </th>
+                      <td style={{ ...tdStyle, color: 'var(--color-warm-gray)' }}>{row.desc}</td>
+                      <td style={{ ...tdStyle, textAlign: 'center' }}>{row.glovesBox}</td>
+                      <td style={{ ...tdStyle, textAlign: 'center', fontFamily: "'JetBrains Mono', monospace" }}>{row.perBox}</td>
+                      <td style={{ ...tdStyle, textAlign: 'center', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, backgroundColor: i % 2 === 0 ? 'rgba(21,101,192,0.04)' : 'rgba(21,101,192,0.07)' }}>{row.perCase}</td>
+                      <td style={{ ...tdStyle, textAlign: 'center', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, color: '#2E7D32', backgroundColor: i % 2 === 0 ? 'rgba(46,125,50,0.04)' : 'rgba(46,125,50,0.07)' }}>{row.wholesale}</td>
+                      <td style={{ ...tdStyle, textAlign: 'center', fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#8B6914', backgroundColor: i % 2 === 0 ? 'rgba(200,146,42,0.04)' : 'rgba(200,146,42,0.07)' }}>{row.distributor}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </AnimateIn>
+
+          <AnimateIn style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', color: 'var(--color-warm-gray)', padding: '6px 14px', backgroundColor: '#FAFAFA', borderRadius: 9999, border: '1px solid var(--color-border)' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#1565C0' }} aria-hidden="true" /> Per Case = 10 boxes
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', color: '#2E7D32', padding: '6px 14px', backgroundColor: 'rgba(46,125,50,0.06)', borderRadius: 9999, border: '1px solid rgba(46,125,50,0.15)' }}>
+              Wholesale = 30+ cases (save 10–15%)
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', color: '#8B6914', padding: '6px 14px', backgroundColor: 'rgba(200,146,42,0.06)', borderRadius: 9999, border: '1px solid rgba(200,146,42,0.15)' }}>
+              Distributor = 120+ cases (save 20–25%)
+            </span>
+          </AnimateIn>
+        </div>
+      </section>
+
+      {/* ─── FULL PRODUCT CATALOG ─────────────────────────────────────── */}
+      <section id="products" style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+
+          {/* Nitrile */}
+          <AnimateIn style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <span className="label-caps" style={{ color: '#1565C0' }}>Nitrile Gloves</span>
+                <h2 className="font-display" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', marginTop: 8, color: 'var(--color-charcoal)' }}>
+                  15 Nitrile SKUs — 3mil to 8mil
+                </h2>
+              </div>
+              <Link
+                href="/catalog"
+                style={{
+                  color: '#1565C0',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 700,
+                  fontSize: '0.78rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase' as const,
+                  fontFamily: "'Barlow', Arial, sans-serif",
+                  padding: '6px 14px',
+                  borderRadius: 9999,
+                  border: '1.5px solid var(--color-border)',
+                }}
+              >
+                View All <ArrowRight size={13} />
+              </Link>
+            </div>
+          </AnimateIn>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16, marginBottom: 64 }}>
+            {nitrileProducts.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+
+          {/* Latex */}
+          <AnimateIn style={{ marginBottom: 32 }}>
+            <div>
+              <span className="label-caps" style={{ color: '#F9A825' }}>Latex Gloves</span>
+              <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 8, color: 'var(--color-charcoal)' }}>
+                Exam-Grade Latex — Polymer Coated
+              </h2>
+            </div>
+          </AnimateIn>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16, marginBottom: 64 }}>
+            {latexProducts.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+
+          {/* Vinyl */}
+          <AnimateIn style={{ marginBottom: 32 }}>
+            <div>
+              <span className="label-caps" style={{ color: '#546E7A' }}>Vinyl Gloves</span>
+              <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginTop: 8, color: 'var(--color-charcoal)' }}>
+                Vinyl — Blue, Black &amp; Clear
+              </h2>
+            </div>
+          </AnimateIn>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
+            {vinylProducts.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* INDUSTRIES WE SERVE */}
       <section style={{ backgroundColor: '#fff', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -410,41 +680,41 @@ export default function CommercialPage() {
             </h2>
           </AnimateIn>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18 }}>
             {INDUSTRIES.map((ind, i) => {
               const Icon = ind.icon;
               return (
-                <AnimateIn key={ind.name} delay={i * 80}>
+                <AnimateIn key={ind.name} delay={i * 60}>
                   <div
                     style={{
                       backgroundColor: '#fff',
                       border: '1px solid var(--color-border)',
-                      borderRadius: 20,
-                      padding: '32px 28px',
+                      borderRadius: 18,
+                      padding: '28px 24px',
                       boxShadow: 'var(--shadow-xs)',
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: 14,
+                      gap: 12,
                     }}
                   >
                     <div
                       style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 14,
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
                         backgroundColor: `${ind.color}10`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
-                      <Icon size={22} color={ind.color} />
+                      <Icon size={20} color={ind.color} />
                     </div>
-                    <h3 className="font-heading" style={{ fontSize: '1.1rem', color: 'var(--color-charcoal)' }}>
+                    <h3 className="font-heading" style={{ fontSize: '1rem', color: 'var(--color-charcoal)' }}>
                       {ind.name}
                     </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--color-warm-gray)', lineHeight: 1.65, margin: 0 }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--color-warm-gray)', lineHeight: 1.6, margin: 0 }}>
                       {ind.desc}
                     </p>
                   </div>
@@ -455,126 +725,8 @@ export default function CommercialPage() {
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
-      <section style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <AnimateIn style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48, flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <span className="label-caps" style={{ color: '#1565C0' }}>
-                Our Products
-              </span>
-              <h2
-                className="font-display"
-                style={{ fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', marginTop: 10, color: 'var(--color-charcoal)' }}
-              >
-                Stocked and Ready to Ship
-              </h2>
-            </div>
-            <Link
-              href="/catalog"
-              style={{
-                color: '#1565C0',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                fontFamily: "'Barlow', Arial, sans-serif",
-                padding: '8px 18px',
-                borderRadius: 9999,
-                border: '1.5px solid var(--color-border)',
-              }}
-            >
-              View All Products <ArrowRight size={14} />
-            </Link>
-          </AnimateIn>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            {PRODUCT_TEASERS.map((product, i) => (
-              <AnimateIn key={product.slug} delay={i * 90}>
-                <Link href={`/catalog/${product.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
-                  <div
-                    className="tilt-card"
-                    style={{
-                      backgroundColor: '#fff',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 20,
-                      overflow: 'hidden',
-                      boxShadow: 'var(--shadow-xs)',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <div className="vs-img-shine" style={{ height: 214, position: 'relative', backgroundColor: 'var(--color-sage-light)', flexShrink: 0 }}>
-                      <div
-                        style={{
-                          position: 'absolute',
-                          inset: 0,
-                          background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(21,101,192,0.08) 0%, transparent 70%)',
-                          pointerEvents: 'none',
-                          zIndex: 1,
-                        }}
-                      />
-                      <Image
-                        src={product.img}
-                        alt={product.name}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 768px) 100vw, 25vw"
-                      />
-                      {product.badge && (
-                        <span
-                          className="label-caps"
-                          style={{
-                            position: 'absolute',
-                            top: 12,
-                            right: 12,
-                            backgroundColor: '#1565C0',
-                            color: '#fff',
-                            padding: '5px 12px',
-                            borderRadius: 9999,
-                            fontSize: '0.62rem',
-                            zIndex: 2,
-                          }}
-                        >
-                          {product.badge}
-                        </span>
-                      )}
-                    </div>
-
-                    <div style={{ padding: '20px 20px 24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <span className="label-caps" style={{ color: '#1565C0', fontSize: '0.62rem' }}>
-                        {product.category}
-                      </span>
-                      <h3 className="font-heading" style={{ fontSize: '1rem', marginTop: 6, marginBottom: 4, color: 'var(--color-charcoal)' }}>
-                        {product.name}
-                      </h3>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--color-warm-gray)', marginBottom: 'auto', paddingBottom: 18 }}>
-                        {product.detail}
-                      </p>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 14 }}>
-                        <span className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-charcoal)' }}>
-                          {product.price}
-                        </span>
-                        <span className="vs-card-arrow label-caps" style={{ color: '#1565C0', fontSize: '0.68rem' }}>
-                          View <ArrowRight size={12} />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </AnimateIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* TIER CARDS */}
-      <section style={{ backgroundColor: '#fff', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
+      <section style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <AnimateIn style={{ textAlign: 'center', marginBottom: 56 }}>
             <span className="label-caps" style={{ color: '#1565C0' }}>
@@ -644,7 +796,7 @@ export default function CommercialPage() {
                       fontWeight: 700,
                       fontSize: '0.78rem',
                       letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
+                      textTransform: 'uppercase' as const,
                       textDecoration: 'none',
                       alignSelf: 'flex-start',
                     }}
@@ -660,7 +812,7 @@ export default function CommercialPage() {
       </section>
 
       {/* WHY VALUE SUPPLIERS */}
-      <section style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
+      <section style={{ backgroundColor: '#fff', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 72, alignItems: 'center' }}>
           <AnimateIn>
             <span className="label-caps" style={{ color: '#1565C0', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
@@ -674,7 +826,7 @@ export default function CommercialPage() {
               We supply the gloves your team burns through every week — at prices that make sense for operations buying by the case, not the box.
             </p>
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 36, fontSize: '0.95rem' }}>
-              Volume pricing that rewards bigger orders — the more cases you buy, the more you save per case.
+              19 products across nitrile, latex, and vinyl. From thin 3mil food-handling gloves to 8mil diamond-grip industrial gloves. Volume pricing that rewards bigger orders.
             </p>
             <Link
               href="/catalog"
@@ -691,7 +843,7 @@ export default function CommercialPage() {
                 fontWeight: 700,
                 fontSize: '0.8rem',
                 letterSpacing: '0.12em',
-                textTransform: 'uppercase',
+                textTransform: 'uppercase' as const,
                 textDecoration: 'none',
               }}
             >
@@ -701,9 +853,9 @@ export default function CommercialPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             {[
-              { label: 'Retail from 1 Case', sub: 'No application needed for 1–29 cases' },
+              { label: '19 Products In Stock', sub: 'Nitrile, latex, and vinyl — 3mil to 8mil' },
               { label: 'Fast Processing', sub: '1–2 business day turnaround on all orders' },
-              { label: 'Volume Discounts', sub: 'Tiered pricing — bigger orders save more per case' },
+              { label: 'Volume Discounts', sub: 'Save 10–25% at wholesale and distributor tiers' },
               { label: 'Dedicated Support', sub: 'Real people, not chatbots, for account help' },
             ].map(({ label, sub }, i) => (
               <AnimateIn key={label} delay={i * 80}>
@@ -740,7 +892,7 @@ export default function CommercialPage() {
       </section>
 
       {/* FAQ */}
-      <section style={{ backgroundColor: '#fff', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
+      <section style={{ backgroundColor: '#FAFAFA', padding: '96px 24px', borderTop: '1px solid var(--color-border)' }}>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
           <AnimateIn style={{ textAlign: 'center', marginBottom: 56 }}>
             <span className="label-caps" style={{ color: '#1565C0' }}>Common Questions</span>
@@ -754,7 +906,7 @@ export default function CommercialPage() {
               <AnimateIn key={item.q} delay={i * 60}>
                 <div
                   style={{
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: '#fff',
                     border: '1px solid var(--color-border)',
                     borderRadius: 16,
                     padding: '24px 28px',
@@ -832,8 +984,8 @@ export default function CommercialPage() {
             Ready to Stock Up?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 44, fontSize: '1.05rem', lineHeight: 1.75 }}>
-            Order online today or apply for wholesale and distribution pricing.
-            Bulk discounts, NET terms, and a dedicated rep for qualifying accounts.
+            19 products in stock. Order online today or apply for wholesale and distribution pricing.
+            Volume discounts, NET terms, and a dedicated rep for qualifying accounts.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
@@ -848,7 +1000,7 @@ export default function CommercialPage() {
                 fontWeight: 700,
                 fontSize: '0.82rem',
                 letterSpacing: '0.12em',
-                textTransform: 'uppercase',
+                textTransform: 'uppercase' as const,
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -871,7 +1023,7 @@ export default function CommercialPage() {
                 fontWeight: 600,
                 fontSize: '0.82rem',
                 letterSpacing: '0.12em',
-                textTransform: 'uppercase',
+                textTransform: 'uppercase' as const,
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -898,3 +1050,22 @@ export default function CommercialPage() {
     </div>
   );
 }
+
+const thStyle: React.CSSProperties = {
+  padding: '14px 16px',
+  textAlign: 'left',
+  color: '#fff',
+  fontWeight: 700,
+  fontSize: '0.75rem',
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  fontFamily: "'Barlow', Arial, sans-serif",
+  whiteSpace: 'nowrap',
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: '12px 16px',
+  color: 'var(--color-charcoal)',
+  whiteSpace: 'nowrap',
+  verticalAlign: 'middle',
+};

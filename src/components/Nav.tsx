@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { Menu, X, Search, User, ShoppingCart, Truck } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import SearchModal from '@/components/SearchModal';
 
@@ -25,6 +25,11 @@ export default function Nav() {
   const { count, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const isCommercial = pathname?.startsWith('/commercial');
+  const visibleLinks = isCommercial
+    ? NAV_LINKS.filter((l) => l.href !== '/services')
+    : NAV_LINKS;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 8);
@@ -85,7 +90,7 @@ export default function Nav() {
 
           {/* Desktop nav */}
           <nav style={{ display: 'flex', gap: 32 }} className="desktop-nav">
-            {NAV_LINKS.map((link) => (
+            {visibleLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -293,7 +298,7 @@ export default function Nav() {
           </div>
 
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
-            {NAV_LINKS.map((link, i) => (
+            {visibleLinks.map((link, i) => (
               <Link
                 key={link.href}
                 href={link.href}
