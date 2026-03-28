@@ -105,7 +105,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What are your shipping rates?',
-    a: 'Shipping is calculated by weight, starting at $7.99 for light packages. We automatically select the cheapest carrier rate for every order and ship to all 48 contiguous states with 1–2 day processing.',
+    a: 'Free shipping on all orders over $200. Under $200, shipping is calculated by weight starting at $7.99. We automatically select the cheapest carrier rate and ship to all 48 contiguous states with 1–2 day processing.',
   },
   {
     q: 'Do you offer NET terms for businesses?',

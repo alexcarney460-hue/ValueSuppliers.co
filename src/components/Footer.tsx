@@ -103,7 +103,7 @@ export default function Footer() {
           <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem' }}>
             © {new Date().getFullYear()} ValueSuppliers.co. All rights reserved.
           </p>
-          <div style={{ display: 'flex', gap: 24 }}>
+          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
             <Link
               href="/contact"
               style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}
@@ -116,6 +116,14 @@ export default function Footer() {
             >
               Terms of Service
             </Link>
+            <a
+              href="https://clawforlife.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 999, padding: '4px 12px', transition: 'all 0.2s' }}
+            >
+              Powered by OpenClaw
+            </a>
           </div>
         </div>
       </div>

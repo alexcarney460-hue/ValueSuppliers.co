@@ -234,7 +234,7 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
       )}
 
       <p style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginTop: 12, lineHeight: 1.5 }}>
-        Ships within 1-2 business days. Free shipping on orders over $500.
+        Ships within 1-2 business days. Free shipping on orders over $200.
       </p>
     </div>
   );
