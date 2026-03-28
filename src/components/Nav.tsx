@@ -26,7 +26,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const isCommercial = pathname?.startsWith('/commercial');
+  const isCommercial = pathname?.startsWith('/commercial') || pathname?.startsWith('/catalog');
   const visibleLinks = isCommercial
     ? NAV_LINKS.filter((l) => l.href !== '/services')
     : NAV_LINKS;

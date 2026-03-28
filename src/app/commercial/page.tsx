@@ -67,7 +67,7 @@ const TIER_CARDS = [
     headline: 'Order What You Need',
     description: 'Per-box and per-case pricing for 1–29 cases. No application needed — perfect for small businesses and offices.',
     cta: 'Shop Now',
-    href: '/catalog',
+    href: '#products',
   },
   {
     tier: 'Wholesale',
@@ -602,8 +602,8 @@ export default function CommercialPage() {
                   15 Nitrile SKUs — 3mil to 8mil
                 </h2>
               </div>
-              <Link
-                href="/catalog"
+              <a
+                href="#products"
                 style={{
                   color: '#1565C0',
                   textDecoration: 'none',
@@ -621,7 +621,7 @@ export default function CommercialPage() {
                 }}
               >
                 View All <ArrowRight size={13} />
-              </Link>
+              </a>
             </div>
           </AnimateIn>
 
@@ -828,8 +828,8 @@ export default function CommercialPage() {
             <p style={{ color: 'var(--color-warm-gray)', lineHeight: 1.85, marginBottom: 36, fontSize: '0.95rem' }}>
               19 products across nitrile, latex, and vinyl. From thin 3mil food-handling gloves to 8mil diamond-grip industrial gloves. Volume pricing that rewards bigger orders.
             </p>
-            <Link
-              href="/catalog"
+            <a
+              href="#products"
               className="vs-btn-forest"
               style={{
                 display: 'inline-flex',
@@ -847,8 +847,8 @@ export default function CommercialPage() {
                 textDecoration: 'none',
               }}
             >
-              Browse Catalog <ArrowRight size={14} />
-            </Link>
+              View Products <ArrowRight size={14} />
+            </a>
           </AnimateIn>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -988,8 +988,8 @@ export default function CommercialPage() {
             Volume discounts, NET terms, and a dedicated rep for qualifying accounts.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link
-              href="/catalog"
+            <a
+              href="#products"
               className="vs-btn-amber"
               style={{
                 backgroundColor: '#1565C0',
@@ -1009,7 +1009,7 @@ export default function CommercialPage() {
               }}
             >
               Shop Now <ArrowRight size={14} />
-            </Link>
+            </a>
             <Link
               href="/wholesale"
               className="vs-btn-ghost"
