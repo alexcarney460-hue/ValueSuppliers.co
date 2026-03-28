@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import type { CommercialProduct } from '@/lib/commercial-products';
@@ -57,50 +58,54 @@ export default function CommercialProductCard({ product, index }: { product: Com
           transition: 'box-shadow 0.25s ease, transform 0.25s ease',
         }}
       >
-        <div className="vs-img-shine" style={{ height: 200, position: 'relative', backgroundColor: '#f5f5f5', flexShrink: 0 }}>
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(21,101,192,0.06) 0%, transparent 70%)',
-              pointerEvents: 'none',
-              zIndex: 1,
-            }}
-          />
-          <Image
-            src={product.img}
-            alt={product.name}
-            fill
-            style={{ objectFit: 'contain', padding: 12 }}
-            sizes="(max-width: 768px) 50vw, 20vw"
-          />
-          {product.badge && (
-            <span
-              className="label-caps"
+        <Link href={`/commercial/${product.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+          <div className="vs-img-shine" style={{ height: 200, position: 'relative', backgroundColor: '#f5f5f5', flexShrink: 0, cursor: 'pointer' }}>
+            <div
               style={{
                 position: 'absolute',
-                top: 10,
-                right: 10,
-                backgroundColor: product.badge === 'Heavy Duty' ? '#E65100' : '#1565C0',
-                color: '#fff',
-                padding: '4px 10px',
-                borderRadius: 9999,
-                fontSize: '0.58rem',
-                zIndex: 2,
+                inset: 0,
+                background: 'radial-gradient(ellipse 70% 55% at 50% 100%, rgba(21,101,192,0.06) 0%, transparent 70%)',
+                pointerEvents: 'none',
+                zIndex: 1,
               }}
-            >
-              {product.badge}
-            </span>
-          )}
-        </div>
+            />
+            <Image
+              src={product.img}
+              alt={product.name}
+              fill
+              style={{ objectFit: 'contain', padding: 12 }}
+              sizes="(max-width: 768px) 50vw, 20vw"
+            />
+            {product.badge && (
+              <span
+                className="label-caps"
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                  backgroundColor: product.badge === 'Heavy Duty' ? '#E65100' : '#1565C0',
+                  color: '#fff',
+                  padding: '4px 10px',
+                  borderRadius: 9999,
+                  fontSize: '0.58rem',
+                  zIndex: 2,
+                }}
+              >
+                {product.badge}
+              </span>
+            )}
+          </div>
+        </Link>
 
         <div style={{ padding: '16px 16px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
           <span className="label-caps" style={{ color: '#1565C0', fontSize: '0.58rem' }}>
             {product.category} · {product.thickness}
           </span>
-          <h3 className="font-heading" style={{ fontSize: '0.88rem', marginTop: 4, marginBottom: 4, color: 'var(--color-charcoal)', lineHeight: 1.3 }}>
-            {product.shortName}
-          </h3>
+          <Link href={`/commercial/${product.slug}`} style={{ textDecoration: 'none' }}>
+            <h3 className="font-heading" style={{ fontSize: '0.88rem', marginTop: 4, marginBottom: 4, color: 'var(--color-charcoal)', lineHeight: 1.3, cursor: 'pointer' }}>
+              {product.shortName}
+            </h3>
+          </Link>
           <p style={{ fontSize: '0.72rem', color: 'var(--color-warm-gray)', marginBottom: 'auto', paddingBottom: 12, lineHeight: 1.5 }}>
             {product.color} · {product.glovesPerBox}ct/box · {product.boxesPerCase} boxes/case
           </p>
