@@ -44,17 +44,27 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
   };
 
   return (
-    <div>
+    <div className="commercial-add-to-cart">
+      <style>{`
+        @media (max-width: 480px) {
+          .commercial-add-to-cart .plan-toggle { flex-direction: column !important; }
+          .commercial-add-to-cart .size-row { flex-wrap: wrap !important; }
+          .commercial-add-to-cart .add-row { flex-direction: column !important; }
+          .commercial-add-to-cart .add-row .qty-wrap { width: 100% !important; justify-content: center !important; }
+          .commercial-add-to-cart .add-row .add-btn { width: 100% !important; }
+        }
+      `}</style>
+
       {/* Size selector */}
       <div style={{ marginBottom: 20 }}>
         <div className="label-caps" style={{ fontSize: '0.65rem', color: 'var(--color-warm-gray)', marginBottom: 8 }}>Size</div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="size-row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {SIZES.map((s) => (
             <button
               key={s}
               onClick={() => setSize(s)}
               style={{
-                padding: '8px 16px',
+                padding: '10px 16px',
                 borderRadius: 8,
                 border: size === s ? '2px solid #1565C0' : '1px solid var(--color-border)',
                 backgroundColor: size === s ? '#E3F2FD' : '#fff',
@@ -63,6 +73,8 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
                 fontSize: '0.8rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                minWidth: 44,
+                minHeight: 44,
               }}
             >
               {s}
@@ -91,11 +103,12 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
                 cursor: 'pointer',
                 textAlign: 'center',
                 transition: 'all 0.15s ease',
+                minHeight: 44,
               }}
             >
               <div>{u === 'box' ? 'Single Box' : 'Full Case'}</div>
               <div style={{ fontSize: '0.7rem', fontWeight: 400, color: purchaseUnit === u ? '#1565C0' : 'var(--color-warm-gray)', marginTop: 2 }}>
-                {u === 'box' ? `${product.glovesPerBox} gloves` : `${product.boxesPerCase} boxes · ${product.glovesPerBox * product.boxesPerCase} gloves`}
+                {u === 'box' ? `${product.glovesPerBox} gloves` : `${product.boxesPerCase}× · ${product.glovesPerBox * product.boxesPerCase} gloves`}
               </div>
             </button>
           ))}
@@ -105,7 +118,7 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
       {/* One-time / Autoship toggle */}
       <div style={{ marginBottom: 20 }}>
         <div className="label-caps" style={{ fontSize: '0.65rem', color: 'var(--color-warm-gray)', marginBottom: 8 }}>Purchase Plan</div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="plan-toggle" style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => setPlan('one-time')}
             style={{
@@ -120,6 +133,7 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.15s ease',
+              minHeight: 44,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -145,6 +159,7 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.15s ease',
+              minHeight: 44,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -162,7 +177,7 @@ export default function CommercialAddToCart({ product, casePrice }: Props) {
       </div>
 
       {/* Quantity + Add to Cart */}
-      <div style={{ display: 'flex', gap: 12, alignItems: 'stretch' }}>
+      <div className="add-row" style={{ display: 'flex', gap: 12, alignItems: 'stretch' }}>
         {/* Qty selector */}
         <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--color-border)', borderRadius: 10, overflow: 'hidden' }}>
           <button

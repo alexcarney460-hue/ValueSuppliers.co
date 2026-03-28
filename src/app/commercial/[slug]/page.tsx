@@ -48,6 +48,18 @@ export default async function CommercialProductPage({
 
   return (
     <div style={{ paddingTop: 'var(--nav-height)', backgroundColor: '#fff', minHeight: '100vh' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .commercial-detail-main { padding: 24px 16px !important; }
+          .commercial-tier-row { flex-direction: column !important; gap: 4px !important; align-items: flex-start !important; }
+          .commercial-tier-row .font-mono { font-size: 1.15rem !important; }
+          .commercial-trust-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+          .commercial-related-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+        }
+        @media (max-width: 480px) {
+          .commercial-related-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
       {/* Breadcrumb */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid var(--color-border)', padding: '12px 24px' }}>
@@ -61,7 +73,7 @@ export default async function CommercialProductPage({
       </div>
 
       {/* Main product section */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+      <div className="commercial-detail-main" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }} className="vs-product-grid">
 
           {/* Left — Image */}
@@ -76,7 +88,7 @@ export default async function CommercialProductPage({
                   </span>
                 )}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 20 }}>
+              <div className="commercial-trust-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 20 }}>
                 {[
                   { icon: Package, label: 'Case Pricing', sub: `${product.boxesPerCase} boxes/case` },
                   { icon: Truck, label: 'Fast Shipping', sub: '1-2 day processing' },
@@ -105,7 +117,7 @@ export default async function CommercialProductPage({
 
             {/* Pricing tiers */}
             <div style={{ backgroundColor: '#fff', border: '1px solid var(--color-border)', borderRadius: 16, overflow: 'hidden', marginBottom: 28 }}>
-              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-bg)' }}>
+              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-bg)', flexWrap: 'wrap' as const }} className="commercial-tier-row">
                 <div>
                   <div className="label-caps" style={{ color: 'var(--color-warm-gray)', fontSize: '0.65rem', marginBottom: 2 }}>Retail — Per Box</div>
                   <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>{product.glovesPerBox} gloves/box</div>
@@ -114,7 +126,7 @@ export default async function CommercialProductPage({
                   ${product.price.toFixed(2)}<span style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', fontWeight: 400 }}> / box</span>
                 </div>
               </div>
-              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const }} className="commercial-tier-row">
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                     <div className="label-caps" style={{ color: '#1565C0', fontSize: '0.65rem' }}>Case Price</div>
@@ -126,7 +138,7 @@ export default async function CommercialProductPage({
                   ${casePrice.toFixed(2)}<span style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', fontWeight: 400 }}> / case</span>
                 </div>
               </div>
-              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const }} className="commercial-tier-row">
                 <div>
                   <div className="label-caps" style={{ color: 'var(--color-muted-green)', fontSize: '0.65rem', marginBottom: 2 }}>Wholesale (30+ cases)</div>
                   <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>Approved accounts · <Link href="/wholesale" style={{ color: 'var(--color-muted-green)', fontWeight: 600, textDecoration: 'none' }}>Apply</Link></div>
@@ -135,7 +147,7 @@ export default async function CommercialProductPage({
                   ${wholesaleCase.toFixed(2)}<span style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', fontWeight: 400 }}> / case</span>
                 </div>
               </div>
-              <div style={{ padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const }} className="commercial-tier-row">
                 <div>
                   <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem', marginBottom: 2 }}>Distribution (120+ cases)</div>
                   <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>NET 30 terms · <Link href="/distribution" style={{ color: 'var(--color-amber)', fontWeight: 600, textDecoration: 'none' }}>Apply</Link></div>
@@ -190,7 +202,7 @@ export default async function CommercialProductPage({
         <section style={{ backgroundColor: '#FAFAFA', padding: '64px 24px', borderTop: '1px solid var(--color-border)' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <h2 className="font-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--color-charcoal)', marginBottom: 32 }}>Related Products</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
+            <div className="commercial-related-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
               {related.map((rp) => (
                 <Link key={rp.slug} href={`/commercial/${rp.slug}`} style={{ textDecoration: 'none' }}>
                   <div className="tilt-card" style={{ backgroundColor: '#fff', border: '1px solid var(--color-border)', borderRadius: 16, overflow: 'hidden' }}>
