@@ -574,7 +574,7 @@ export default function CartDrawer() {
             )}
 
             {/* Subtotal */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ color: 'var(--color-warm-gray)', fontSize: '0.82rem' }}>
                 {hasAutoship ? 'Monthly subtotal' : 'Subtotal'}
               </span>
@@ -582,6 +582,23 @@ export default function CartDrawer() {
                 ${adjustedTotal.toFixed(2)}
               </span>
             </div>
+
+            {/* Free shipping progress */}
+            {adjustedTotal < 200 ? (
+              <div style={{ backgroundColor: '#FFF8E1', borderRadius: 8, padding: '10px 12px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Truck size={14} color="#F9A825" />
+                <span style={{ fontSize: '0.78rem', color: '#E65100', fontWeight: 600 }}>
+                  Add ${(200 - adjustedTotal).toFixed(2)} more for free shipping!
+                </span>
+              </div>
+            ) : (
+              <div style={{ backgroundColor: '#E8F5E9', borderRadius: 8, padding: '10px 12px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Truck size={14} color="#2E7D32" />
+                <span style={{ fontSize: '0.78rem', color: '#2E7D32', fontWeight: 600 }}>
+                  You qualify for free shipping!
+                </span>
+              </div>
+            )}
 
             {/* Shipping zip + rate selection */}
             <div style={{

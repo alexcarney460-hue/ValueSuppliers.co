@@ -161,18 +161,27 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    // Add customer-selected shipping rate as a line item
-    const shippingLabel = `Shipping — ${shipping.carrier} ${shipping.service}`;
+    // Free shipping on orders $200+
+    const FREE_SHIPPING_THRESHOLD = 200;
+    const subtotal = validatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+    const shippingCharge = qualifiesForFreeShipping ? 0 : shipping.price;
+
+    const shippingLabel = qualifiesForFreeShipping
+      ? `Shipping — FREE (order over $${FREE_SHIPPING_THRESHOLD})`
+      : `Shipping — ${shipping.carrier} ${shipping.service}`;
     lineItems.push({
       name: shippingLabel,
       quantity: '1',
       basePriceMoney: {
-        amount: BigInt(Math.round(shipping.price * 100)),
+        amount: BigInt(Math.round(shippingCharge * 100)),
         currency: 'USD' as const,
       },
-      note: shipping.estimatedDays
-        ? `Est. ${shipping.estimatedDays} business day${shipping.estimatedDays !== 1 ? 's' : ''}`
-        : undefined,
+      note: qualifiesForFreeShipping
+        ? 'Free shipping — order qualifies'
+        : shipping.estimatedDays
+          ? `Est. ${shipping.estimatedDays} business day${shipping.estimatedDays !== 1 ? 's' : ''}`
+          : undefined,
     });
 
     // Create Square payment link
