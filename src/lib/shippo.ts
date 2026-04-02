@@ -10,9 +10,9 @@ export const shippoClient = apiKey
 export const WAREHOUSE_ADDRESS = {
   name: 'Value Suppliers',
   company: 'Value Suppliers',
-  street1: '1401 N Clovis Ave',
-  street2: 'STE #103',
-  city: 'Clovis',
+  street1: '1401 N. Clovis Ave.',
+  street2: 'STE. 103',
+  city: 'Fresno',
   state: 'CA',
   zip: '93727',
   country: 'US',
@@ -116,6 +116,7 @@ async function createShipmentWithParcels(
 
   const shipment = await shippoClient.shipments.create({
     addressFrom: { ...WAREHOUSE_ADDRESS },
+    addressReturn: { ...WAREHOUSE_ADDRESS },
     addressTo: {
       name: addressTo.name,
       street1: addressTo.street1,
