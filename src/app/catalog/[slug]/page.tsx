@@ -575,7 +575,7 @@ export default async function ProductPage({
             Buying in Volume?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: 28 }}>
-            Wholesale accounts pay $70/case (save $10/case). Distribution accounts pay $60/case (save $20/case) with NET 30 terms. Apply in minutes.
+            Wholesale accounts pay $70/case (save $10/case). Distribution accounts pay $56.60/case (save $23.40/case) with NET 30 terms. Apply in minutes.
           </p>
           <div className="vs-btn-group" style={{ maxWidth: 380, margin: '0 auto' }}>
             <Link

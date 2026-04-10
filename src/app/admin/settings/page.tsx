@@ -35,7 +35,7 @@ type AdminConfig = {
 const PRICING_TIERS = [
   { name: 'Retail', discount: '$80/case', label: '$8/box · 1–29 cases', color: '#1B3A2D', minOrder: '1 case' },
   { name: 'Wholesale', discount: '$70/case', label: 'Save $10/case · $7/box', color: '#C8922A', minOrder: '30 cases' },
-  { name: 'Distribution', discount: '$60/case', label: 'Save $20/case · $6/box', color: '#1C1C1C', minOrder: '120 cases' },
+  { name: 'Distribution', discount: '$56.60/case', label: 'Save $23.40/case · $5.66/box', color: '#1C1C1C', minOrder: '120 cases' },
 ];
 
 /* helpers */

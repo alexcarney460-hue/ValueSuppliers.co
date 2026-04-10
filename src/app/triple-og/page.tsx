@@ -7,7 +7,7 @@ import AnimateIn from '@/components/AnimateIn';
 export const metadata: Metadata = {
   title: 'Triple OG Gloves — Built for the Trim',
   description:
-    'Triple OG Gloves: 5 mil nitrile trimming gloves built for speed, grip, and marathon trim sessions. No stick. No tear. No compromise. Case pricing from $60/case. By ValueSuppliers.co.',
+    'Triple OG Gloves: 5 mil nitrile trimming gloves built for speed, grip, and marathon trim sessions. No stick. No tear. No compromise. Case pricing from $56.60/case. By ValueSuppliers.co.',
   keywords: [
     'trimming gloves', 'cannabis trimming gloves', 'nitrile gloves for trimming',
     'trim gloves', 'harvest gloves', 'Triple OG Gloves', 'best gloves for trimming weed',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Triple OG Gloves — Built for the Trim',
-    description: 'No stick. No tear. No compromise. 5 mil nitrile trimming gloves from $60/case at distribution pricing.',
+    description: 'No stick. No tear. No compromise. 5 mil nitrile trimming gloves from $56.60/case at distribution pricing.',
     url: 'https://valuesuppliers.co/triple-og',
   },
   alternates: { canonical: 'https://valuesuppliers.co/triple-og' },
@@ -49,7 +49,7 @@ const WHY_ITEMS = [
   {
     icon: Package,
     title: 'Case Pricing That Scales',
-    desc: '$80/case retail. $70 wholesale (30+). $60 distribution (120+). The more you run, the less you spend.',
+    desc: '$80/case retail. $70 wholesale (30+). $56.60 distribution (120+). The more you run, the less you spend.',
   },
 ];
 
@@ -72,7 +72,7 @@ const USE_CASES = [
 const PRICING_TIERS = [
   { tier: 'Retail', price: '$80', unit: '/case', note: '1-29 cases · No application', color: 'var(--color-warm-gray)', href: '/catalog' },
   { tier: 'Wholesale', price: '$70', unit: '/case', note: '30+ cases · Save $10/case', color: 'var(--color-muted-green)', href: '/wholesale' },
-  { tier: 'Distribution', price: '$60', unit: '/case', note: '120+ cases · NET 30 available', color: 'var(--color-amber)', href: '/distribution' },
+  { tier: 'Distribution', price: '$56.60', unit: '/case', note: '120+ cases · NET 30 available', color: 'var(--color-amber)', href: '/distribution' },
 ];
 
 export default function TripleOGPage() {
@@ -196,7 +196,7 @@ export default function TripleOGPage() {
                 marginBottom: 44,
               }}
             >
-              From $60/case at distribution pricing.
+              From $56.60/case at distribution pricing.
             </p>
 
             <div className="vs-fade-up-3" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>

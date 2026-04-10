@@ -124,7 +124,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ValueSuppliers.co — Professional Gloves & Cannabis Supplies',
     description:
-      'Nitrile gloves by the case. Wholesale $70/case (30+ cases) · Distribution $60/case (120+ cases). Cannabis trimming supplies and accessories.',
+      'Nitrile gloves by the case. Wholesale $70/case (30+ cases) · Distribution $56.60/case (120+ cases). Cannabis trimming supplies and accessories.',
     creator: '@valuesuppliers',
     images: ['/og-image.jpg'],
   },

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 const BENEFITS = [
-  { icon: DollarSign, title: 'Volume Discounts', desc: '$70/case at 30+ cases. Distribution pricing ($60/case) at 120+ cases.' },
+  { icon: DollarSign, title: 'Volume Discounts', desc: '$70/case at 30+ cases. Distribution pricing ($56.60/case) at 120+ cases.' },
   { icon: Truck, title: 'Priority Fulfillment', desc: 'Wholesale accounts get restocked before retail.' },
   { icon: BadgeCheck, title: 'Dedicated Support', desc: 'Direct line to your account rep for reorders and custom requests.' },
   { icon: User, title: 'Net 30 Available', desc: 'Qualify for NET terms after your first three orders.' },
@@ -129,7 +129,7 @@ export default function WholesalePage() {
             Looking for Distribution Pricing?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 36, lineHeight: 1.75 }}>
-            Distribution accounts get $60/case pricing (120+ cases) with NET 30 terms and a dedicated rep.
+            Distribution accounts get $56.60/case pricing (120+ cases) with NET 30 terms and a dedicated rep.
           </p>
           <Link
             href="/distribution"

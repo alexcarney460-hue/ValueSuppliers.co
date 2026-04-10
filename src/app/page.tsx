@@ -10,7 +10,7 @@ import CTASection from './(home)/CTASection';
 export const metadata: Metadata = {
   title: 'Disposable Gloves Wholesale & Cannabis Trimming Supplies',
   description:
-    'Buy nitrile gloves in bulk from $60/case. Wholesale disposable gloves and cannabis trimming supplies shipped fast. Retail, wholesale, and distribution tiers available.',
+    'Buy nitrile gloves in bulk from $56.60/case. Wholesale disposable gloves and cannabis trimming supplies shipped fast. Retail, wholesale, and distribution tiers available.',
   keywords: [
     'disposable gloves wholesale',
     'nitrile gloves bulk',
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://valuesuppliers.co' },
   openGraph: {
     title: 'Disposable Gloves Wholesale & Cannabis Trimming Supplies',
-    description: 'Nitrile, latex, and vinyl gloves by the case. Wholesale $70/case (30+), distribution $60/case (120+). Cannabis trimming tools in stock.',
+    description: 'Nitrile, latex, and vinyl gloves by the case. Wholesale $70/case (30+), distribution $56.60/case (120+). Cannabis trimming tools in stock.',
     url: 'https://valuesuppliers.co',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Disposable Gloves Wholesale & Cannabis Supplies',
-    description: 'Nitrile gloves by the case. Wholesale $70/case, distribution $60/case. Cannabis trimming supplies shipped fast.',
+    description: 'Nitrile gloves by the case. Wholesale $70/case, distribution $56.60/case. Cannabis trimming supplies shipped fast.',
   },
 };
 
@@ -58,7 +58,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Full Distribution Programs',
-    description: '$60/case ($6/box) on 120+ case orders. Save $20/case with NET terms, dedicated rep, and bulk pricing.',
+    description: '$56.60/case ($5.66/box) on 120+ case orders. Save $23.40/case with NET terms, dedicated rep, and bulk pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -111,7 +111,7 @@ export default function HomePage() {
                 whiteSpace: 'nowrap',
               }}
             >
-              Professional Grade &nbsp;·&nbsp; Case Pricing &nbsp;·&nbsp; Fast Restock &nbsp;·&nbsp; Wholesale $70/case &nbsp;·&nbsp; Distribution $60/case &nbsp;·&nbsp; Supplied for the Grow
+              Professional Grade &nbsp;·&nbsp; Case Pricing &nbsp;·&nbsp; Fast Restock &nbsp;·&nbsp; Wholesale $70/case &nbsp;·&nbsp; Distribution $56.60/case &nbsp;·&nbsp; Supplied for the Grow
             </span>
           ))}
         </div>

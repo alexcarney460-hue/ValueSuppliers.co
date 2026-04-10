@@ -8,7 +8,7 @@ import { formatPrice } from '@/lib/pricing';
 export const metadata: Metadata = {
   title: 'Buy Nitrile Gloves Online — Gloves by the Case',
   description:
-    'Shop nitrile, latex, and vinyl disposable gloves by the case. Cannabis trimming scissors and harvest accessories. From $60/case with wholesale pricing.',
+    'Shop nitrile, latex, and vinyl disposable gloves by the case. Cannabis trimming scissors and harvest accessories. From $56.60/case with distribution pricing.',
   keywords: ['buy nitrile gloves online', 'gloves by the case', 'disposable gloves case', 'cannabis trimming scissors', 'trimming supplies', 'wholesale gloves online'],
   openGraph: {
     title: 'Buy Nitrile Gloves Online — Gloves by the Case',
@@ -150,7 +150,7 @@ export default function CatalogPage() {
           <div style={{ position: 'relative' }}>
             <div className="label-caps" style={{ color: 'rgba(200,146,42,0.85)', fontSize: '0.65rem', marginBottom: 10 }}>Volume Pricing</div>
             <h3 className="font-display" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#fff', marginBottom: 8, lineHeight: 1.1 }}>
-              Wholesale $70/case. Distribution $60/case.
+              Wholesale $70/case. Distribution $56.60/case.
             </h3>
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.88rem', lineHeight: 1.6 }}>
               Apply online — approval within 1 business day.

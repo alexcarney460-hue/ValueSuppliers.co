@@ -55,7 +55,7 @@ function buildOutreachEmail(lead: LeadData, template: string): { subject: string
 
 Saw you guys are licensed in ${loc}.
 
-We supply 5 mil nitrile gloves at $60-80/case (1,000 gloves per case) — most grows and labs in ${lead.state} are restocking with us monthly.
+We supply 5 mil nitrile gloves at $56.60-80/case (1,000 gloves per case) — most grows and labs in ${lead.state} are restocking with us monthly.
 
 Would it make sense to send you a sample case?
 
@@ -103,7 +103,7 @@ admin@valuesuppliersdirect.com`,
 
 ${company} showed up on our radar as a licensed distributor in ${lead.state}.
 
-If you're moving product that needs PPE — we do distribution pricing at $60/case (120+ cases) with NET 30 terms. 5 mil nitrile, case of 1,000.
+If you're moving product that needs PPE — we do distribution pricing at $56.60/case (120+ cases) with NET 30 terms. 5 mil nitrile, case of 1,000.
 
 Worth a conversation?
 

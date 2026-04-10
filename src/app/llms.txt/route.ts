@@ -21,7 +21,7 @@ We offer volume-based pricing on glove cases (10 boxes / 1,000 gloves per case):
 |--------------|----------------|----------------|
 | Retail       | 1–29 cases     | $80.00         |
 | Wholesale    | 30–119 cases   | $70.00         |
-| Distribution | 120+ cases     | $60.00         |
+| Distribution | 120+ cases     | $56.60         |
 
 Individual glove boxes (100 gloves) are available at $10.00/box.
 

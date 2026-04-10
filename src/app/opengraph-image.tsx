@@ -365,7 +365,7 @@ export default function Image() {
               <span style={{ color: '#C8922A', fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'flex' }}>
                 Distribution
               </span>
-              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>$60/case</span>
+              <span style={{ color: '#1C1C1C', fontSize: 20, fontWeight: 900, display: 'flex' }}>$56.60/case</span>
               <span style={{ color: '#9A9590', fontSize: 12, display: 'flex' }}>120+ cases</span>
             </div>
           </div>

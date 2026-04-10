@@ -9,11 +9,11 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What is the minimum order quantity?',
-    a: 'Retail customers can order 1–29 cases at $80/case with no application needed. Wholesale pricing ($70/case) requires 30+ cases per order and an approved application. Distribution pricing ($60/case) requires 120+ cases per order and is designed for commercial operations and resellers.',
+    a: 'Retail customers can order 1–29 cases at $80/case with no application needed. Wholesale pricing ($70/case) requires 30+ cases per order and an approved application. Distribution pricing ($56.60/case) requires 120+ cases per order and is designed for commercial operations and resellers.',
   },
   {
     q: 'How much do wholesale accounts save?',
-    a: 'Wholesale accounts pay $70/case ($7/box) — saving $10/case off the $80 retail price on 30+ case orders. Distribution accounts pay $60/case ($6/box) — saving $20/case on 120+ case orders. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
+    a: 'Wholesale accounts pay $70/case ($7/box) — saving $10/case off the $80 retail price on 30+ case orders. Distribution accounts pay $56.60/case ($5.66/box) — saving $23.40/case on 120+ case orders. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
   },
   {
     q: 'Do you ship to all 50 states?',
