@@ -372,7 +372,7 @@ export default async function ProductPage({
                     <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem' }}>Distribution</div>
                     <span style={{ backgroundColor: '#FEF3DC', color: 'var(--color-amber)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>SAVE $20/CASE</span>
                   </div>
-                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>120+ cases · NET 30 terms available</div>
+                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>120+ cases · Dedicated rep</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-amber)' }}>
@@ -575,7 +575,7 @@ export default async function ProductPage({
             Buying in Volume?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: 28 }}>
-            Wholesale accounts pay $70/case (save $10/case). Distribution accounts pay $56.60/case (save $23.40/case) with NET 30 terms. Apply in minutes.
+            Wholesale accounts pay $70/case (save $10/case). Distribution accounts pay $56.60/case (save $23.40/case). Apply in minutes.
           </p>
           <div className="vs-btn-group" style={{ maxWidth: 380, margin: '0 auto' }}>
             <Link

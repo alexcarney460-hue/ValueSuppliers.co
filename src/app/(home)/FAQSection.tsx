@@ -13,7 +13,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How much do wholesale accounts save?',
-    a: 'Wholesale accounts pay $70/case ($7/box) — saving $10/case off the $80 retail price on 30+ case orders. Distribution accounts pay $56.60/case ($5.66/box) — saving $23.40/case on 120+ case orders. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
+    a: 'Wholesale accounts pay $70/case — saving $10/case off the $80 retail price on 30+ case orders. Distribution accounts pay $56.60/case — saving $23.40/case on 120+ case orders. Both tiers include priority fulfillment and dedicated account support. Apply online — approval typically within 1 business day.',
   },
   {
     q: 'Do you ship to all 50 states?',

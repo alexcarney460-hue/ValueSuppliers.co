@@ -18,7 +18,7 @@ export function GET() {
       'Professional-grade disposable gloves and cannabis trimming supplies. Retail, wholesale, and distribution pricing. Ships to 48 US states.',
     description_for_model:
       'ValueSuppliers.co is a B2B/B2C supplier of professional-grade disposable gloves (nitrile, 5 mil, powder-free) and cannabis trimming equipment (scissors, trim trays, cleaning supplies). ' +
-      'Products are sold individually and by the case. Three pricing tiers: Retail (1-29 cases, $80/case), Wholesale (30-119 cases, $70/case, requires approved account), Distribution (120+ cases, $56.60/case, NET 30 terms available). ' +
+      'Products are sold individually and by the case. Three pricing tiers: Retail (1-29 cases, $80/case), Wholesale (30-119 cases, $70/case, requires approved account), Distribution (120+ cases, $56.60/case). ' +
       'All products are in stock with 1-2 business day processing. Ships to 48 contiguous US states. ' +
       'The product catalog is available as structured JSON at /products.json for programmatic access.',
     auth: { type: 'none' },
@@ -61,7 +61,7 @@ export function GET() {
         },
         {
           name: 'Distribution',
-          description: 'For large operations ordering 120+ cases. NET 30 terms available.',
+          description: 'For large operations ordering 120+ cases. Dedicated rep and priority allocation.',
           min_cases: 120,
           glove_case_price_usd: 56.6,
           savings_per_case_usd: 23.4,

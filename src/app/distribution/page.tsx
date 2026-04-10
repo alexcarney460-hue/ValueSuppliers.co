@@ -1,31 +1,30 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BadgeCheck, Truck, DollarSign, User, FileText, Phone, ArrowRight } from 'lucide-react';
+import { BadgeCheck, Truck, DollarSign, User, Phone, ArrowRight } from 'lucide-react';
 import AnimateIn from '@/components/AnimateIn';
 import DistributionForm from '@/components/forms/DistributionForm';
 
 export const metadata: Metadata = {
-  title: 'Glove Distributor Program — $56.60/Case + NET 30',
+  title: 'Glove Distributor Program — $56.60/Case',
   description:
-    'Become a glove distributor. $56.60/case pricing on 120+ case orders with NET 30 terms, dedicated rep, and priority inventory. Save $23.40/case off retail.',
-  keywords: ['glove distributor', 'distribution pricing gloves', 'wholesale glove distributor', 'disposable gloves distributor', 'net 30 gloves', 'cannabis supplies distributor'],
+    'Become a glove distributor. $56.60/case pricing on 120+ case orders with dedicated rep and priority inventory. Save $23.40/case off retail.',
+  keywords: ['glove distributor', 'distribution pricing gloves', 'wholesale glove distributor', 'disposable gloves distributor', 'cannabis supplies distributor'],
   openGraph: {
-    title: 'Glove Distributor Program — $56.60/Case + NET 30',
-    description: 'Distribution pricing at $56.60/case on 120+ case orders. NET 30 billing, dedicated rep, and priority inventory allocation.',
+    title: 'Glove Distributor Program — $56.60/Case',
+    description: 'Distribution pricing at $56.60/case on 120+ case orders. Dedicated rep and priority inventory allocation.',
     url: 'https://valuesuppliers.co/distribution',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Glove Distribution Program | ValueSuppliers.co',
-    description: '$56.60/case glove pricing for distributors. NET 30 terms, priority allocation, and dedicated account rep.',
+    description: '$56.60/case glove pricing for distributors. Priority allocation and dedicated account rep.',
   },
   alternates: { canonical: 'https://valuesuppliers.co/distribution' },
 };
 
 const BENEFITS = [
-  { icon: DollarSign, title: '$56.60/case Pricing', desc: 'Distribution accounts save $23.40/case off retail — $56.60/case ($5.66/box) on every SKU, every order.' },
+  { icon: DollarSign, title: '$56.60/case Pricing', desc: 'Distribution accounts save $23.40/case off retail — $56.60/case on every SKU, every order.' },
   { icon: Truck, title: 'Priority Allocation', desc: 'Distribution partners are fulfilled first. You get inventory priority before wholesale and retail channels.' },
-  { icon: FileText, title: 'NET 30 Terms', desc: 'Qualify for NET 30 billing after account approval. Invoice-based ordering for established operations.' },
   { icon: User, title: 'Dedicated Rep', desc: 'Direct line to your account manager for custom orders, volume quotes, and restock scheduling.' },
   { icon: BadgeCheck, title: 'Custom Pricing Tiers', desc: 'At 100+ case/month volume, we build a custom pricing agreement tailored to your operation.' },
   { icon: Phone, title: 'After-Hours Support', desc: 'Distribution accounts get priority support contact for urgent restock situations.' },
@@ -35,7 +34,6 @@ const COMPARISON = [
   { label: 'Case Price',               retail: '$80/case',  wholesale: '$70/case',      distribution: '$56.60/case' },
   { label: 'Savings per Case',         retail: '—',         wholesale: 'Save $10/case', distribution: 'Save $23.40/case' },
   { label: 'Minimum Order',            retail: '1 case',    wholesale: '30 cases',      distribution: '120 cases' },
-  { label: 'NET Terms',                retail: 'No',        wholesale: 'No',            distribution: 'NET 30' },
   { label: 'Dedicated Account Rep',    retail: 'No',        wholesale: 'No',            distribution: 'Yes' },
   { label: 'Inventory Priority',       retail: 'No',        wholesale: 'No',            distribution: 'Yes' },
   { label: 'Custom Pricing Available', retail: 'No',        wholesale: 'No',            distribution: 'Yes (200+ cases)' },
@@ -66,7 +64,7 @@ export default function DistributionPage() {
             <span className="font-display" style={{ fontSize: '2.25rem', color: 'var(--color-amber)', lineHeight: 1 }}>$56.60</span>
             <div style={{ textAlign: 'left' }}>
               <div style={{ color: 'var(--color-charcoal)', fontWeight: 700, fontSize: '0.9rem' }}>Per Case — Distribution Tier</div>
-              <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.8rem' }}>120+ cases · Save $23.40/case · NET 30 available</div>
+              <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.8rem' }}>120+ cases · Save $23.40/case</div>
             </div>
           </div>
         </div>
@@ -167,7 +165,7 @@ export default function DistributionPage() {
               Distribution Application
             </h2>
             <p style={{ color: 'var(--color-warm-gray)', marginTop: 12 }}>
-              Applications reviewed within 1 business day. You&apos;ll receive account credentials and NET 30 terms upon approval.
+              Applications reviewed within 1 business day. You&apos;ll receive account credentials upon approval.
             </p>
           </AnimateIn>
 

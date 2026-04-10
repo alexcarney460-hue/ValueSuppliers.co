@@ -150,7 +150,7 @@ export default async function CommercialProductPage({
               <div style={{ padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const }} className="commercial-tier-row">
                 <div>
                   <div className="label-caps" style={{ color: 'var(--color-amber)', fontSize: '0.65rem', marginBottom: 2 }}>Distribution (120+ cases)</div>
-                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>NET 30 terms · <Link href="/distribution" style={{ color: 'var(--color-amber)', fontWeight: 600, textDecoration: 'none' }}>Apply</Link></div>
+                  <div style={{ color: 'var(--color-warm-gray)', fontSize: '0.78rem' }}>Dedicated rep · <Link href="/distribution" style={{ color: 'var(--color-amber)', fontWeight: 600, textDecoration: 'none' }}>Apply</Link></div>
                 </div>
                 <div className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-amber)' }}>
                   ${distroCase.toFixed(2)}<span style={{ fontSize: '0.75rem', color: 'var(--color-warm-gray)', fontWeight: 400 }}> / case</span>

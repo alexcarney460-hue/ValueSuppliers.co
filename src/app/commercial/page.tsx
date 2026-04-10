@@ -84,7 +84,7 @@ const TIER_CARDS = [
     color: 'var(--color-amber)',
     accentBg: '#FDF6E8',
     headline: 'Enterprise Programs',
-    description: 'Save 20–25% per case on 120+ case orders. NET terms, dedicated rep, and bulk freight pricing.',
+    description: 'Save 20–25% per case on 120+ case orders. Dedicated rep, priority allocation, and bulk freight pricing.',
     cta: 'Apply for Distribution',
     href: '/distribution',
   },
@@ -108,8 +108,8 @@ const FAQ_ITEMS = [
     a: 'Free shipping on all orders over $200. Under $200, shipping is calculated by weight starting at $7.99. We automatically select the cheapest carrier rate and ship to all 48 contiguous states with 1–2 day processing.',
   },
   {
-    q: 'Do you offer NET terms for businesses?',
-    a: 'Distribution accounts have access to NET 30 terms with approved credit. Contact us at admin@valuesuppliersdirect.com for custom payment arrangements on large or recurring orders.',
+    q: 'Do you offer custom quotes for businesses?',
+    a: 'Distribution accounts get custom case-based quotes with a dedicated rep. Contact us at admin@valuesuppliersdirect.com for pricing on large or recurring orders.',
   },
   {
     q: 'What is the difference between 3.5mil and 8mil gloves?',
@@ -896,7 +896,7 @@ export default function CommercialPage() {
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 44, fontSize: '1.05rem', lineHeight: 1.75 }}>
             19 products in stock. Order online today or apply for wholesale and distribution pricing.
-            Volume discounts, NET terms, and a dedicated rep for qualifying accounts.
+            Volume discounts, priority allocation, and a dedicated rep for qualifying accounts.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a

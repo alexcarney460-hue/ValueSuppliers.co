@@ -72,7 +72,7 @@ const USE_CASES = [
 const PRICING_TIERS = [
   { tier: 'Retail', price: '$80', unit: '/case', note: '1-29 cases · No application', color: 'var(--color-warm-gray)', href: '/catalog' },
   { tier: 'Wholesale', price: '$70', unit: '/case', note: '30+ cases · Save $10/case', color: 'var(--color-muted-green)', href: '/wholesale' },
-  { tier: 'Distribution', price: '$56.60', unit: '/case', note: '120+ cases · NET 30 available', color: 'var(--color-amber)', href: '/distribution' },
+  { tier: 'Distribution', price: '$56.60', unit: '/case', note: '120+ cases · Save $23.40/case', color: 'var(--color-amber)', href: '/distribution' },
 ];
 
 export default function TripleOGPage() {

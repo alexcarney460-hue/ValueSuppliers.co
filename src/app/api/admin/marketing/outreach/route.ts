@@ -66,7 +66,7 @@ valuesuppliers.co`,
     },
     followup_1: {
       subject: `re: gloves for ${company}?`,
-      text: `Quick follow up — we ship same week and do NET 30 for operations ordering 30+ cases.
+      text: `Quick follow up — we ship same week and do case-based volume discounts for operations ordering 30+ cases.
 
 Most trim crews go through 10-20 cases/month. Happy to put together a quote if you want to compare against your current supplier.
 
@@ -103,7 +103,7 @@ admin@valuesuppliersdirect.com`,
 
 ${company} showed up on our radar as a licensed distributor in ${lead.state}.
 
-If you're moving product that needs PPE — we do distribution pricing at $56.60/case (120+ cases) with NET 30 terms. 5 mil nitrile, case of 1,000.
+If you're moving product that needs PPE — we do distribution pricing at $56.60/case (120+ cases) with a dedicated rep. 5 mil nitrile, case of 1,000.
 
 Worth a conversation?
 

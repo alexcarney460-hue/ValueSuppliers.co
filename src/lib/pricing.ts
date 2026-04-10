@@ -2,9 +2,9 @@ import type { AccountType } from '@/lib/account';
 
 // Discount tiers — Wholesale saves $10/case, Distribution saves $23.40/case off $80 retail
 export const DISCOUNTS: Record<AccountType, number> = {
-  retail:       0,           // full price ($80/case, $10/box)
-  wholesale:    0.125,       // $70/case ($7/box) — save $10/case
-  distribution: 0.2925,      // $56.60/case ($5.66/box) — save $23.40/case
+  retail:       0,           // full price ($80/case)
+  wholesale:    0.125,       // $70/case — save $10/case
+  distribution: 0.2925,      // $56.60/case — save $23.40/case
 };
 
 export function roundMoney(n: number): number {

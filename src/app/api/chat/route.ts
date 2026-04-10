@@ -18,9 +18,9 @@ PRODUCTS:
 - Available sizes: XS, S, M, L, XL
 
 PRICING TIERS:
-- Retail: $80/case ($8/box), 1–29 cases, buy online at /catalog
-- Wholesale: $70/case ($7/box), save $10/case off retail, minimum 30 cases, apply at /wholesale
-- Distribution: $56.60/case ($5.66/box), save $23.40/case off retail, minimum 120 cases, NET 30 available, apply at /distribution
+- Retail: $80/case, 1–29 cases, buy online at /catalog (individual boxes also available at $10/box for small orders)
+- Wholesale: $70/case, save $10/case off retail, minimum 30 cases, apply at /wholesale
+- Distribution: $56.60/case, save $23.40/case off retail, minimum 120 cases, apply at /distribution
 
 AFFILIATE PROGRAM:
 - Commission tiers: Starter 10% ($0–$10k), Growth 12% ($10k–$25k), Pro 15% ($25k–$75k), Elite 18% ($75k–$150k), Apex 20% ($150k+)

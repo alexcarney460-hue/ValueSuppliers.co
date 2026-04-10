@@ -96,7 +96,7 @@ export function GET() {
     pricingModel: {
       retail: { description: 'Standard pricing, no minimum order', minCases: 1 },
       wholesale: { description: 'Approved accounts, 30+ cases per order, save $10/case', minCases: 30 },
-      distribution: { description: 'Approved accounts, 120+ cases, NET 30 terms, save $20/case', minCases: 120 },
+      distribution: { description: 'Approved accounts, 120+ cases, save $23.40/case', minCases: 120 },
     },
     products,
   };

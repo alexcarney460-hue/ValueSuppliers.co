@@ -32,7 +32,7 @@ export default function CTASection() {
           Ready to Set Up Your Account?
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: 44, fontSize: '1.05rem', lineHeight: 1.75 }}>
-          Apply for wholesale or distribution pricing. Get access to bulk discounts, NET terms, and a dedicated rep.
+          Apply for wholesale or distribution pricing. Get access to bulk discounts, priority allocation, and a dedicated rep.
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link

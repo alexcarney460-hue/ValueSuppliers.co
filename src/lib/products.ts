@@ -89,12 +89,11 @@ const PRODUCTS: Product[] = [
       { label: 'Powder', value: 'Powder-Free' },
       { label: 'Sizes', value: 'S, M, L, XL, XXL' },
       { label: 'Count', value: '10 boxes / case (1,000 gloves)' },
-      { label: 'Price Per Box', value: '$8.00 per box (in case)' },
       { label: 'Certification', value: 'ASTM D6319 (Industrial)' },
       { label: 'AQL', value: '1.5' },
     ],
     description:
-      'The same premium 5 mil nitrile glove — sold by the case. 10 boxes per case, 1,000 gloves total. $80 per case retail ($8/box). Volume discounts available for wholesale (30+ cases at $70/case) and distributor (120+ cases at $56.60/case) orders.',
+      'The same premium 5 mil nitrile glove — sold by the case. 10 boxes per case, 1,000 gloves total. $80 per case retail. Volume discounts available for wholesale (30+ cases at $70/case) and distributor (120+ cases at $56.60/case) orders.',
     features: [
       '10 boxes per case — 1,000 gloves total',
       '$80/case retail — volume discounts at 30+ and 120+ cases',
